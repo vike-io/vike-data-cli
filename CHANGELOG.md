@@ -2,6 +2,12 @@
 
 All notable changes are documented here. Entries follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 0.10.0 — commander 15 + Node 22.12 floor (drops Node 20)
+
+- **Dependency:** `commander` 14 → 15 (via Dependabot #8). Commander 15 is ESM-only and requires Node ≥22.12; the CLI was already ESM (`"type": "module"`) and uses no `--no-*` options, so command behavior is unchanged.
+- **Breaking (environment):** minimum supported Node.js is now **22.12.0** (was 20). Node 20 dropped from the CI matrix. Node-20 users should upgrade Node or pin to `0.9.x`.
+- Also merged Dependabot #7 (dev-deps: eslint/vitest lockfile bump).
+
 ## 0.9.0 — `vike ohlcv` (CEX historical candles)
 
 - **`vike ohlcv <symbol>`** (new command, wraps the new `ohlcv` MCP tool). Historical CEX candles for a canonical ticker (`BTC`) or exchange pair (`BTCUSDT`) across any timeframe (1m–1w), spot or perp. Flags: `--interval`, `--exchange` (binance/bybit/okx/gate/kucoin/coinbase/mexc/pyth, or omit for the merged best-source series), `--market`, `--start`/`--end`, `--limit` (max 5000), and `--cursor` paging. Look-ahead-safe — the in-progress bucket is excluded. Distinct from `vike token chart`, which serves DEX candles by **contract address** at 5/30/120-min only.
