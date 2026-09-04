@@ -57,10 +57,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vike-io/vike-cli.git"
+    "url": "git+https://github.com/vike-io/vike-data-cli.git"
   },
   "bugs": {
-    "url": "https://github.com/vike-io/vike-cli/issues"
+    "url": "https://github.com/vike-io/vike-data-cli/issues"
   },
   "homepage": "https://vike.io",
   "engines": {
