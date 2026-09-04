@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.11.0
+
+### Minor Changes
+
+- 1082cc5: Add `vike-data` as a second command name, alongside `vike`.
+
+  `vike` collides with the Vike Trader multicall binary, which is also called
+  `vike` — two different programs, both ours, one name on PATH. Anyone running the
+  trading platform and this CLI on the same machine gets whichever the shell finds
+  first.
+
+  This is ADDITIVE: `vike` keeps working exactly as before, so nothing installed
+  today breaks. `vike-data` is the unambiguous name to move to, and the one the
+  docs should teach from here.
+
 All notable changes are documented here. Entries follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## 0.10.0 — commander 15 + Node 22.12 floor (drops Node 20)
