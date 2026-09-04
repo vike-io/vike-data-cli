@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   release:
-    if: github.repository == 'vike-io/vike-cli'
+    if: github.repository == 'vike-io/vike-data-cli'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7

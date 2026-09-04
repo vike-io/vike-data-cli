@@ -1,11 +1,11 @@
 # @vike-io/cli
 
-> Repo + package: `@vike-io/cli` (npm) · `vike-io/vike-cli` (GitHub) · binary: `vike`
+> Repo + package: `@vike-io/cli` (npm) · `vike-io/vike-data-cli` (GitHub) · binary: `vike`
 
 [![npm version](https://img.shields.io/npm/v/@vike-io/cli.svg)](https://www.npmjs.com/package/@vike-io/cli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node](https://img.shields.io/badge/node-%3E%3D20-brightgreen.svg)](https://nodejs.org)
-[![skills.sh](https://skills.sh/b/vike-io/vike-cli)](https://skills.sh/vike-io/vike-cli)
+[![skills.sh](https://skills.sh/b/vike-io/vike-data-cli)](https://skills.sh/vike-io/vike-data-cli)
 
 > **Command-line interface for the [vike.io](https://vike.io) API.** On-chain analytics, perpetuals, options flow, and prediction-market data across 11 chains — designed to be driven by AI agents (Claude Code, OpenClaw) as well as humans.
 
@@ -17,7 +17,7 @@ npm install -g @vike-io/cli
 
 # OR install just the skill playbooks into your AI agent (Claude Code, Cursor,
 # Codex, Copilot, OpenCode and 50+ more — auto-detected):
-npx skills add vike-io/vike-cli
+npx skills add vike-io/vike-data-cli
 ```
 
 After `npm install`, you can also drop the skill into AI agents from the CLI itself:
@@ -70,9 +70,9 @@ Three install paths, pick whichever fits your stack:
 
 ```bash
 # 1. Install just the skill files for your agent (no Node binary needed):
-npx skills add vike-io/vike-cli                # auto-detects the agent
-npx skills add vike-io/vike-cli -a claude-code # explicit target
-npx skills add vike-io/vike-cli --list          # list all 41 first
+npx skills add vike-io/vike-data-cli                # auto-detects the agent
+npx skills add vike-io/vike-data-cli -a claude-code # explicit target
+npx skills add vike-io/vike-data-cli --list          # list all 41 first
 
 # 2. Use the CLI itself to install the umbrella skill into multiple agents:
 vike install --claude --cursor --copilot --agents
@@ -117,5 +117,5 @@ MIT — see [LICENSE](LICENSE).
 ## Links
 
 - Homepage: [vike.io](https://vike.io)
-- Issues: [github.com/vike-io/vike-cli/issues](https://github.com/vike-io/vike-cli/issues)
+- Issues: [github.com/vike-io/vike-data-cli/issues](https://github.com/vike-io/vike-data-cli/issues)
 - API docs: [vike.io/api](https://vike.io/api)
