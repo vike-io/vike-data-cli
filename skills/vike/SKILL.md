@@ -5,6 +5,8 @@ description: "Use this skill whenever the user asks any question about on-chain 
 
 # vike — Multi-chain On-chain Analytics
 
+This skill is for anyone who asks an AI agent about crypto data: who is buying a token, what a wallet holds, what Hyperliquid or Polymarket traders are doing right now. It tells the agent which vike tool answers which question and how to read the result, so it does not guess or invent numbers. It reads its data from vike.io and needs a free vike API key.
+
 Answer on-chain questions using the vike.io platform: 11 chains (ETH, BSC, Base, Arbitrum, HyperEVM, BTC, Solana, Tron, XMR, ZEC, Dash), full Hyperliquid perps coverage, CEX perps across 5 venues, Polymarket prediction markets, multi-source wallet labels, and a 34-tool MCP server.
 
 **MCP endpoint for all calls:** `https://vike.io/mcp` (JSON-RPC 2.0)
@@ -53,7 +55,7 @@ If the user has no API key yet, tell them:
 >
 > Per-key default cap: 2000 requests/hour. Most calls return in <500ms.
 
-If using the MCP server directly (without the CLI), send the key as a header:
+If using the MCP server directly (without the CLI), authenticate with the key in this header:
 ```
 X-API-KEY: vk_...
 ```
@@ -118,22 +120,7 @@ vike wallet summary 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045 --json
 vike perp funding --symbol BTC --window 24h --json
 ```
 
-**B) Via MCP JSON-RPC (recommended when an MCP connector is available).** All 34 tools live at `https://vike.io/mcp`:
-```http
-POST https://vike.io/mcp
-X-API-KEY: vk_...
-Content-Type: application/json
-
-{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "method": "tools/call",
-  "params": {
-    "name": "wallet_summary",
-    "arguments": {"address": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045", "chain": "ethereum"}
-  }
-}
-```
+**B) Via an MCP connector (recommended when your client has one).** All 31 tools live at `https://vike.io/mcp`. Connect the client to that address with the `X-API-KEY` header above, then call a tool by name with its arguments, for example `wallet_summary` with `address` set to a full 0x address and `chain` set to `ethereum`.
 
 Run `vike schema --pretty` (or call MCP `tools/list`) to see the live arg shape for every tool. Always read the schema before constructing arguments — defaults and enum values change.
 
