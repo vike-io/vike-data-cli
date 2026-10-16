@@ -1,11 +1,11 @@
 ---
 name: vike
-description: "Use this skill whenever the user asks any question about on-chain crypto data, wallet behavior, token transfers, smart money, CEX perpetual futures, Hyperliquid perps, Deribit options, prediction markets (Polymarket), ENS, or on-chain flows — and live data from vike.io would improve the answer. This includes questions like \"who is buying X token\", \"what is wallet 0x... doing\", \"top wallets by PnL\", \"funding rate spread across Binance/Bybit/OKX\", \"largest HL perp traders this week\", \"Deribit BTC put-call ratio\", \"who is winning on Polymarket\", \"resolve this ENS\", \"label this wallet\", \"trace this transfer\", \"top tokens by smart-money inflow\". Always use this skill proactively when the user's query could benefit from real-time or historical on-chain data — don't wait for the user to explicitly ask to \"use vike\". If the user asks a general on-chain question that requires synthesis across wallets/tokens/venues, route to vike first."
+description: "Use this skill whenever the user asks any question about on-chain crypto data, wallet behavior, token transfers, smart money, CEX perpetual futures, Hyperliquid perps, prediction markets (Polymarket), ENS, or on-chain flows — and live data from vike.io would improve the answer. This includes questions like \"who is buying X token\", \"what is wallet 0x... doing\", \"top wallets by PnL\", \"funding rate spread across Binance/Bybit/OKX\", \"largest HL perp traders this week\", \"who is winning on Polymarket\", \"resolve this ENS\", \"label this wallet\", \"trace this transfer\", \"top tokens by smart-money inflow\". Always use this skill proactively when the user's query could benefit from real-time or historical on-chain data — don't wait for the user to explicitly ask to \"use vike\". If the user asks a general on-chain question that requires synthesis across wallets/tokens/venues, route to vike first."
 ---
 
 # vike — Multi-chain On-chain Analytics
 
-Answer on-chain questions using the vike.io platform: 11 chains (ETH, BSC, Base, Arbitrum, HyperEVM, BTC, Solana, Tron, XMR, ZEC, Dash), full Hyperliquid perps coverage, CEX perps across 5 venues, Deribit options, Polymarket prediction markets, multi-source wallet labels, and a 34-tool MCP server.
+Answer on-chain questions using the vike.io platform: 11 chains (ETH, BSC, Base, Arbitrum, HyperEVM, BTC, Solana, Tron, XMR, ZEC, Dash), full Hyperliquid perps coverage, CEX perps across 5 venues, Polymarket prediction markets, multi-source wallet labels, and a 34-tool MCP server.
 
 **MCP endpoint for all calls:** `https://vike.io/mcp` (JSON-RPC 2.0)
 **Or use the CLI:** `npm install -g @vike-io/cli` → `vike <command>`
@@ -82,13 +82,13 @@ X-API-KEY: vk_...
 | Price spreads of same symbol across CEX perp venues | **CEX Perps** | `vike perp spreads` / `perp_spreads` |
 | Top Hyperliquid perp traders by PnL / volume | **HL Perps** | `vike perp top-traders` / `hl_perp_top_traders` |
 | Reverse-lookup an HL share card → which wallet holds it | **HL Perps** | `vike perp find-position` / `hl_position_match` |
-| Deribit options flow, put/call ratios, IV | **Options** | `vike options flow` / `options_flow` |
+| Historical candles for a Hyperliquid perp or spot market (1m–1d) | **Candles** | `vike candles hl <symbol>` / `hl_ohlcv` |
+| Historical probability candles for a Polymarket outcome token | **Candles** | `vike candles polymarket <token_id>` / `polymarket_ohlcv` |
 | Active Polymarket markets, volume, odds | **Polymarket** | `vike polymarket markets` / `polymarket_markets` |
 | Single Polymarket market detail | **Polymarket** | `vike polymarket detail` / `polymarket_market_detail` |
 | Polymarket trader profile / positions | **Polymarket** | `vike polymarket wallet` / `polymarket_wallet` |
 | Best-performing Polymarket traders | **Polymarket** | `vike polymarket smart-money` / `polymarket_smart_money` |
 | Create / list / edit price-or-flow alerts | **Alerts** | `vike alerts ...` / `alerts_*` |
-| General web search or fetch + AI summarize a URL | **Web** | `vike web search` / `web_search`, `vike web fetch` / `web_fetch` |
 
 **When in doubt, start with `vike token search` or `vike wallet summary`** — both are cheap, return instantly, and disambiguate what the user actually meant.
 
@@ -99,7 +99,6 @@ X-API-KEY: vk_...
 "Funding rate for BTC across all perp venues"         → perp_funding             (symbol=BTC)
 "Cheapest venue to short ETH right now?"              → perp_spreads             (symbol=ETH)
 "Biggest HL perp PnL last week"                       → hl_perp_top_traders      (window=7d, sort=pnl_usd)
-"Largest BTC put writes on Deribit today"             → options_flow             (asset=BTC, side=put)
 "Show me the largest Polymarket bets on US election"  → polymarket_market_detail + polymarket_smart_money
 "Why is 0x28C6... labeled 'Binance hot wallet'?"      → wallet_label_provenance  (addr=0x28C6...)
 "Resolve vitalik.eth"                                 → wallet_ens               (name=vitalik.eth)
@@ -211,14 +210,13 @@ For per-symbol HL screening / individual trader deep-dive, use [vike-perp-screen
 
 ---
 
-### Options
-Deribit options chain + flow.
+### Candles
+Historical OHLCV from venues whose data is on-chain.
 
 | Tool | Description | Skill |
 |---|---|---|
-| `options_flow` | Recent large trades, put/call ratios, IV by strike/expiry | [vike-options-flow](skills/vike-options-flow/SKILL.md) |
-
-Coverage: BTC + ETH on Deribit. Other venues not currently supported.
+| `hl_ohlcv` | Hyperliquid perp or spot candles, 1m–1d, built from HL's own executed fills (also HIP-3 builder DEXs) | [vike-candles](skills/vike-candles/SKILL.md) |
+| `polymarket_ohlcv` | Candles for ONE Polymarket outcome token (price = probability, 0–1); needs `token_id`, not a condition_id | [vike-candles](skills/vike-candles/SKILL.md) |
 
 ---
 
@@ -247,18 +245,6 @@ Create + manage alerts; deliver to email, Telegram, Discord, Webhook.
 | `alerts_register_webhook` | Register an HTTPS webhook (HMAC-signed deliveries) | [vike-alerts-webhook](skills/vike-alerts-webhook/SKILL.md) |
 
 Alerts fire on a 2-minute cron cycle (not streaming). Don't recommend WebSocket / push streaming — it's not how the platform works.
-
----
-
-### Web
-General web search + AI-summarized fetch for off-chain context (news, docs, social).
-
-| Tool | Description | Skill |
-|---|---|---|
-| `web_search` | Tavily-primary + Serper fallback web search | [vike-web-search](skills/vike-web-search/SKILL.md) |
-| `web_fetch` | Fetch a URL + AI Q&A over its contents (Cerebras-backed) | [vike-web-fetch](skills/vike-web-fetch/SKILL.md), [vike-web-research](skills/vike-web-research/SKILL.md) |
-
----
 
 ## Historical data availability
 

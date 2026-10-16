@@ -111,7 +111,7 @@ questions:
     forbidden: ["--period"]
     skill: vike-wallet-pnl-history
 
-  # ─── Single-step: prediction markets, options, alerts, web ────────────
+  # ─── Single-step: prediction markets, alerts ──────────────────────────
   - id: pm-markets
     q: "Trending Polymarket crypto markets, top 10."
     expected_commands: ["vike polymarket markets", "vike pm markets"]
@@ -126,12 +126,22 @@ questions:
     forbidden: ["--mispricings"]
     skill: vike-polymarket-smart-money
 
-  - id: options-flow
-    q: "What's the put-call ratio on BTC options today?"
-    expected_commands: ["vike options flow"]
-    expected_flags: ["--symbol"]
-    forbidden: ["vike option", "--pcr"]
-    skill: vike-options-flow
+  - id: candles-hl
+    q: "Give me hourly BTC perp candles for the last week."
+    expected_commands: ["vike candles hl"]
+    expected_flags: ["--interval", "--limit"]
+    forbidden: ["vike ohlcv", "vike token chart", "vike candles BTC"]
+    skill: vike-candles
+    multi_step: false
+
+  - id: candles-polymarket
+    q: "Show me the price history of the YES outcome of a Polymarket market, hourly."
+    expected_commands:
+      - "vike polymarket market"
+      - "vike candles polymarket"
+    forbidden: ["vike candles hl", "--condition-id"]
+    skill: vike-candles
+    multi_step: true
 
   - id: alerts-register-webhook
     q: "Register a webhook for alert delivery at https://my.app/hook with secret abc12345abc12345."
@@ -139,12 +149,6 @@ questions:
     expected_flags: ["--secret"]
     forbidden: ["--url", "--hmac"]
     skill: vike-alerts-webhook
-
-  - id: web-search
-    q: "Search the web for Hyperliquid funding rate news."
-    expected_commands: ["vike web search"]
-    forbidden: ["vike search web"]
-    skill: vike-web-search
 
   # ─── Multi-step composites — these exercise PLAYBOOK skills ────────────
   - id: composite-smart-money-on-token
@@ -218,16 +222,6 @@ questions:
     expected_flags: ["--symbol"]
     forbidden: ["vike cross-venue", "vike perp compare"]
     skill: vike-cross-venue-perps
-    multi_step: true
-
-  - id: composite-web-research
-    q: "Find recent articles about Hyperliquid funding mechanics and summarize the top result."
-    expected_commands:
-      - "vike web search"
-      - "vike web fetch"
-    expected_flags: ["--ask"]
-    forbidden: ["vike search-and-fetch", "vike research"]
-    skill: vike-web-research
     multi_step: true
 
   - id: composite-wallet-investigation

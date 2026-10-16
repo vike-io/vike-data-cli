@@ -61,10 +61,10 @@
       ]
     },
     {
-      "title": "Options",
-      "description": "Deribit BTC/ETH options flow + put-call ratios.",
+      "title": "Candles",
+      "description": "Historical OHLCV for Hyperliquid perp/spot markets and Polymarket outcome tokens.",
       "skills": [
-        "vike-options-flow"
+        "vike-candles"
       ]
     },
     {
@@ -84,15 +84,6 @@
       "skills": [
         "vike-alerts-setup",
         "vike-alerts-webhook"
-      ]
-    },
-    {
-      "title": "Web research",
-      "description": "Off-chain context: general web search and AI-summarized URL fetch for news, docs, and social.",
-      "skills": [
-        "vike-web-search",
-        "vike-web-fetch",
-        "vike-web-research"
       ]
     }
   ]
