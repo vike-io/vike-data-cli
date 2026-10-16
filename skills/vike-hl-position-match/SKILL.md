@@ -81,6 +81,6 @@ The response includes `tolerance_used` so the caller knows which band matched (`
 
 ## Pairs well with
 
-- [vike-wallet-summary](../vike-wallet-summary/SKILL.md) — once you have the address, get the trader's HL profile + multi-chain identity.
-- [vike-hl-top-traders](../vike-hl-top-traders/SKILL.md) — check if the matched wallet is on a leaderboard.
-- [vike-wallet-label-provenance](../vike-wallet-label-provenance/SKILL.md) — find out if the wallet is a known CEX/fund/MM rather than a retail trader.
+- `vike-wallet-summary` — once you have the address, get the trader's HL profile + multi-chain identity.
+- `vike-hl-top-traders` — check if the matched wallet is on a leaderboard.
+- `vike-wallet-label-provenance` — find out if the wallet is a known CEX/fund/MM rather than a retail trader.

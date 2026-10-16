@@ -141,17 +141,17 @@ Run `vike schema --pretty` (or call MCP `tools/list`) to see the live arg shape 
 
 ## Per-service tool reference
 
-For deeper per-tool workflows (multi-step recipes, common pitfalls, output schemas), see the `skills/` directory in this repo. The router lives at [`skills/vike-router/SKILL.md`](skills/vike-router/SKILL.md).
+For deeper per-tool workflows (multi-step recipes, common pitfalls, output schemas), see the `skills/` directory in this repo. The router lives at `vike-router`.
 
 ### Tokens
 Address resolution, transfers, holder cohorts, screening.
 
 | Tool | Description | Skill |
 |---|---|---|
-| `token_search` | Symbol/name → contract address + chain + market cap | [vike-token-search](skills/vike-token-search/SKILL.md) |
-| `token_transfers` | Recent transfers with USD values; supports `--min-usd`, time windows | [vike-token-transfers](skills/vike-token-transfers/SKILL.md) |
-| `token_holders` | Top holders + concentration metrics | [vike-token-holders](skills/vike-token-holders/SKILL.md) |
-| `token_screener` | Filter tokens by smart-money inflow, age, liquidity, sector | [vike-token-screener](skills/vike-token-screener/SKILL.md) |
+| `token_search` | Symbol/name → contract address + chain + market cap | `vike-token-search` |
+| `token_transfers` | Recent transfers with USD values; supports `--min-usd`, time windows | `vike-token-transfers` |
+| `token_holders` | Top holders + concentration metrics | `vike-token-holders` |
+| `token_screener` | Filter tokens by smart-money inflow, age, liquidity, sector | `vike-token-screener` |
 
 **Key chains:** `ethereum`, `bsc`, `base`, `arbitrum`, `hyperevm` (EVM); `bitcoin`, `solana`, `tron`, `xmr`, `zec`, `dash` (non-EVM, limited tool support).
 
@@ -162,16 +162,16 @@ Profile, PnL, transactions, comparison, tracing, counterparty graph.
 
 | Tool | Description | Skill |
 |---|---|---|
-| `wallet_summary` | One-call profile: PnL, top holdings, recent activity, labels | [vike-wallet-summary](skills/vike-wallet-summary/SKILL.md) |
-| `wallet_discover` | Leaderboard of top wallets by PnL/inflow on a token | [vike-wallet-discover](skills/vike-wallet-discover/SKILL.md), [vike-smart-money-discovery](skills/vike-smart-money-discovery/SKILL.md) |
-| `wallet_transactions` | Raw recent transactions (tx_hash, ts, from, to, token, usd) | [vike-wallet-transactions](skills/vike-wallet-transactions/SKILL.md) |
-| `wallet_compare` | Side-by-side metrics for 2+ wallets | [vike-wallet-compare](skills/vike-wallet-compare/SKILL.md) |
-| `wallet_trace` | BFS funds tracing N hops from a starting wallet | [vike-wallet-trace](skills/vike-wallet-trace/SKILL.md) |
-| `wallet_counterparties` | Top counterparties (who they send to / receive from) | [vike-wallet-counterparties](skills/vike-wallet-counterparties/SKILL.md) |
-| `wallet_pnl_history` | Daily PnL timeseries over `--days N` | [vike-wallet-pnl-history](skills/vike-wallet-pnl-history/SKILL.md) |
-| `wallet_token_balances` | Current token balances (Moralis-backed) | [vike-wallet-balances](skills/vike-wallet-balances/SKILL.md) |
-| `wallet_ens` | ENS name ↔ address (local cache: 477K wallets pre-resolved) | [vike-wallet-ens](skills/vike-wallet-ens/SKILL.md) |
-| `wallet_batch_labels` | Bulk-label up to 100 addresses in one call | [vike-wallet-batch](skills/vike-wallet-batch/SKILL.md) |
+| `wallet_summary` | One-call profile: PnL, top holdings, recent activity, labels | `vike-wallet-summary` |
+| `wallet_discover` | Leaderboard of top wallets by PnL/inflow on a token | `vike-wallet-discover`, `vike-smart-money-discovery` |
+| `wallet_transactions` | Raw recent transactions (tx_hash, ts, from, to, token, usd) | `vike-wallet-transactions` |
+| `wallet_compare` | Side-by-side metrics for 2+ wallets | `vike-wallet-compare` |
+| `wallet_trace` | BFS funds tracing N hops from a starting wallet | `vike-wallet-trace` |
+| `wallet_counterparties` | Top counterparties (who they send to / receive from) | `vike-wallet-counterparties` |
+| `wallet_pnl_history` | Daily PnL timeseries over `--days N` | `vike-wallet-pnl-history` |
+| `wallet_token_balances` | Current token balances (Moralis-backed) | `vike-wallet-balances` |
+| `wallet_ens` | ENS name ↔ address (local cache: 477K wallets pre-resolved) | `vike-wallet-ens` |
+| `wallet_batch_labels` | Bulk-label up to 100 addresses in one call | `vike-wallet-batch` |
 
 **Address shape:** always full 0x-prefixed hex (42 chars). Never truncate when reporting back to the user.
 
@@ -182,7 +182,7 @@ Wallet label provenance.
 
 | Tool | Description | Skill |
 |---|---|---|
-| `wallet_label_provenance` | Why a wallet got a given label (sources + confidence) | [vike-wallet-label-provenance](skills/vike-wallet-label-provenance/SKILL.md) |
+| `wallet_label_provenance` | Why a wallet got a given label (sources + confidence) | `vike-wallet-label-provenance` |
 
 Vike's label cascade is multi-source — when an answer hinges on "is this really a CEX hot wallet?", call `wallet_label_provenance` rather than trusting a single source.
 
@@ -193,8 +193,8 @@ Vike's label cascade is multi-source — when an answer hinges on "is this reall
 
 | Tool | Description | Skill |
 |---|---|---|
-| `perp_funding` | Funding rates per symbol per venue + 24h/7d averages | [vike-perp-funding-arb](skills/vike-perp-funding-arb/SKILL.md) |
-| `perp_spreads` | Mark-price spreads of the same symbol across venues | [vike-perp-spread-arb](skills/vike-perp-spread-arb/SKILL.md), [vike-cross-venue-perps](skills/vike-cross-venue-perps/SKILL.md) |
+| `perp_funding` | Funding rates per symbol per venue + 24h/7d averages | `vike-perp-funding-arb` |
+| `perp_spreads` | Mark-price spreads of the same symbol across venues | `vike-perp-spread-arb`, `vike-cross-venue-perps` |
 
 ---
 
@@ -203,10 +203,10 @@ On-chain perps data: snapshots, fills, ledger, funding, attribution.
 
 | Tool | Description | Skill |
 |---|---|---|
-| `hl_perp_top_traders` | Top HL traders by PnL/volume over a window | [vike-hl-top-traders](skills/vike-hl-top-traders/SKILL.md), [vike-hl-trader-profile](skills/vike-hl-trader-profile/SKILL.md) |
-| `hl_position_match` | Reverse-lookup: share-card details (coin/side/lev/entry) → wallet holding that open position | [vike-hl-position-match](skills/vike-hl-position-match/SKILL.md) |
+| `hl_perp_top_traders` | Top HL traders by PnL/volume over a window | `vike-hl-top-traders`, `vike-hl-trader-profile` |
+| `hl_position_match` | Reverse-lookup: share-card details (coin/side/lev/entry) → wallet holding that open position | `vike-hl-position-match` |
 
-For per-symbol HL screening / individual trader deep-dive, use [vike-perp-screener](skills/vike-perp-screener/SKILL.md) and [vike-hl-trader-profile](skills/vike-hl-trader-profile/SKILL.md).
+For per-symbol HL screening / individual trader deep-dive, use `vike-perp-screener` and `vike-hl-trader-profile`.
 
 ---
 
@@ -215,8 +215,8 @@ Historical OHLCV from venues whose data is on-chain.
 
 | Tool | Description | Skill |
 |---|---|---|
-| `hl_ohlcv` | Hyperliquid perp or spot candles, 1m–1d, built from HL's own executed fills (also HIP-3 builder DEXs) | [vike-candles](skills/vike-candles/SKILL.md) |
-| `polymarket_ohlcv` | Candles for ONE Polymarket outcome token (price = probability, 0–1); needs `token_id`, not a condition_id | [vike-candles](skills/vike-candles/SKILL.md) |
+| `hl_ohlcv` | Hyperliquid perp or spot candles, 1m–1d, built from HL's own executed fills (also HIP-3 builder DEXs) | `vike-candles` |
+| `polymarket_ohlcv` | Candles for ONE Polymarket outcome token (price = probability, 0–1); needs `token_id`, not a condition_id | `vike-candles` |
 
 ---
 
@@ -225,10 +225,10 @@ Prediction markets — markets, traders, smart-money.
 
 | Tool | Description | Skill |
 |---|---|---|
-| `polymarket_markets` | Active markets sorted by volume / liquidity / volatility | [vike-polymarket-markets](skills/vike-polymarket-markets/SKILL.md), [vike-polymarket-screener](skills/vike-polymarket-screener/SKILL.md) |
-| `polymarket_market_detail` | Single market: outcomes, holders, recent trades, time-to-resolution | [vike-polymarket-market-detail](skills/vike-polymarket-market-detail/SKILL.md) |
-| `polymarket_wallet` | One trader's positions, PnL, win rate | [vike-polymarket-trader](skills/vike-polymarket-trader/SKILL.md) |
-| `polymarket_smart_money` | Top-PnL Polymarket traders + their current open positions | [vike-polymarket-smart-money](skills/vike-polymarket-smart-money/SKILL.md) |
+| `polymarket_markets` | Active markets sorted by volume / liquidity / volatility | `vike-polymarket-markets`, `vike-polymarket-screener` |
+| `polymarket_market_detail` | Single market: outcomes, holders, recent trades, time-to-resolution | `vike-polymarket-market-detail` |
+| `polymarket_wallet` | One trader's positions, PnL, win rate | `vike-polymarket-trader` |
+| `polymarket_smart_money` | Top-PnL Polymarket traders + their current open positions | `vike-polymarket-smart-money` |
 
 ---
 
@@ -237,12 +237,12 @@ Create + manage alerts; deliver to email, Telegram, Discord, Webhook.
 
 | Tool | Description | Skill |
 |---|---|---|
-| `alerts_list` | List user's existing alerts | [vike-alerts-setup](skills/vike-alerts-setup/SKILL.md) |
-| `alerts_create` | Create a new price/transfer/funding alert | [vike-alerts-setup](skills/vike-alerts-setup/SKILL.md) |
-| `alerts_edit` | Edit an existing alert | [vike-alerts-setup](skills/vike-alerts-setup/SKILL.md) |
-| `alerts_delete` | Delete an alert | [vike-alerts-setup](skills/vike-alerts-setup/SKILL.md) |
-| `alerts_list_channels` | List user's registered delivery channels | [vike-alerts-setup](skills/vike-alerts-setup/SKILL.md) |
-| `alerts_register_webhook` | Register an HTTPS webhook (HMAC-signed deliveries) | [vike-alerts-webhook](skills/vike-alerts-webhook/SKILL.md) |
+| `alerts_list` | List user's existing alerts | `vike-alerts-setup` |
+| `alerts_create` | Create a new price/transfer/funding alert | `vike-alerts-setup` |
+| `alerts_edit` | Edit an existing alert | `vike-alerts-setup` |
+| `alerts_delete` | Delete an alert | `vike-alerts-setup` |
+| `alerts_list_channels` | List user's registered delivery channels | `vike-alerts-setup` |
+| `alerts_register_webhook` | Register an HTTPS webhook (HMAC-signed deliveries) | `vike-alerts-webhook` |
 
 Alerts fire on a 2-minute cron cycle (not streaming). Don't recommend WebSocket / push streaming — it's not how the platform works.
 
