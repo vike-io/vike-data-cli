@@ -12,6 +12,10 @@ Answer on-chain questions using the vike.io platform: 11 chains (ETH, BSC, Base,
 **MCP endpoint for all calls:** `https://vike.io/mcp` (JSON-RPC 2.0)
 **Or use the CLI:** `npm install -g @vike-io/cli` → `vike <command>`
 
+## What it does and who it is for
+
+It is for traders, researchers and developers who use an AI agent to look at crypto data. With this skill the agent knows which vike tool to call for wallets, tokens, smart money, Hyperliquid perps, Polymarket markets and alerts. It also knows how to read each answer and what the tools cannot do, so it reports real numbers instead of guesses. The data comes from vike.io and a free vike API key is needed.
+
 ---
 
 ## Critical Rules
