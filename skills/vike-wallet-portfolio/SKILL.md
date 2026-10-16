@@ -17,7 +17,6 @@ vike wallet ens     $ADDR --json &     # cheap, ~1 credit
 vike labels         $ADDR --json &     # cheap, ~1 credit
 vike wallet summary $ADDR --json &     # cheap, ~2 credits
 vike wallet balances $ADDR --json &    # multi-chain, ~3 credits
-vike defi           $ADDR --json &     # multi-chain, ~3 credits
 vike wallet pnl-history $ADDR --days 30 --json &
 wait
 ```
@@ -47,14 +46,13 @@ wait
 
 ## Cost
 
-~6 parallel calls, ~12 credits total. Use sparingly — only when the user wants the FULL picture, not a single dimension.
+~5 parallel calls, ~9 credits total. Use sparingly — only when the user wants the FULL picture, not a single dimension.
 
 ## When to use a focused skill instead
 
 - "Just labels for X" → `vike-wallet-label-provenance`
 - "What does X hold" → `vike-wallet-balances`
 - "Top counterparties of X" → `vike-wallet-counterparties`
-- "DeFi positions of X" → `vike-defi-positions`
 
 ## Pairs well with
 

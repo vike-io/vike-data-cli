@@ -5,7 +5,7 @@ import { parseInt10 } from '../util.js';
 export function registerToken(program) {
   const cmd = program
     .command('token')
-    .description('Token search, transfers, and price charts');
+    .description('Token search, transfers, screener and holders');
 
   cmd
     .command('search <query>')
@@ -38,21 +38,6 @@ export function registerToken(program) {
           period: opts.period,
           tab: opts.tab,
           chain: opts.chain,
-        });
-        emit(r, opts);
-      } catch (err) { emitError(err, opts); }
-    });
-
-  cmd
-    .command('chart <token_address>')
-    .description('OHLCV candle data for a token')
-    .option('--interval <m>', '5 | 30 | 120 minutes', '30')
-    .option('--json', 'Emit JSON')
-    .action(async (tokenAddress, opts) => {
-      try {
-        const r = await callTool('token_chart', {
-          token_address: tokenAddress,
-          interval: opts.interval,
         });
         emit(r, opts);
       } catch (err) { emitError(err, opts); }

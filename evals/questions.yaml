@@ -39,12 +39,6 @@ questions:
     skill: vike-token-screener
 
   # ─── Single-step: wallet domain ───────────────────────────────────────
-  - id: defi-positions
-    q: "What's vitalik.eth's portfolio across DeFi protocols?"
-    expected_commands: ["vike defi"]
-    forbidden: ["--protocols"]
-    skill: vike-defi-positions
-
   - id: hl-top-traders
     q: "Top Hyperliquid traders by PnL in the last 30 days, win rate above 75%."
     expected_commands: ["vike perp top-traders"]
@@ -110,13 +104,6 @@ questions:
     forbidden: ["vike ens"]
     skill: vike-wallet-ens
 
-  - id: fund-holdings
-    q: "Top fund and market-maker wallets accumulating last 30 days."
-    expected_commands: ["vike funds"]
-    expected_flags: ["--kind", "--window"]
-    forbidden: ["--type", "vike fund"]
-    skill: vike-fund-holdings
-
   - id: wallet-pnl-history
     q: "Daily PnL series for wallet 0xabc... over the last 60 days."
     expected_commands: ["vike wallet pnl-history"]
@@ -172,12 +159,11 @@ questions:
     multi_step: true
 
   - id: composite-wallet-portfolio
-    q: "Give me a full snapshot of 0xd8da6bf26964af9d7eed9e03e53415d37aa96045 — ENS, labels, ERC-20 balances, DeFi positions, recent net flow."
+    q: "Give me a full snapshot of 0xd8da6bf26964af9d7eed9e03e53415d37aa96045 — ENS, labels, ERC-20 balances, recent net flow."
     expected_commands:
       - "vike wallet ens"
       - "vike labels"
       - "vike wallet balances"
-      - "vike defi"
       - "vike wallet pnl-history"
     forbidden: ["vike profile", "vike snapshot"]
     skill: vike-wallet-portfolio
@@ -205,11 +191,10 @@ questions:
     multi_step: true
 
   - id: composite-token-research
-    q: "Research $TOKEN — resolve its address, see top buyers + sellers in the last 24h, and pull the price chart."
+    q: "Research $TOKEN — resolve its address, and see top buyers + sellers in the last 24h."
     expected_commands:
       - "vike token search"
       - "vike token transfers"
-      - "vike token chart"
     expected_flags: ["--tab", "--period"]
     forbidden: ["vike token research", "vike research"]
     skill: vike-token-research
@@ -359,36 +344,3 @@ questions:
     skill: vike-token-transfers
     multi_step: false
 
-  - id: trap-defi-for-token-balances
-    q: "Get current ERC-20 token balances for 0xabc — what does the wallet hold right now?"
-    expected_commands:
-      - "vike wallet balances"   # ← the right tool
-    forbidden: ["vike defi"]      # ← defi gives PROTOCOL positions, not spot ERC-20 balances
-    skill: vike-wallet-balances
-    multi_step: false
-
-  # ─── Single-step: ohlcv (CEX historical candles / data download) ─────
-  - id: ohlcv-historical-candles
-    q: "Pull the last week of hourly BTC candles from Binance for a backtest."
-    expected_commands: ["vike ohlcv"]
-    expected_flags: ["--interval", "--exchange"]
-    forbidden: ["vike token chart", "vike chart", "--symbol"]   # symbol is positional, not a flag
-    skill: vike-ohlcv
-    multi_step: false
-
-  - id: ohlcv-perp-candles
-    q: "Give me 4-hour ETH perpetual candles, the most recent 200 bars."
-    expected_commands: ["vike ohlcv"]
-    expected_flags: ["--interval", "--market", "--limit"]
-    forbidden: ["vike perp ohlcv", "vike perp chart", "--symbol"]
-    skill: vike-ohlcv
-    multi_step: false
-
-  - id: trap-ohlcv-vs-token-chart
-    q: "Get the price candles for the token at 0x6982508145454ce325ddbe47a25d4ec3d2311933."
-    expected_commands:
-      - "vike token chart"        # ← DEX candles by contract address
-    expected_flags: ["--interval"]
-    forbidden: ["vike ohlcv"]     # ← ohlcv is by ticker/pair (BTC, BTCUSDT), not a contract address
-    skill: vike-token-research
-    multi_step: false

@@ -40,8 +40,7 @@ Get an API key at [vike.io/account?tab=api-keys](https://vike.io/account?tab=api
 ## Commands at a glance
 
 ```
-vike token   search | transfers | chart
-vike ohlcv   <symbol>          # CEX candles, any timeframe (BTC, BTCUSDT)
+vike token   search | transfers | screener | holders
 vike wallet  summary | discover
 vike perp    funding | spreads | top-traders
 vike options flow
@@ -55,7 +54,7 @@ Run `vike schema --pretty` for the full command + flag reference.
 
 | Domain | What you can ask |
 |---|---|
-| **Tokens** | Resolve symbols → addresses, see top buyers/sellers, pull OHLCV |
+| **Tokens** | Resolve symbols → addresses, see top buyers/sellers, screen by smart-money flow |
 | **Wallets** | Aggregate metrics per wallet, leaderboards by volume / PnL / netflow |
 | **Perps** | Funding rates + cross-venue spreads across Binance / Bybit / OKX / Aster / Hyperliquid |
 | **Hyperliquid** | Top-trader leaderboard with PnL / ROI / win-rate filters |

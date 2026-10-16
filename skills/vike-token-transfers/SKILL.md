@@ -40,4 +40,3 @@ Each row is one wallet: `address`, `qty`, `usd_value`, `label` (if known), `tx_c
 ## Pairs well with
 
 - `vike wallet summary <addr>` to profile any interesting buyer/seller
-- `vike token chart <addr>` to correlate flows with price action

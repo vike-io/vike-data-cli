@@ -30,13 +30,10 @@ describe('cli --help', () => {
     ['alerts'],
     ['polymarket'],
     ['web'],
-    ['ohlcv', 'BTC'],
     ['init'],
     ['doctor'],
     ['schema'],
     ['labels', '0x0000000000000000000000000000000000000000'],
-    ['funds'],
-    ['defi', '0x0000000000000000000000000000000000000000'],
     ['login'],
     ['logout'],
   ])('vike %s --help', (...cmdParts) => {

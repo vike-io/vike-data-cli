@@ -38,4 +38,3 @@ vike wallet ens 0x28c6c06298d514db089934071355e5743bf21d60
 
 - `vike labels <addr>` — combine ENS + labels for the fullest identity view
 - `vike wallet summary <addr>` — ENS + activity profile
-- `vike funds` — pair with ENS lookups on the top entries for richer display

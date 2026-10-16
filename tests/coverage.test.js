@@ -8,12 +8,12 @@ import { describe, it, expect } from 'vitest';
 
 const EXPECTED_TOP_LEVEL = [
   'token', 'wallet', 'perp', 'options', 'alerts',
-  'polymarket', 'web', 'ohlcv', 'labels', 'funds', 'defi',
+  'polymarket', 'web', 'labels',
   'init', 'install', 'doctor', 'schema', 'login', 'logout',
 ];
 
 const EXPECTED_SUBCMDS = {
-  token: ['search', 'transfers', 'chart', 'holders'],
+  token: ['search', 'transfers', 'screener', 'holders'],
   wallet: ['summary', 'discover', 'ens',
            'counterparties', 'pnl-history', 'balances'],
   perp: ['funding', 'spreads', 'top-traders', 'find-position'],
@@ -65,7 +65,6 @@ async function loadAllRegisters() {
     registerPolymarket: (await import('../src/commands/polymarket.js')).registerPolymarket,
     registerLabels: (await import('../src/commands/labels.js')).registerLabels,
     registerWeb: (await import('../src/commands/web.js')).registerWeb,
-    registerOhlcv: (await import('../src/commands/ohlcv.js')).registerOhlcv,
     registerInit: (await import('../src/commands/init.js')).registerInit,
     registerInstall: (await import('../src/commands/install.js')).registerInstall,
     registerDoctor: (await import('../src/commands/doctor.js')).registerDoctor,

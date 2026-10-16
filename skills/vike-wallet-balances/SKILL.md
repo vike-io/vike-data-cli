@@ -49,12 +49,10 @@ Holdings sorted by `usd_value` descending.
 ## Anti-patterns
 
 - This is ERC-20 only — does NOT include native ETH/BNB/MATIC (would need separate calls; not in our current tool surface). Mention this when reporting "total holdings".
-- Don't combine with `defi_positions` totals naively — there's overlap (e.g. aUSDC shows in `balances`, the Aave deposit shows in `defi_positions`; you'd double-count).
 - For wallets with 100+ tokens, the response is large — use `--min-usd 100` or higher to focus on meaningful holdings.
 
 ## Pairs well with
 
-- `vike defi <addr>` — protocol positions (Aave/Uniswap LP/Lido) alongside spot balances
 - `vike wallet pnl-history <addr>` — how the wallet got to its current state
 - `vike labels <addr>` — institutional context
 - `vike wallet ens <addr>` — friendly identifier

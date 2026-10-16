@@ -1,6 +1,6 @@
 ---
 name: vike
-description: "Use this skill whenever the user asks any question about on-chain crypto data, wallet behavior, token transfers, smart money, CEX perpetual futures, Hyperliquid perps, Deribit options, prediction markets (Polymarket), DeFi positions, ENS, or institutional fund holdings — and live data from vike.io would improve the answer. This includes questions like \"who is buying X token\", \"what is wallet 0x... doing\", \"top wallets by PnL\", \"funding rate spread across Binance/Bybit/OKX\", \"largest HL perp traders this week\", \"Deribit BTC put-call ratio\", \"who is winning on Polymarket\", \"which funds hold X token\", \"resolve this ENS\", \"label this wallet\", \"trace this transfer\", \"top tokens by smart-money inflow\". Always use this skill proactively when the user's query could benefit from real-time or historical on-chain data — don't wait for the user to explicitly ask to \"use vike\". If the user asks a general on-chain question that requires synthesis across wallets/tokens/venues, route to vike first."
+description: "Use this skill whenever the user asks any question about on-chain crypto data, wallet behavior, token transfers, smart money, CEX perpetual futures, Hyperliquid perps, Deribit options, prediction markets (Polymarket), ENS, or on-chain flows — and live data from vike.io would improve the answer. This includes questions like \"who is buying X token\", \"what is wallet 0x... doing\", \"top wallets by PnL\", \"funding rate spread across Binance/Bybit/OKX\", \"largest HL perp traders this week\", \"Deribit BTC put-call ratio\", \"who is winning on Polymarket\", \"resolve this ENS\", \"label this wallet\", \"trace this transfer\", \"top tokens by smart-money inflow\". Always use this skill proactively when the user's query could benefit from real-time or historical on-chain data — don't wait for the user to explicitly ask to \"use vike\". If the user asks a general on-chain question that requires synthesis across wallets/tokens/venues, route to vike first."
 ---
 
 # vike — Multi-chain On-chain Analytics
@@ -66,8 +66,6 @@ X-API-KEY: vk_...
 |---|---|---|
 | Token by symbol/name → address, market cap, holders | **Tokens** | `vike token search` / `token_search` |
 | Token holders, who bought/sold, top inflows | **Tokens** | `vike token transfers` / `token_transfers` |
-| Token chart / DEX OHLCV by contract address | **Tokens** | `vike token chart` / `token_chart` |
-| CEX candles by ticker/pair, any timeframe (1m–1w), spot or perp | **Tokens** | `vike ohlcv <symbol>` / `ohlcv` |
 | Filter/screen tokens by smart-money flow, liquidity, age | **Tokens** | `vike token screener` / `token_screener` |
 | Single wallet's PnL, holdings, recent activity | **Wallets** | `vike wallet summary` / `wallet_summary` |
 | Top wallets by PnL on a token / leaderboard | **Wallets** | `vike wallet discover` / `wallet_discover` |
@@ -80,7 +78,6 @@ X-API-KEY: vk_...
 | ENS name → address or address → ENS | **Wallets** | `vike wallet ens` / `wallet_ens` |
 | Bulk-label many wallets at once | **Wallets** | `vike wallet batch` / `wallet_batch_labels` |
 | Why is this wallet labeled X? (provenance) | **Labels** | `vike labels provenance` / `wallet_label_provenance` |
-| Which funds hold this token / what funds hold | **Funds** | `vike funds holdings` / `fund_holdings` |
 | Funding rates across CEX perps (Binance/Bybit/OKX/Aster/HL) | **CEX Perps** | `vike perp funding` / `perp_funding` |
 | Price spreads of same symbol across CEX perp venues | **CEX Perps** | `vike perp spreads` / `perp_spreads` |
 | Top Hyperliquid perp traders by PnL / volume | **HL Perps** | `vike perp top-traders` / `hl_perp_top_traders` |
@@ -90,7 +87,6 @@ X-API-KEY: vk_...
 | Single Polymarket market detail | **Polymarket** | `vike polymarket detail` / `polymarket_market_detail` |
 | Polymarket trader profile / positions | **Polymarket** | `vike polymarket wallet` / `polymarket_wallet` |
 | Best-performing Polymarket traders | **Polymarket** | `vike polymarket smart-money` / `polymarket_smart_money` |
-| DeFi positions for a wallet (Aave/Uniswap/Lido/…) | **DeFi** | `vike defi positions` / `defi_positions` |
 | Create / list / edit price-or-flow alerts | **Alerts** | `vike alerts ...` / `alerts_*` |
 | General web search or fetch + AI summarize a URL | **Web** | `vike web search` / `web_search`, `vike web fetch` / `web_fetch` |
 
@@ -99,13 +95,12 @@ X-API-KEY: vk_...
 ### Example query routing
 ```
 "Top 20 wallets buying PEPE in the last 24h"          → wallet_discover         (token=PEPE, sort=net_inflow_usd)
-"What is 0xd8dA6BF...AbA96 holding?"                  → wallet_summary           + defi_positions
+"What is 0xd8dA6BF...AbA96 holding?"                  → wallet_summary           + wallet_token_balances
 "Funding rate for BTC across all perp venues"         → perp_funding             (symbol=BTC)
 "Cheapest venue to short ETH right now?"              → perp_spreads             (symbol=ETH)
 "Biggest HL perp PnL last week"                       → hl_perp_top_traders      (window=7d, sort=pnl_usd)
 "Largest BTC put writes on Deribit today"             → options_flow             (asset=BTC, side=put)
 "Show me the largest Polymarket bets on US election"  → polymarket_market_detail + polymarket_smart_money
-"Which funds bought Lido tokens this quarter?"        → fund_holdings            (token=LDO, window=90d)
 "Why is 0x28C6... labeled 'Binance hot wallet'?"      → wallet_label_provenance  (addr=0x28C6...)
 "Resolve vitalik.eth"                                 → wallet_ens               (name=vitalik.eth)
 "Alert me when whale 0xABCD sells over $1M of WBTC"   → alerts_create
@@ -150,14 +145,12 @@ Run `vike schema --pretty` (or call MCP `tools/list`) to see the live arg shape 
 For deeper per-tool workflows (multi-step recipes, common pitfalls, output schemas), see the `skills/` directory in this repo. The router lives at [`skills/vike-router/SKILL.md`](skills/vike-router/SKILL.md).
 
 ### Tokens
-Address resolution, transfers, OHLCV, holder cohorts, screening.
+Address resolution, transfers, holder cohorts, screening.
 
 | Tool | Description | Skill |
 |---|---|---|
 | `token_search` | Symbol/name → contract address + chain + market cap | [vike-token-search](skills/vike-token-search/SKILL.md) |
 | `token_transfers` | Recent transfers with USD values; supports `--min-usd`, time windows | [vike-token-transfers](skills/vike-token-transfers/SKILL.md) |
-| `token_chart` | DEX OHLCV by contract address (5/30/120-min, data_history aggregate) | [vike-token-research](skills/vike-token-research/SKILL.md) |
-| `ohlcv` | CEX candles by ticker (BTC) or pair (BTCUSDT), 1m–1w, spot/perp, paged | [vike-ohlcv](skills/vike-ohlcv/SKILL.md) |
 | `token_holders` | Top holders + concentration metrics | [vike-token-holders](skills/vike-token-holders/SKILL.md) |
 | `token_screener` | Filter tokens by smart-money inflow, age, liquidity, sector | [vike-token-screener](skills/vike-token-screener/SKILL.md) |
 
@@ -185,13 +178,12 @@ Profile, PnL, transactions, comparison, tracing, counterparty graph.
 
 ---
 
-### Labels & Funds
-Institutional wallet identification + label provenance.
+### Labels
+Wallet label provenance.
 
 | Tool | Description | Skill |
 |---|---|---|
 | `wallet_label_provenance` | Why a wallet got a given label (sources + confidence) | [vike-wallet-label-provenance](skills/vike-wallet-label-provenance/SKILL.md) |
-| `fund_holdings` | Which funds/institutions hold a given token + recent flows | [vike-fund-holdings](skills/vike-fund-holdings/SKILL.md) |
 
 Vike's label cascade is multi-source — when an answer hinges on "is this really a CEX hot wallet?", call `wallet_label_provenance` rather than trusting a single source.
 
@@ -242,17 +234,6 @@ Prediction markets — markets, traders, smart-money.
 
 ---
 
-### DeFi
-Cross-protocol positions for a wallet.
-
-| Tool | Description | Skill |
-|---|---|---|
-| `defi_positions` | Aave/Uniswap V2+V3/Lido/Compound/etc. open positions per wallet | [vike-defi-positions](skills/vike-defi-positions/SKILL.md) |
-
-Covers ~30+ protocols across ETH/BSC/Base/Arbitrum.
-
----
-
 ### Alerts
 Create + manage alerts; deliver to email, Telegram, Discord, Webhook.
 
@@ -295,19 +276,6 @@ Coverage windows per dataset. Don't ask for data older than the window — the t
 | Bitcoin | 2024-01 | Recent windows only — full-history backfill not active |
 | Solana | 2026-Q1 onward | Recent only — see `vike-cli` chain-coverage notes |
 | Tron/XMR/ZEC/Dash | 2024 onward | Recent only |
-
-### Prices (data_history, spot)
-
-| Venue | Earliest | Notes |
-|---|---|---|
-| Binance | 2017-08 | Full minute-level OHLCV |
-| Bybit | 2020-03 | Full minute-level OHLCV |
-| OKX | 2019-04 | Full minute-level OHLCV |
-| Gate | 2017 (CSV) → 2024-05 (CSV ends) | After 2024-05 use API; capped 10k minutes/request |
-| Coinbase | 2015 | Full history (recently added) |
-| KuCoin | 2018 | Full history (recently added) |
-| Pyth | 2023 | On-chain price feed; sparse pre-2023 |
-| Deribit options | 2020 onward | BTC + ETH only |
 
 ### Hyperliquid perps (hl_perps DB)
 

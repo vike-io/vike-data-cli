@@ -13,11 +13,10 @@
     },
     {
       "title": "Tokens",
-      "description": "Resolve, screen, and research tokens across 11 chains. Smart-money inflow, holders, recent transfers, OHLCV.",
+      "description": "Resolve, screen, and research tokens across 11 chains. Smart-money inflow, holders, recent transfers.",
       "skills": [
         "vike-token-search",
         "vike-token-research",
-        "vike-ohlcv",
         "vike-token-transfers",
         "vike-token-holders",
         "vike-token-screener",
@@ -26,7 +25,7 @@
     },
     {
       "title": "Wallets",
-      "description": "Per-wallet profile, PnL, counterparty graphs, ENS, batch labelling, fund affiliation, DeFi positions.",
+      "description": "Per-wallet profile, PnL, counterparty graphs, ENS, batch labelling, label provenance.",
       "skills": [
         "vike-wallet-summary",
         "vike-wallet-portfolio",
@@ -39,9 +38,7 @@
         "vike-wallet-pnl-history",
         "vike-wallet-balances",
         "vike-wallet-ens",
-        "vike-wallet-label-provenance",
-        "vike-fund-holdings",
-        "vike-defi-positions"
+        "vike-wallet-label-provenance"
       ]
     },
     {
