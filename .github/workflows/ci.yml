@@ -22,5 +22,5 @@ jobs:
       - run: npm test --if-present
       # Lightweight security audit — fails only on high/critical.
       # Low/medium are reported via the weekly Dependabot PRs.
-      - run: npm audit --audit-level=high
+      - run: npm audit --omit=dev --audit-level=high   # shipped deps only; the advisories are all in dev-only @changesets/cli
         continue-on-error: false
