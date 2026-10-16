@@ -61,5 +61,3 @@ vike labels 0x28C6c06298d514Db089934071355E5743bf21d60     # Binance Hot Wallet 
 ## Pairs well with
 
 - `vike wallet summary <addr>` — for the flow metrics of the labeled wallet
-- `vike funds` — find all known fund wallets and their recent flows
-- `vike defi <addr>` — see what protocols this entity is using

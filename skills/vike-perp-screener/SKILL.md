@@ -45,5 +45,4 @@ wait
 
 ## Pairs well with
 
-- `vike-options-flow` for the corresponding options positioning on BTC/ETH/SOL
 - `vike-perp-funding-arb` for the funding-only deep dive

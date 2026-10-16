@@ -22,11 +22,10 @@ src/
   util.js               # small helpers (version read, type coerce)
   commands/             # one file per command group
     auth.js             # login/logout/whoami
-    token.js            # token search|transfers|chart
-    ohlcv.js            # ohlcv <symbol> (CEX candles, any timeframe)
+    token.js            # token search|transfers|screener|holders
     wallet.js           # wallet summary|discover
     perp.js             # perp funding|spreads|top-traders
-    options.js          # options flow
+    candles.js          # candles hl|polymarket (Hyperliquid + Polymarket OHLCV)
     alerts.js           # alerts CRUD + channels
     init.js             # interactive setup
     doctor.js           # diagnostics

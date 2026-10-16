@@ -36,5 +36,4 @@ vike token search PEPE --chain ethereum --limit 5
 ## Pairs well with
 
 - `vike token transfers <address>` after resolution
-- `vike token chart <address>`
 - `vike-token-research` for a full multi-call report

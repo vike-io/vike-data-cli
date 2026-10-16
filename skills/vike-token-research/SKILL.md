@@ -22,11 +22,6 @@ Multi-call token research workflow.
    vike token transfers <addr> --tab sold   --period 24h --chain <chain> --json
    ```
 
-3. **Price action**
-   ```bash
-   vike token chart <addr> --interval 30 --json
-   ```
-
 ## Verdict heuristics
 
 After step 2, classify direction-of-pressure:

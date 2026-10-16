@@ -55,4 +55,3 @@ For lifetime realized PnL: `vike wallet discover --sort pnl --window all`.
 
 - `vike wallet summary <addr>` for the aggregate context
 - `vike wallet counterparties <addr>` to see WHO they traded with
-- `vike token chart <addr>` to correlate flow spikes with price action

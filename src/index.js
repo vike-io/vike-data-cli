@@ -3,15 +3,12 @@ import { Command } from 'commander';
 import { registerToken } from './commands/token.js';
 import { registerWallet } from './commands/wallet.js';
 import { registerPerp } from './commands/perp.js';
-import { registerOptions } from './commands/options.js';
 import { registerAlerts } from './commands/alerts.js';
 import { registerPolymarket } from './commands/polymarket.js';
 import { registerLabels } from './commands/labels.js';
-import { registerWeb } from './commands/web.js';
-import { registerOhlcv } from './commands/ohlcv.js';
-// Note: registerLabels also registers `vike funds` and `vike defi` top-level
-// commands. New wallet subcommands (counterparties, pnl-history, balances,
-// ens) are added under registerWallet.
+import { registerCandles } from './commands/candles.js';
+// New wallet subcommands (counterparties, pnl-history, balances, ens) are
+// added under registerWallet.
 import { registerInit } from './commands/init.js';
 import { registerInstall } from './commands/install.js';
 import { registerDoctor } from './commands/doctor.js';
@@ -63,12 +60,10 @@ registerSchema(program);
 registerToken(program);
 registerWallet(program);
 registerPerp(program);
-registerOptions(program);
 registerAlerts(program);
 registerPolymarket(program);
 registerLabels(program);
-registerWeb(program);
-registerOhlcv(program);
+registerCandles(program);
 
 const _parseT0 = Date.now();
 program.parseAsync(process.argv)

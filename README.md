@@ -7,7 +7,7 @@
 [![Node](https://img.shields.io/badge/node-%3E%3D20-brightgreen.svg)](https://nodejs.org)
 [![skills.sh](https://skills.sh/b/vike-io/vike-data-cli)](https://skills.sh/vike-io/vike-data-cli)
 
-> **Command-line interface for the [vike.io](https://vike.io) API.** On-chain analytics, perpetuals, options flow, and prediction-market data across 11 chains — designed to be driven by AI agents (Claude Code, OpenClaw) as well as humans.
+> **Command-line interface for the [vike.io](https://vike.io) API.** On-chain analytics, perpetuals, and prediction-market data across 11 chains — designed to be driven by AI agents (Claude Code, OpenClaw) as well as humans.
 
 ## Install
 
@@ -40,11 +40,10 @@ Get an API key at [vike.io/account?tab=api-keys](https://vike.io/account?tab=api
 ## Commands at a glance
 
 ```
-vike token   search | transfers | chart
-vike ohlcv   <symbol>          # CEX candles, any timeframe (BTC, BTCUSDT)
+vike token   search | transfers | screener | holders
 vike wallet  summary | discover
 vike perp    funding | spreads | top-traders
-vike options flow
+vike candles hl <symbol> | polymarket <token_id>
 vike alerts  list | channels | create | edit | delete
 vike init | doctor | schema | whoami | login | logout
 ```
@@ -55,16 +54,16 @@ Run `vike schema --pretty` for the full command + flag reference.
 
 | Domain | What you can ask |
 |---|---|
-| **Tokens** | Resolve symbols → addresses, see top buyers/sellers, pull OHLCV |
+| **Tokens** | Resolve symbols → addresses, see top buyers/sellers, screen by smart-money flow |
 | **Wallets** | Aggregate metrics per wallet, leaderboards by volume / PnL / netflow |
 | **Perps** | Funding rates + cross-venue spreads across Binance / Bybit / OKX / Aster / Hyperliquid |
 | **Hyperliquid** | Top-trader leaderboard with PnL / ROI / win-rate filters |
-| **Options** | Deribit flow for BTC / ETH / SOL with put-call ratios |
+| **Candles** | Historical OHLCV for Hyperliquid perp/spot markets and Polymarket outcome tokens |
 | **Alerts** | Create transfer alerts; deliver to email or Discord |
 
 ## For AI agents
 
-This package ships **41 skill playbooks** under [`skills/`](skills/) — markdown files designed to be loaded by AI coding agents (Claude Code, Cursor, Codex, Copilot, OpenCode, …) so they know when and how to invoke each command. They are grouped in [`skills.sh.json`](skills.sh.json) by domain (Tokens / Wallets / CEX perps / Hyperliquid / Options / Polymarket / Alerts / Web research).
+This package ships **36 skill playbooks** under [`skills/`](skills/) — markdown files designed to be loaded by AI coding agents (Claude Code, Cursor, Codex, Copilot, OpenCode, …) so they know when and how to invoke each command. They are grouped in [`skills.sh.json`](skills.sh.json) by domain (Tokens / Wallets / CEX perps / Hyperliquid / Candles / Polymarket / Alerts).
 
 Three install paths, pick whichever fits your stack:
 

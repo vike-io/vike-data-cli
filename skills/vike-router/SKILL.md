@@ -1,6 +1,6 @@
 ---
 name: vike-router
-description: Entry point — decide which vike skill to use. Read this first when the user asks anything about on-chain analytics, perps, options, prediction markets, wallets, or tokens.
+description: Entry point — decide which vike skill to use. Read this first when the user asks anything about on-chain analytics, perps, prediction markets, wallets, or tokens.
 allowed-tools: Bash(vike:*)
 ---
 
@@ -15,7 +15,6 @@ Route the user's question to the right `vike-*` skill.
 | Token by symbol/name → address | `vike-token-search` |
 | Token holders / who bought / sold | `vike-token-transfers` |
 | Token price chart / DEX OHLCV by contract address | `vike-token-research` |
-| CEX candles by ticker/pair, any timeframe (BTC, BTCUSDT) | `vike-ohlcv` |
 | Generic token research (everything) | `vike-token-research` |
 | Single wallet's metrics | `vike-wallet-summary` |
 | Top wallets / leaderboard | `vike-wallet-discover` |
@@ -27,18 +26,17 @@ Route the user's question to the right `vike-*` skill.
 | Profile a single HL perp trader | `vike-hl-trader-profile` |
 | HL market overview (vol/OI/funding) | `vike-perp-screener` |
 | Compare a symbol across all perp venues | `vike-cross-venue-perps` |
-| Deribit options flow / put-call ratios | `vike-options-flow` |
+| Historical candles (Hyperliquid perp/spot, Polymarket outcome token) | `vike-candles` |
 | Create / list / edit alerts | `vike-alerts-setup` |
 | Auth / setup / "I just installed it" | `vike-core` |
 
 ## Quick command map
 
 ```
-vike token   search | transfers | chart
-vike ohlcv   <symbol>          # CEX candles, any timeframe (BTC, BTCUSDT)
+vike token   search | transfers | screener | holders
 vike wallet  summary | discover
 vike perp    funding | spreads | top-traders
-vike options flow
+vike candles hl <symbol> | polymarket <token_id>
 vike alerts  list | channels | create | edit | delete
 vike init | doctor | schema | whoami | login | logout
 ```

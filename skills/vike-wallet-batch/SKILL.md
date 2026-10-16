@@ -53,4 +53,3 @@ One row per INPUT address (preserves input order — useful when joining back to
 
 - `vike labels <addr>` — drill into any address showing high-confidence labels
 - `vike wallet compare <a> <b>` — pick two interesting batch results and diff them
-- `vike funds` — when batch reveals fund/MM/treasury wallets, get their flows
