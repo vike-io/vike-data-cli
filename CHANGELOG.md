@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.12.1
+
+### Patch Changes
+
+- e4f4b6c: package.json description and keywords now describe the free Data API (Polymarket L2 Parquet archive, Hyperliquid, labelled wallets, MCP). `vike doctor` / `vike init` no longer assume `/mcp` answers `initialize` without a key: with no key the check fails with the "No API key" message, and `vike init` reports a rejected key instead of printing ok. The postinstall hint links https://vike.io/data/ and the API-keys page instead of the dead https://vike.io/api.
+- e4f4b6c: README: answer-first summary of the free Vike Data API, a Free datasets section with direct links, MCP setup, the full command list, and an examples/ folder (Polymarket archive, Hyperliquid cohorts, DuckDB).
+- 7f4be01: Umbrella skill: add a plain what-it-is-for paragraph, describe the MCP connector instead of a raw HTTP POST, and fix the tool count (31).
+- 31952b5: Umbrella skill: add a 'What it does and who it is for' section (the marketplace check looks for a prose paragraph there).
+- ffb25f3: Skills: replace links to sibling skills with their names, so a skill imported on its own (e.g. a marketplace bundle of `skills/vike`) has no dead links.
+
 ## 0.12.0
 
 ### Minor Changes
