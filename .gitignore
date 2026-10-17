@@ -10,3 +10,4 @@ dist/
 *.tsbuildinfo
 .vike/
 evals/results/
+vike-archive/
