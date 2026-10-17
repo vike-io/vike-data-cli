@@ -4,7 +4,7 @@
     "access": "public"
   },
   "version": "0.12.0",
-  "description": "AI-agent CLI for vike.io on-chain analytics, perps, options, and prediction markets across 11 chains",
+  "description": "CLI, agent skills and MCP client for the free Vike Data API: a Polymarket full-L2 order-book archive in Parquet (CC BY 4.0), Hyperliquid positions, fills and cohorts, and labelled Ethereum/BNB wallets",
   "type": "module",
   "main": "src/index.js",
   "bin": {
@@ -44,14 +44,16 @@
     "onchain",
     "perps",
     "hyperliquid",
-    "options",
-    "deribit",
     "polymarket",
     "prediction-markets",
     "defi",
     "ethereum",
     "bsc",
-    "base"
+    "base",
+    "parquet",
+    "order-book",
+    "historical-data",
+    "crypto-data"
   ],
   "author": "vike.io",
   "license": "MIT",

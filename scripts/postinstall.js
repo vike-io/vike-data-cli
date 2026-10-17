@@ -30,7 +30,8 @@ try {
     '    vike doctor                — verify your install',
     '    vike token search BTC      — your first query',
     '',
-    '  Docs: https://vike.io/api',
+    '  Docs:    https://vike.io/data/',
+    '  API key: https://vike.io/account?tab=api-keys',
     '',
   ];
   process.stdout.write(lines.join('\n'));
