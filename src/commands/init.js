@@ -33,7 +33,7 @@ export function registerInit(program) {
 
       console.log('Verifying connection to vike.io/mcp ...');
       const { status, body } = await ping({ apiKey: key });
-      if (status !== 200) {
+      if (status !== 200 || body?.error) {
         console.error(`Endpoint returned HTTP ${status}: ${JSON.stringify(body)}`);
         process.exitCode = 1;
         return;

@@ -1,4 +1,4 @@
-import { requireApiKey, getEndpoint, getApiKey } from './auth.js';
+import { requireApiKey, getEndpoint } from './auth.js';
 
 let _id = 0;
 function nextId() { return ++_id; }
@@ -78,14 +78,13 @@ export async function listTools(opts = {}) {
 }
 
 export async function ping(opts = {}) {
-  // initialize doesn't require auth — useful for `vike doctor`
+  // /mcp authenticates every method, initialize included: no key gets a
+  // JSON-RPC "Invalid or missing API key" error (soon HTTP 401), so fail early.
   const endpoint = opts.endpoint ?? getEndpoint();
-  const apiKey = opts.apiKey ?? getApiKey();
-  const headers = { 'Content-Type': 'application/json' };
-  if (apiKey) headers['X-API-KEY'] = apiKey;
+  const apiKey = opts.apiKey ?? requireApiKey();
   const resp = await fetch(endpoint, {
     method: 'POST',
-    headers,
+    headers: { 'Content-Type': 'application/json', 'X-API-KEY': apiKey },
     body: JSON.stringify({
       jsonrpc: '2.0', id: nextId(), method: 'initialize', params: {},
     }),
