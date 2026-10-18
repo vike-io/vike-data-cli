@@ -38,12 +38,12 @@ Hard rules — agents that violate these produce wrong answers. Read once, apply
 Follow this decision tree **before every session**. Do not skip to Step 2 until auth is confirmed.
 
 ```
-1. Is the `vike` CLI installed? (`vike --version`)
+1. Is the `vike` CLI installed? (`vike-data --version`)
    ├── YES → continue
    └── NO  → `npm install -g @vike-io/cli`
 
-2. Is $VIKE_API_KEY set OR has the user run `vike init` / `vike login` already?
-   ├── YES → run `vike doctor` to verify the key + endpoint reachability. Proceed.
+2. Is $VIKE_API_KEY set OR has the user run `vike-data init` / `vike-data login` already?
+   ├── YES → run `vike-data doctor` to verify the key + endpoint reachability. Proceed.
    └── NO  → prompt the user (see Setup below).
 ```
 
@@ -54,8 +54,8 @@ If the user has no API key yet, tell them:
 > **To use vike, you'll need a free API key:**
 >
 > 1. Visit https://vike.io/account?tab=api-keys&utm_source=skill&utm_medium=ai&utm_campaign=cli_skill, sign in, and copy a key (starts with `vk_`).
-> 2. Save it: `vike login --api-key vk_...` (or `export VIKE_API_KEY=vk_...`).
-> 3. Verify: `vike doctor`.
+> 2. Save it: `vike-data login --api-key vk_...` (or `export VIKE_API_KEY=vk_...`).
+> 3. Verify: `vike-data doctor`.
 >
 > Per-key default cap: 2000 requests/hour. Most calls return in <500ms.
 
@@ -70,33 +70,33 @@ X-API-KEY: vk_...
 
 | User is asking about... | Service | CLI / Tool |
 |---|---|---|
-| Token by symbol/name → address, market cap, holders | **Tokens** | `vike token search` / `token_search` |
-| Token holders, who bought/sold, top inflows | **Tokens** | `vike token transfers` / `token_transfers` |
-| Filter/screen tokens by smart-money flow, liquidity, age | **Tokens** | `vike token screener` / `token_screener` |
-| Single wallet's PnL, holdings, recent activity | **Wallets** | `vike wallet summary` / `wallet_summary` |
-| Top wallets by PnL on a token / leaderboard | **Wallets** | `vike wallet discover` / `wallet_discover` |
-| Recent wallet transactions with USD values | **Wallets** | `vike wallet transactions` / `wallet_transactions` |
-| Compare 2+ wallets side by side | **Wallets** | `vike wallet compare` / `wallet_compare` |
-| Trace funds N hops from a starting wallet | **Wallets** | `vike wallet trace` / `wallet_trace` |
-| Find counterparties (who sends to / receives from) | **Wallets** | `vike wallet counterparties` / `wallet_counterparties` |
-| Wallet PnL history (timeseries) | **Wallets** | `vike wallet pnl-history` / `wallet_pnl_history` |
-| Token balances for a wallet | **Wallets** | `vike wallet balances` / `wallet_token_balances` |
-| ENS name → address or address → ENS | **Wallets** | `vike wallet ens` / `wallet_ens` |
-| Bulk-label many wallets at once | **Wallets** | `vike wallet batch` / `wallet_batch_labels` |
-| Why is this wallet labeled X? (provenance) | **Labels** | `vike labels provenance` / `wallet_label_provenance` |
-| Funding rates across CEX perps (Binance/Bybit/OKX/Aster/HL) | **CEX Perps** | `vike perp funding` / `perp_funding` |
-| Price spreads of same symbol across CEX perp venues | **CEX Perps** | `vike perp spreads` / `perp_spreads` |
-| Top Hyperliquid perp traders by PnL / volume | **HL Perps** | `vike perp top-traders` / `hl_perp_top_traders` |
-| Reverse-lookup an HL share card → which wallet holds it | **HL Perps** | `vike perp find-position` / `hl_position_match` |
-| Historical candles for a Hyperliquid perp or spot market (1m–1d) | **Candles** | `vike candles hl <symbol>` / `hl_ohlcv` |
-| Historical probability candles for a Polymarket outcome token | **Candles** | `vike candles polymarket <token_id>` / `polymarket_ohlcv` |
-| Active Polymarket markets, volume, odds | **Polymarket** | `vike polymarket markets` / `polymarket_markets` |
-| Single Polymarket market detail | **Polymarket** | `vike polymarket detail` / `polymarket_market_detail` |
-| Polymarket trader profile / positions | **Polymarket** | `vike polymarket wallet` / `polymarket_wallet` |
-| Best-performing Polymarket traders | **Polymarket** | `vike polymarket smart-money` / `polymarket_smart_money` |
-| Create / list / edit price-or-flow alerts | **Alerts** | `vike alerts ...` / `alerts_*` |
+| Token by symbol/name → address, market cap, holders | **Tokens** | `vike-data token search` / `token_search` |
+| Token holders, who bought/sold, top inflows | **Tokens** | `vike-data token transfers` / `token_transfers` |
+| Filter/screen tokens by smart-money flow, liquidity, age | **Tokens** | `vike-data token screener` / `token_screener` |
+| Single wallet's PnL, holdings, recent activity | **Wallets** | `vike-data wallet summary` / `wallet_summary` |
+| Top wallets by PnL on a token / leaderboard | **Wallets** | `vike-data wallet discover` / `wallet_discover` |
+| Recent wallet transactions with USD values | **Wallets** | `vike-data wallet transactions` / `wallet_transactions` |
+| Compare 2+ wallets side by side | **Wallets** | `vike-data wallet compare` / `wallet_compare` |
+| Trace funds N hops from a starting wallet | **Wallets** | `vike-data wallet trace` / `wallet_trace` |
+| Find counterparties (who sends to / receives from) | **Wallets** | `vike-data wallet counterparties` / `wallet_counterparties` |
+| Wallet PnL history (timeseries) | **Wallets** | `vike-data wallet pnl-history` / `wallet_pnl_history` |
+| Token balances for a wallet | **Wallets** | `vike-data wallet balances` / `wallet_token_balances` |
+| ENS name → address or address → ENS | **Wallets** | `vike-data wallet ens` / `wallet_ens` |
+| Bulk-label many wallets at once | **Wallets** | `vike-data wallet batch` / `wallet_batch_labels` |
+| Why is this wallet labeled X? (provenance) | **Labels** | `vike-data labels provenance` / `wallet_label_provenance` |
+| Funding rates across CEX perps (Binance/Bybit/OKX/Aster/HL) | **CEX Perps** | `vike-data perp funding` / `perp_funding` |
+| Price spreads of same symbol across CEX perp venues | **CEX Perps** | `vike-data perp spreads` / `perp_spreads` |
+| Top Hyperliquid perp traders by PnL / volume | **HL Perps** | `vike-data perp top-traders` / `hl_perp_top_traders` |
+| Reverse-lookup an HL share card → which wallet holds it | **HL Perps** | `vike-data perp find-position` / `hl_position_match` |
+| Historical candles for a Hyperliquid perp or spot market (1m–1d) | **Candles** | `vike-data candles hl <symbol>` / `hl_ohlcv` |
+| Historical probability candles for a Polymarket outcome token | **Candles** | `vike-data candles polymarket <token_id>` / `polymarket_ohlcv` |
+| Active Polymarket markets, volume, odds | **Polymarket** | `vike-data polymarket markets` / `polymarket_markets` |
+| Single Polymarket market detail | **Polymarket** | `vike-data polymarket detail` / `polymarket_market_detail` |
+| Polymarket trader profile / positions | **Polymarket** | `vike-data polymarket wallet` / `polymarket_wallet` |
+| Best-performing Polymarket traders | **Polymarket** | `vike-data polymarket smart-money` / `polymarket_smart_money` |
+| Create / list / edit price-or-flow alerts | **Alerts** | `vike-data alerts ...` / `alerts_*` |
 
-**When in doubt, start with `vike token search` or `vike wallet summary`** — both are cheap, return instantly, and disambiguate what the user actually meant.
+**When in doubt, start with `vike-data token search` or `vike-data wallet summary`** — both are cheap, return instantly, and disambiguate what the user actually meant.
 
 ### Example query routing
 ```
@@ -120,13 +120,13 @@ X-API-KEY: vk_...
 
 **A) Via CLI (recommended for shell-bound agents).** All commands accept `--json` for machine-readable output:
 ```bash
-vike wallet summary 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045 --json
-vike perp funding --symbol BTC --window 24h --json
+vike-data wallet summary 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045 --json
+vike-data perp funding --symbol BTC --window 24h --json
 ```
 
 **B) Via an MCP connector (recommended when your client has one).** All 31 tools live at `https://vike.io/mcp`. Connect the client to that address with the `X-API-KEY` header above, then call a tool by name with its arguments, for example `wallet_summary` with `address` set to a full 0x address and `chain` set to `ethereum`.
 
-Run `vike schema --pretty` (or call MCP `tools/list`) to see the live arg shape for every tool. Always read the schema before constructing arguments — defaults and enum values change.
+Run `vike-data schema --pretty` (or call MCP `tools/list`) to see the live arg shape for every tool. Always read the schema before constructing arguments — defaults and enum values change.
 
 ---
 

@@ -9,7 +9,7 @@ allowed-tools: Bash(vike:*)
 ## Command
 
 ```bash
-vike wallet balances <address>
+vike-data wallet balances <address>
   [--chains eth,bsc,base,arbitrum,polygon,optimism]  (default = all 6)
   [--min-usd 1]   (filter dust below this)
   [--json]
@@ -18,7 +18,7 @@ vike wallet balances <address>
 ## Example
 
 ```bash
-vike wallet balances 0xd8da6bf26964af9d7eed9e03e53415d37aa96045 --chains eth,arbitrum
+vike-data wallet balances 0xd8da6bf26964af9d7eed9e03e53415d37aa96045 --chains eth,arbitrum
 ```
 
 ## Output
@@ -53,6 +53,6 @@ Holdings sorted by `usd_value` descending.
 
 ## Pairs well with
 
-- `vike wallet pnl-history <addr>` — how the wallet got to its current state
-- `vike labels <addr>` — institutional context
-- `vike wallet ens <addr>` — friendly identifier
+- `vike-data wallet pnl-history <addr>` — how the wallet got to its current state
+- `vike-data labels <addr>` — institutional context
+- `vike-data wallet ens <addr>` — friendly identifier

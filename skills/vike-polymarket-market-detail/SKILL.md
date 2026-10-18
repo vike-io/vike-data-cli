@@ -9,17 +9,17 @@ allowed-tools: Bash(vike:*)
 ## Command
 
 ```bash
-vike polymarket market <condition_id> [--json]
+vike-data polymarket market <condition_id> [--json]
 ```
 
-`condition_id` is a hex string (you'll have it from `vike polymarket markets` output).
+`condition_id` is a hex string (you'll have it from `vike-data polymarket markets` output).
 
 ## Example
 
 ```bash
-vike polymarket markets --category Crypto --limit 5 --json
+vike-data polymarket markets --category Crypto --limit 5 --json
 #   → pick a condition_id from the output, then:
-vike polymarket market 0x1234abcd...
+vike-data polymarket market 0x1234abcd...
 ```
 
 ## What it returns

@@ -9,7 +9,7 @@ allowed-tools: Bash(vike:*)
 ## Command
 
 ```bash
-vike token screener
+vike-data token screener
   [--chain ethereum|bsc|base]
   [--window 24h|7d|30d|90d]
   [--sort volume|net_inflow|holders|smart_inflow]
@@ -24,16 +24,16 @@ vike token screener
 
 ```bash
 # Trending today by volume
-vike token screener --window 24h --sort volume --limit 20
+vike-data token screener --window 24h --sort volume --limit 20
 
 # Find tokens smart money is accumulating
-vike token screener --window 7d --sort smart_inflow --smart-money-only
+vike-data token screener --window 7d --sort smart_inflow --smart-money-only
 
 # Rising holders count (organic growth signal)
-vike token screener --window 30d --sort holders --min-volume 100000
+vike-data token screener --window 30d --sort holders --min-volume 100000
 
 # Mid-cap tokens with real activity
-vike token screener --min-volume 1000000 --min-holders 100 --sort net_inflow
+vike-data token screener --min-volume 1000000 --min-holders 100 --sort net_inflow
 ```
 
 ## Output columns
@@ -77,6 +77,6 @@ vike token screener --min-volume 1000000 --min-holders 100 --sort net_inflow
 
 ## Pairs well with
 
-- `vike token holders <addr>` — drill into the top holders of any flagged token
-- `vike token transfers <addr>` — see WHO is buying/selling once a token is interesting
+- `vike-data token holders <addr>` — drill into the top holders of any flagged token
+- `vike-data token transfers <addr>` — see WHO is buying/selling once a token is interesting
 - `vike-smart-money-discovery` — composite playbook starting from this screen

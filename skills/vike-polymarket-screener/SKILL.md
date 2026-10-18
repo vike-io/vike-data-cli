@@ -11,9 +11,9 @@ Composite playbook — 3 parallel calls for a complete prediction-market snapsho
 ## Workflow
 
 ```bash
-vike polymarket markets --category all --limit 10 --json &
-vike polymarket smart-money --mode flows --hours 24 --json &
-vike polymarket smart-money --mode mispricings --hours 24 --json &
+vike-data polymarket markets --category all --limit 10 --json &
+vike-data polymarket smart-money --mode flows --hours 24 --json &
+vike-data polymarket smart-money --mode mispricings --hours 24 --json &
 wait
 ```
 

@@ -9,14 +9,14 @@ allowed-tools: Bash(vike:*)
 ## Command
 
 ```bash
-vike polymarket wallet <address> [--window 24h|7d|30d|all] [--json]
+vike-data polymarket wallet <address> [--window 24h|7d|30d|all] [--json]
 ```
 
 ## Example
 
 ```bash
-vike polymarket wallet 0xabcdef1234... --window 30d
-vike pm wallet 0xabcdef1234... --json     # `pm` alias
+vike-data polymarket wallet 0xabcdef1234... --window 30d
+vike-data pm wallet 0xabcdef1234... --json     # `pm` alias
 ```
 
 ## Output

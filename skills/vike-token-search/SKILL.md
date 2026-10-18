@@ -11,13 +11,13 @@ Symbol/name → address resolver.
 ## Command
 
 ```bash
-vike token search <query> [--chain ethereum|bsc|base] [--limit N] [--json]
+vike-data token search <query> [--chain ethereum|bsc|base] [--limit N] [--json]
 ```
 
 ## Example
 
 ```bash
-vike token search PEPE --chain ethereum --limit 5
+vike-data token search PEPE --chain ethereum --limit 5
 # →  symbol  name    address                                     chain
 #    PEPE    Pepe    0x6982508145454ce325ddbe47a25d4ec3d2311933  ethereum
 #    PEPE2   ...     0x...                                       ethereum
@@ -35,5 +35,5 @@ vike token search PEPE --chain ethereum --limit 5
 
 ## Pairs well with
 
-- `vike token transfers <address>` after resolution
+- `vike-data token transfers <address>` after resolution
 - `vike-token-research` for a full multi-call report

@@ -9,8 +9,8 @@ allowed-tools: Bash(vike:*)
 ## Command
 
 ```bash
-vike perp spreads --json                 # full matrix, all symbols with spread >= 0.5%
-vike perp spreads --symbol BTC --json    # one specific symbol
+vike-data perp spreads --json                 # full matrix, all symbols with spread >= 0.5%
+vike-data perp spreads --symbol BTC --json    # one specific symbol
 ```
 
 ## Output

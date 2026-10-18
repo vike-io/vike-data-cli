@@ -11,7 +11,7 @@ Find the wallet(s) holding an open Hyperliquid perp position that match a share 
 ## Command
 
 ```bash
-vike perp find-position
+vike-data perp find-position
   --coin <SYM>         # e.g. BTC, ETH, SOL
   --side long|short
   --leverage <X>       # e.g. 25
@@ -77,7 +77,7 @@ The response includes `tolerance_used` so the caller knows which band matched (`
 
 - Don't fabricate matches when the tool returns `match_count: 0`. Say "no open position matches that share card" — closed positions, post-card adds, or non-HL cards all produce empty results.
 - Don't strip the address when displaying — share-card investigations always want the full 0x...40hex (users copy-paste it).
-- Don't infer trader skill from a single share-card match. Use `vike perp top-traders` or `vike wallet summary` for profile context.
+- Don't infer trader skill from a single share-card match. Use `vike-data perp top-traders` or `vike-data wallet summary` for profile context.
 
 ## Pairs well with
 

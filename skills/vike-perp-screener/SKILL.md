@@ -11,9 +11,9 @@ One-shot market overview for perpetuals.
 ## Workflow (3 parallel calls)
 
 ```bash
-vike perp funding --json &              # top funding-arb opportunities
-vike perp spreads --json &              # top spot-perp price spreads
-vike perp top-traders --window 1d --sort pnl --size 10 --json &
+vike-data perp funding --json &              # top funding-arb opportunities
+vike-data perp spreads --json &              # top spot-perp price spreads
+vike-data perp top-traders --window 1d --sort pnl --size 10 --json &
 wait
 ```
 

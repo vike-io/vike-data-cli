@@ -1,4 +1,4 @@
-// `vike install` — copy SKILL.md into the agent-discoverable locations for
+// `vike-data install` — copy SKILL.md into the agent-discoverable locations for
 // supported IDEs/agents so the skill loads without the user having to wire
 // it up manually.
 //
@@ -95,8 +95,8 @@ export function registerInstall(program) {
       if (!targets.claude && !targets.cursor && !targets.copilot && !targets.agents) {
         console.error('No target selected. Use --claude / --cursor / --copilot / --agents / --all.');
         console.error('Examples:');
-        console.error('  vike install --claude');
-        console.error('  vike install --all');
+        console.error('  vike-data install --claude');
+        console.error('  vike-data install --all');
         process.exitCode = 1;
         return;
       }
@@ -104,7 +104,7 @@ export function registerInstall(program) {
       try {
         skill = readSkillSource();
       } catch (e) {
-        console.error(`vike install: ${e.message}`);
+        console.error(`vike-data install: ${e.message}`);
         process.exitCode = 1;
         return;
       }
@@ -115,7 +115,7 @@ export function registerInstall(program) {
         if (targets.copilot) results.push(installCopilot(skill, cwd));
         if (targets.agents) results.push(installAgents(skill, cwd));
       } catch (e) {
-        console.error(`vike install: ${e.message}`);
+        console.error(`vike-data install: ${e.message}`);
         process.exitCode = 1;
         return;
       }

@@ -9,7 +9,7 @@ allowed-tools: Bash(vike:*)
 ## Command
 
 ```bash
-vike wallet transactions <address>     # alias: vike wallet txs
+vike-data wallet transactions <address>     # alias: vike-data wallet txs
   [--chain ethereum|bsc|base]
   [--direction in|out|all]
   [--days N]   (max 365)
@@ -23,13 +23,13 @@ vike wallet transactions <address>     # alias: vike wallet txs
 
 ```bash
 # Recent in+out transfers, last 7 days
-vike wallet txs 0xd8da6bf26964af9d7eed9e03e53415d37aa96045 --days 7 --limit 20
+vike-data wallet txs 0xd8da6bf26964af9d7eed9e03e53415d37aa96045 --days 7 --limit 20
 
 # Only outgoing > $10k in last 30d
-vike wallet txs 0xabc... --direction out --min-usd 10000
+vike-data wallet txs 0xabc... --direction out --min-usd 10000
 
 # Only USDC transfers
-vike wallet txs 0xabc... --token 0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48
+vike-data wallet txs 0xabc... --token 0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48
 ```
 
 ## Output columns
@@ -53,7 +53,7 @@ Sorted descending by time (most recent first).
 
 ## Pairs well with
 
-- `vike wallet summary <addr>` — aggregate metrics over same window
-- `vike wallet counterparties <addr>` — who they trade with most
-- `vike wallet trace <addr>` — graph-traverse outward from this wallet
-- `vike labels <addr>` — identify the wallet itself
+- `vike-data wallet summary <addr>` — aggregate metrics over same window
+- `vike-data wallet counterparties <addr>` — who they trade with most
+- `vike-data wallet trace <addr>` — graph-traverse outward from this wallet
+- `vike-data labels <addr>` — identify the wallet itself

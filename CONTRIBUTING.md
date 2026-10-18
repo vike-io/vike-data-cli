@@ -44,8 +44,8 @@ See [AGENTS.md](AGENTS.md) for the full conventions. Short version:
 ## Reporting bugs
 
 Include:
-- `vike --version`
+- `vike-data --version`
 - Node version (`node --version`)
 - The exact command you ran
 - Full error message
-- Output of `vike doctor`
+- Output of `vike-data doctor`

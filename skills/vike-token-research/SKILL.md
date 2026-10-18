@@ -12,14 +12,14 @@ Multi-call token research workflow.
 
 1. **Resolve address** (skip if user already gave one)
    ```bash
-   vike token search <symbol> --chain <chain> --limit 3 --json
+   vike-data token search <symbol> --chain <chain> --limit 3 --json
    ```
    Pick the highest-volume match; capture the address.
 
 2. **Recent buyers + sellers** (parallel calls)
    ```bash
-   vike token transfers <addr> --tab bought --period 24h --chain <chain> --json
-   vike token transfers <addr> --tab sold   --period 24h --chain <chain> --json
+   vike-data token transfers <addr> --tab bought --period 24h --chain <chain> --json
+   vike-data token transfers <addr> --tab sold   --period 24h --chain <chain> --json
    ```
 
 ## Verdict heuristics

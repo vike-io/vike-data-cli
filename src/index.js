@@ -34,7 +34,7 @@ if (updateNotice) process.stderr.write(updateNotice);
 const program = new Command();
 
 program
-  .name('vike')
+  .name('vike-data')
   .description('AI-agent CLI for vike.io on-chain analytics')
   .version(version, '-v, --version', 'Show CLI version');
 

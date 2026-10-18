@@ -37,7 +37,7 @@ describe('cli --help', () => {
     ['labels', '0x0000000000000000000000000000000000000000'],
     ['login'],
     ['logout'],
-  ])('vike %s --help', (...cmdParts) => {
+  ])('vike-data %s --help', (...cmdParts) => {
     const out = run([...cmdParts, '--help']);
     expect(out).toMatch(/Usage:|Options:/);
   });

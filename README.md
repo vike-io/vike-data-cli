@@ -1,6 +1,6 @@
 # @vike-io/cli — the Vike Data API from your terminal and your AI agent
 
-> Repo + package: `@vike-io/cli` (npm) · `vike-io/vike-data-cli` (GitHub) · binary: `vike` (alias `vike-data`)
+> Repo + package: `@vike-io/cli` (npm) · `vike-io/vike-data-cli` (GitHub) · binary: `vike-data`
 
 [![npm version](https://img.shields.io/npm/v/@vike-io/cli.svg)](https://www.npmjs.com/package/@vike-io/cli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -22,7 +22,7 @@ at all. Market data from centralised exchanges is not offered through the REST A
 ## Install
 
 ```bash
-# The CLI (Node.js >= 22.12). Installs the `vike` binary.
+# The CLI (Node.js >= 22.12). Installs the `vike-data` binary.
 npm install -g @vike-io/cli
 
 # OR install only the skill playbooks into your AI agent (Claude Code, Cursor,
@@ -36,16 +36,16 @@ Get a free key at [vike.io/account?tab=api-keys](https://vike.io/account?tab=api
 with `vk_`), then:
 
 ```bash
-vike init                                   # paste the key; saves ~/.vike/config.json, checks vike.io/mcp
-vike doctor                                 # Node version, key, MCP connectivity, tool list
-vike token search PEPE                      # first query
-vike perp top-traders --window 7d           # Hyperliquid wallets ranked by PnL
-vike candles hl BTC --interval 1h --limit 48
-vike polymarket markets --category Crypto   # trending markets by 24h volume
+vike-data init                                   # paste the key; saves ~/.vike/config.json, checks vike.io/mcp
+vike-data doctor                                 # Node version, key, MCP connectivity, tool list
+vike-data token search PEPE                      # first query
+vike-data perp top-traders --window 7d           # Hyperliquid wallets ranked by PnL
+vike-data candles hl BTC --interval 1h --limit 48
+vike-data polymarket markets --category Crypto   # trending markets by 24h volume
 ```
 
 The key is read from `VIKE_API_KEY` first, then from `~/.vike/config.json`
-(`vike login --api-key vk_...` writes it, `vike logout` removes it).
+(`vike-data login --api-key vk_...` writes it, `vike-data logout` removes it).
 
 ## Free datasets
 
@@ -132,24 +132,24 @@ not only the HTTP status. A rate-limited call gets HTTP 429 with `Retry-After: 6
 
 ## CLI commands
 
-Every data command is one `tools/call` to the MCP server. `vike <group> --help` lists the flags;
-`vike schema --pretty` prints every tool the server exposes, with its parameters.
+Every data command is one `tools/call` to the MCP server. `vike-data <group> --help` lists the flags;
+`vike-data schema --pretty` prints every tool the server exposes, with its parameters.
 
 | Command | Subcommands | MCP tool |
 |---|---|---|
-| `vike token` | `search`, `transfers`, `screener`, `holders` (`--chain ethereum\|bsc\|base`) | `token_search`, `token_transfers`, `token_screener`, `token_holders` |
-| `vike wallet` | `summary`, `transactions` (`txs`), `compare`, `trace`, `batch`, `counterparties`, `pnl-history`, `balances`, `ens`, `discover` | `wallet_summary`, `wallet_transactions`, `wallet_compare`, `wallet_trace`, `wallet_batch_labels`, `wallet_counterparties`, `wallet_pnl_history`, `wallet_token_balances`, `wallet_ens`, `wallet_discover` |
-| `vike labels <address>` | multi-source label provenance for one wallet | `wallet_label_provenance` |
-| `vike perp` | `top-traders`, `find-position` (Hyperliquid); `funding`, `spreads` (cross-venue funding rates and spot-perp spreads) | `hl_perp_top_traders`, `hl_position_match`, `perp_funding`, `perp_spreads` |
-| `vike candles` | `hl <symbol>` (Hyperliquid perp or spot, from executed fills), `polymarket <token_id>` (one outcome token) | `hl_ohlcv`, `polymarket_ohlcv` |
-| `vike polymarket` (`pm`) | `markets`, `market <condition_id>`, `wallet <address>`, `smart-money` | `polymarket_markets`, `polymarket_market_detail`, `polymarket_wallet`, `polymarket_smart_money` |
-| `vike alerts` | `list`, `channels`, `create`, `edit`, `delete`, `register-webhook` (email, Discord, or an HTTPS webhook, HMAC-signed when you set a secret) | `alerts_*` |
+| `vike-data token` | `search`, `transfers`, `screener`, `holders` (`--chain ethereum\|bsc\|base`) | `token_search`, `token_transfers`, `token_screener`, `token_holders` |
+| `vike-data wallet` | `summary`, `transactions` (`txs`), `compare`, `trace`, `batch`, `counterparties`, `pnl-history`, `balances`, `ens`, `discover` | `wallet_summary`, `wallet_transactions`, `wallet_compare`, `wallet_trace`, `wallet_batch_labels`, `wallet_counterparties`, `wallet_pnl_history`, `wallet_token_balances`, `wallet_ens`, `wallet_discover` |
+| `vike-data labels <address>` | multi-source label provenance for one wallet | `wallet_label_provenance` |
+| `vike-data perp` | `top-traders`, `find-position` (Hyperliquid); `funding`, `spreads` (cross-venue funding rates and spot-perp spreads) | `hl_perp_top_traders`, `hl_position_match`, `perp_funding`, `perp_spreads` |
+| `vike-data candles` | `hl <symbol>` (Hyperliquid perp or spot, from executed fills), `polymarket <token_id>` (one outcome token) | `hl_ohlcv`, `polymarket_ohlcv` |
+| `vike-data polymarket` (`pm`) | `markets`, `market <condition_id>`, `wallet <address>`, `smart-money` | `polymarket_markets`, `polymarket_market_detail`, `polymarket_wallet`, `polymarket_smart_money` |
+| `vike-data alerts` | `list`, `channels`, `create`, `edit`, `delete`, `register-webhook` (email, Discord, or an HTTPS webhook, HMAC-signed when you set a secret) | `alerts_*` |
 | setup | `init`, `login`, `logout`, `doctor`, `schema`, `install` | — |
 
 Output is a table on a terminal and JSON with `--json` or whenever stdout is piped:
 
 ```bash
-vike token search BTC --json | jq '.'
+vike-data token search BTC --json | jq '.'
 ```
 
 ## Examples
@@ -183,14 +183,14 @@ npx skills add vike-io/vike-data-cli --list    # see them first
 npx skills add vike-io/vike-data-cli           # install
 
 # Or, from the installed CLI, write the umbrella skill into each agent's location:
-vike install --claude     # ~/.claude/skills/vike/SKILL.md
-vike install --cursor     # ./.cursorrules
-vike install --copilot    # ./.github/copilot-instructions.md
-vike install --agents     # ./AGENTS.md
-vike install --all        # all four
+vike-data install --claude     # ~/.claude/skills/vike/SKILL.md
+vike-data install --cursor     # ./.cursorrules
+vike-data install --copilot    # ./.github/copilot-instructions.md
+vike-data install --agents     # ./AGENTS.md
+vike-data install --all        # all four
 ```
 
-`vike install` replaces only its own `<!-- vike-skill:begin -->` ... `<!-- vike-skill:end -->`
+`vike-data install` replaces only its own `<!-- vike-skill:begin -->` ... `<!-- vike-skill:end -->`
 block in files it does not own.
 
 ## Environment
@@ -205,7 +205,7 @@ block in files it does not own.
 Telemetry sends the command name, the flag names (never their values), the duration, an error code
 and a random device id. It never sends what you queried, and it is off when `CI` is set.
 
-`vike` here is the Data API client. The Vike Trader platform has its own, separate command line,
+`vike-data` is the Data API client. The Vike Trader platform has its own, separate command line,
 `vike-cli` ([docs](https://vike.io/docs/trader/cli)).
 
 ## License

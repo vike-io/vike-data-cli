@@ -12,11 +12,11 @@ Per-symbol cross-venue analysis.
 
 1. Per-venue funding
    ```bash
-   vike perp funding --symbol <SYM> --json
+   vike-data perp funding --symbol <SYM> --json
    ```
 2. Per-venue spread
    ```bash
-   vike perp spreads --symbol <SYM> --json
+   vike-data perp spreads --symbol <SYM> --json
    ```
 
 ## Report template

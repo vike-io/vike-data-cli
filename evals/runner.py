@@ -9,7 +9,7 @@
 """A/B harness for vike-cli skills.
 
 Measures whether including SKILL.md files in the prompt actually improves
-an LLM's command picks vs. providing only `vike --help`.
+an LLM's command picks vs. providing only `vike-data --help`.
 
 Run:
     uv run --script evals/runner.py
@@ -38,7 +38,7 @@ MODEL = os.environ.get("VIKE_EVAL_MODEL", "claude-sonnet-4-5")
 
 
 def vike_help() -> str:
-    """Capture `vike --help` and all subcommand --help outputs."""
+    """Capture `vike-data --help` and all subcommand --help outputs."""
     out = subprocess.check_output(
         ["node", str(ROOT / "src" / "index.js"), "--help"],
         text=True, env={**os.environ, "CI": "1", "VIKE_NO_TELEMETRY": "1"},
@@ -54,7 +54,7 @@ def vike_help() -> str:
                 ["node", str(ROOT / "src" / "index.js"), sub, "--help"],
                 text=True, env={**os.environ, "CI": "1", "VIKE_NO_TELEMETRY": "1"},
             )
-            out += f"\n\n--- vike {sub} --help ---\n{sub_out}"
+            out += f"\n\n--- vike-data {sub} --help ---\n{sub_out}"
         except subprocess.CalledProcessError:
             continue
     return out
@@ -133,7 +133,7 @@ def main() -> int:
 
     system_a = (
         "You are a helpful CLI assistant. Answer questions about how to use "
-        "the vike CLI. Only respond with the shell command the user should "
+        "the vike-data CLI. Only respond with the shell command the user should "
         "run; do not explain. Here is the full help output:\n\n" + help_text
     )
     system_b = system_a + "\n\n--- Skill bundle ---\n\n" + skills_text

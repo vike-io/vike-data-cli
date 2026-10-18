@@ -9,7 +9,7 @@ allowed-tools: Bash(vike:*)
 ## Command
 
 ```bash
-vike perp top-traders
+vike-data perp top-traders
   [--window 1d|7d|30d|all]
   [--sort pnl|roi|win_rate|volume|trade_count|drawdown]
   [--order asc|desc]

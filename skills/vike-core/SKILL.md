@@ -1,6 +1,6 @@
 ---
 name: vike-core
-description: Install-first skill — authentication, setup, and CLI conventions for the vike toolkit. Use when you see any `vike <cmd>` reference or the user mentions on-chain analytics, Hyperliquid perps, options flow, or prediction markets.
+description: Install-first skill — authentication, setup, and CLI conventions for the vike toolkit. Use when you see any `vike-data <cmd>` reference or the user mentions on-chain analytics, Hyperliquid perps, options flow, or prediction markets.
 metadata:
   openclaw:
     requires:
@@ -27,8 +27,8 @@ npm install -g @vike-io/cli
 ## Authenticate (one of these)
 
 ```bash
-vike init                          # interactive: prompt for API key + verify
-vike login --api-key vk_...        # non-interactive
+vike-data init                          # interactive: prompt for API key + verify
+vike-data login --api-key vk_...        # non-interactive
 export VIKE_API_KEY=vk_...         # env (wins over saved config)
 ```
 
@@ -37,9 +37,9 @@ Get an API key at https://vike.io/account?tab=api-keys
 ## Verify
 
 ```bash
-vike doctor                        # Node version + API key + endpoint reachability + tool count
-vike whoami                        # which key is in use (masked)
-vike schema --pretty               # full command list with flags
+vike-data doctor                        # Node version + API key + endpoint reachability + tool count
+vike-data whoami                        # which key is in use (masked)
+vike-data schema --pretty               # full command list with flags
 ```
 
 ## Conventions
@@ -48,13 +48,13 @@ vike schema --pretty               # full command list with flags
 - Addresses: pass full 0x-prefixed hex (42 chars). Never truncate when reporting back to the user.
 - USD amounts: integers/decimals (e.g. `--min-usd 10000`).
 - Chain identifiers: `eth`, `bsc`, `base`, `arb`, `hyper`, `btc`, `sol`, `tron`, `xmr`, `zec`, `dash` (depending on the command — some only support a subset).
-- Time windows: `24h`, `7d`, `30d`, `90d`, `all` (per command; check `vike <cmd> --help`).
+- Time windows: `24h`, `7d`, `30d`, `90d`, `all` (per command; check `vike-data <cmd> --help`).
 
 ## Errors
 
-- `No API key` → run `vike init` or set `VIKE_API_KEY`.
+- `No API key` → run `vike-data init` or set `VIKE_API_KEY`.
 - `MCP error -32000: Hourly rate limit exceeded` → you hit the per-key cap; wait or upgrade your plan.
-- `Network error` / timeout → check `vike doctor`; the endpoint is `https://vike.io/mcp`.
+- `Network error` / timeout → check `vike-data doctor`; the endpoint is `https://vike.io/mcp`.
 - `503` from a tool → upstream data source temporarily down; retry in 30s.
 
 ## Cost awareness

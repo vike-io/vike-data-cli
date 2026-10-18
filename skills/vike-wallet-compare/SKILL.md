@@ -9,7 +9,7 @@ allowed-tools: Bash(vike:*)
 ## Command
 
 ```bash
-vike wallet compare <address_a> <address_b>
+vike-data wallet compare <address_a> <address_b>
   [--chain ethereum|bsc|base]
   [--window 24h|7d|30d|90d|180d|all]
   [--limit N]   (max 50)
@@ -51,6 +51,6 @@ vike wallet compare <address_a> <address_b>
 
 ## Pairs well with
 
-- `vike labels <addr>` — drill into any interesting shared counterparty
-- `vike wallet trace <addr>` — follow money outward from either wallet
-- `vike wallet counterparties <addr>` — top partners per wallet individually
+- `vike-data labels <addr>` — drill into any interesting shared counterparty
+- `vike-data wallet trace <addr>` — follow money outward from either wallet
+- `vike-data wallet counterparties <addr>` — top partners per wallet individually

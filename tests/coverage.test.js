@@ -23,7 +23,7 @@ const EXPECTED_SUBCMDS = {
 };
 
 describe('command coverage', () => {
-  it.each(EXPECTED_TOP_LEVEL)('top-level command exists: vike %s', async (name) => {
+  it.each(EXPECTED_TOP_LEVEL)('top-level command exists: vike-data %s', async (name) => {
     // Walk each registerXxx module and make sure it declares the expected
     // name. We do this via dynamic import of the central index module.
     // Indirect, but cheap.
@@ -36,7 +36,7 @@ describe('command coverage', () => {
   });
 
   it.each(Object.entries(EXPECTED_SUBCMDS))(
-    'subcommands for vike %s',
+    'subcommands for vike-data %s',
     async (group, subs) => {
       const { Command } = await import('commander');
       const program = new Command();

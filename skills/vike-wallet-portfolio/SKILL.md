@@ -13,11 +13,11 @@ Multi-call playbook for a complete wallet snapshot.
 ```bash
 ADDR=0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
 
-vike wallet ens     $ADDR --json &     # cheap, ~1 credit
-vike labels         $ADDR --json &     # cheap, ~1 credit
-vike wallet summary $ADDR --json &     # cheap, ~2 credits
-vike wallet balances $ADDR --json &    # multi-chain, ~3 credits
-vike wallet pnl-history $ADDR --days 30 --json &
+vike-data wallet ens     $ADDR --json &     # cheap, ~1 credit
+vike-data labels         $ADDR --json &     # cheap, ~1 credit
+vike-data wallet summary $ADDR --json &     # cheap, ~2 credits
+vike-data wallet balances $ADDR --json &    # multi-chain, ~3 credits
+vike-data wallet pnl-history $ADDR --days 30 --json &
 wait
 ```
 

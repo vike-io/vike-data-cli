@@ -1,6 +1,6 @@
 # Evals — does our skill bundle actually help LLMs?
 
-This directory holds an A/B harness that measures whether `SKILL.md` files in `skills/` move an LLM's command picks vs `vike --help` alone.
+This directory holds an A/B harness that measures whether `SKILL.md` files in `skills/` move an LLM's command picks vs `vike-data --help` alone.
 
 If shipping skills doesn't improve the model's choices, we shouldn't ship them. If it does, we have proof.
 
@@ -8,10 +8,10 @@ If shipping skills doesn't improve the model's choices, we shouldn't ship them. 
 
 For each question in `questions.yaml`:
 
-1. **Condition A (control):** ask Claude/GPT to answer using only `vike --help` output.
+1. **Condition A (control):** ask Claude/GPT to answer using only `vike-data --help` output.
 2. **Condition B (treatment):** same question, but ALSO include the relevant `SKILL.md` files in the prompt.
 3. Score each answer on three dimensions:
-   - `command_match` — did the model name the right `vike <cmd>`?
+   - `command_match` — did the model name the right `vike-data <cmd>`?
    - `fragment_score` — what % of expected flags did it suggest?
    - `rejected_fragments` — if any forbidden fragment appears (made-up flag, wrong command), the score is **zeroed**. No partial credit for hallucinations.
 
@@ -47,7 +47,7 @@ The script has inline `# /// script` dependencies — no separate venv needed.
 Cover every command at least once. Bonus: cover composite playbook skills (e.g. `vike-smart-money-discovery`) with multi-step expected outputs.
 
 A good question:
-- Phrases the request in natural language (not "what does `vike token holders` do")
+- Phrases the request in natural language (not "what does `vike-data token holders` do")
 - Has ONE clearly-correct command
 - Lists 2-5 expected flags
 - Lists 2-3 forbidden fragments (made-up flags or wrong commands the model commonly hallucinates)
