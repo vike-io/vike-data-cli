@@ -39,4 +39,5 @@ vike-data polymarket market 0x1234abcd...
 ## Pairs well with
 
 - `vike-polymarket-trader` — profile any interesting wallet you find in the top-wallets list
-- `vike-polymarket-smart-money mode=mispricings` — markets where cohort bought below current mid
+- `vike-polymarket-smart-money` (`--mode mispricings`) — markets where cohort bought below current mid
+- `vike-candles` — probability history: the market's `clob_token_ids` are the `token_id` values

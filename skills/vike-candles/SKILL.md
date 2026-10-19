@@ -41,7 +41,7 @@ vike-data candles polymarket <token_id>
 | "Hourly BTC perp candles, last week" | `vike-data candles hl BTC --interval 1h --limit 168` |
 | "HYPE spot daily candles" | `vike-data candles hl HYPE --market spot --interval 1d` |
 | "4h ETH, 200 bars" | `vike-data candles hl ETH --interval 4h --limit 200` |
-| "Price history of the YES outcome of market X" | get `clob_token_ids` from `vike-data polymarket market <condition_id>`, then `vike-data candles polymarket <token_id> --interval 1h` |
+| "Price history of the YES outcome of market X" | take the leg's `token_id` from `outcomes[]` in `vike-data polymarket markets` (or `clob_token_ids` in `vike-data polymarket market <condition_id>`), then `vike-data candles polymarket <token_id> --interval 1h` |
 
 ## Output
 
@@ -50,7 +50,7 @@ Polymarket: `ts`, `open`, `high`, `low`, `close`, `volume`, `trades`, oldest fir
 
 ## Pitfalls
 
-- Polymarket takes an **outcome token id**, not a `condition_id`. A condition id returns nothing useful; read the token ids off `clob_token_ids` in `vike-data polymarket market`.
+- Polymarket takes an **outcome token id**, not a `condition_id`. A condition id returns nothing useful; read the token ids off `outcomes[].token_id` in `vike-data polymarket markets` or `clob_token_ids` in `vike-data polymarket market`.
 - Polymarket has no cursor: a window wider than `--limit` is truncated at the **old** end. Raise `--from` to reach the recent end.
 - Polymarket `--from` / `--to` are epoch **milliseconds**; HL `--start` / `--end` also accept ISO-8601.
 - HL buckets are left-aligned UTC and the window is half-open.

@@ -15,6 +15,8 @@ vike-data wallet pnl-history <address>
   [--json]
 ```
 
+`--chain base` is accepted, but per-wallet transfer data is documented for Ethereum and BSC: treat an empty Base result as "not covered", not "no activity".
+
 ## Output
 
 ```json
@@ -35,10 +37,11 @@ vike-data wallet pnl-history <address>
 
 **This is NET INFLOW USD, not realized PnL.** True realized PnL requires WAC (weighted-average cost) accounting per token, which we don't do in this fast tool. A wallet that bought $10K and sold $10K of the same token at the SAME price would show $0 here — but if they sold higher, true PnL would be positive (and this tool wouldn't reflect that). Use this for direction + trend, not for tax-grade PnL.
 
-For lifetime realized PnL: `vike-data wallet discover --sort pnl --window all`.
+There is no reliable realized-PnL figure for a wallet in the CLI: `wallet discover` carries a `realized_pnl` column, but it is only an ordering key (many stored values are wrong), so never quote it as dollars.
 
 ## Reading
 
+- The series is **sparse**: one point per day that had activity, not one per day of the range. Zero-fill the calendar before charting or diffing.
 - `cumulative_net_flow_usd` ramping up = wallet has been accumulating $
 - Big positive day with high `tx_count` = single large buy (deposit / acquisition / token purchase)
 - Big negative day with high `tx_count` = sell-down or large transfer out

@@ -19,6 +19,8 @@ vike-data wallet transactions <address>     # alias: vike-data wallet txs
   [--json]
 ```
 
+`--chain base` is accepted, but per-wallet transfer data is documented for Ethereum and BSC: treat an empty Base result as "not covered", not "no activity".
+
 ## Examples
 
 ```bash
@@ -34,7 +36,7 @@ vike-data wallet txs 0xabc... --token 0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48
 
 ## Output columns
 
-`time`, `tx_hash`, `from_address`, `to_address`, `token_address`, `value_usd`, `direction` (in/out), `block`.
+`time`, `tx_hash`, `from_address`, `to_address`, `token_address`, `usd`, `direction` (in/out), `block`. The USD key is `usd`, and `usd: 0.0` means the transfer is **unpriced**, not worthless: `--min-usd` therefore also hides unpriced transfers. The native coin shows as `token_address` `0x0000000000000000000000000000000000000000`.
 
 Sorted descending by time (most recent first).
 

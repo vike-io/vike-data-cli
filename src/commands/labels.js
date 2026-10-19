@@ -5,7 +5,7 @@ export function registerLabels(program) {
   // `vike-data labels <address>` — multi-source label provenance for one wallet
   program
     .command('labels <address>')
-    .description('Multi-source label cascade for a wallet (10+ providers + in-house heuristic + consensus view)')
+    .description('Multi-source label cascade for an Ethereum wallet (up to 6 label sources + in-house heuristic + consensus view)')
     .option('--json', 'Emit JSON')
     .action(async (address, opts) => {
       try {

@@ -55,6 +55,7 @@ vike-data alerts delete 42 --hard                   # permanently remove
 ## Notes + gotchas
 
 - Currently chains supported: **eth** and **bsc** only. For both, create two alerts.
+- **An alert watches a token, not an address.** It fires on ANY transfer of that token on that chain whose USD value crosses the thresholds. There is no wallet filter, so "alert me when whale 0xABCD sells" cannot be built: say so, and offer the token-wide alert or periodic `vike-data wallet transactions` checks instead. There are no price or funding alerts, and delivery is email, Discord or an HTTPS webhook (no Telegram).
 - Thresholds are in **USD value** of the transfer at fire time, not token quantity.
 - `--cooldown` is per-alert minimum gap between triggers (default 60 min). Useful to avoid spam during high-volume hours.
 - Tokens are matched by symbol (UPPERCASE). For cross-chain symbols like `USDC` that exist on multiple chains, be explicit with `--chain`.

@@ -9,10 +9,10 @@ allowed-tools: Bash(vike-data:*)
 ## Command
 
 ```bash
-vike-data polymarket markets [--category C] [--limit N] [--json]
+vike-data polymarket markets [--category C] [--limit N] [--json]     # limit default 10, max 30
 ```
 
-`C` is one of: `Crypto`, `Sports`, `Politics`, `Pop-Culture`, `Tech`, `all` (default).
+`C` is one of: `Crypto`, `Sports`, `Politics`, `Pop-Culture`, `Tech`, `all` (default). Names are exact.
 
 ## Examples
 
@@ -22,23 +22,28 @@ vike-data polymarket markets --category Politics --limit 20
 vike-data pm markets --json                    # `pm` alias
 ```
 
-## Output columns
+## Output
 
-`condition_id`, `slug`, `question`, `end_date`, `market_vol_24h` (USD), `liquidity`, plus per-outcome `outcome` / `mid` / `bid` / `ask` for both Yes and No legs.
+One row per market, ranked by **24h volume only** (there is no liquidity or volatility ranking):
+
+`condition_id`, `slug`, `question`, `end_date`, `ended` (true once `end_date` has passed), `volume_24h` (USD), `liquidity`, `latest_ts`, and `outcomes`: a list with one entry per outcome leg, each with `token_id`, `outcome` (Yes / No or the leg's name), `mid`, `bid`, `ask`, `snap_vol_24h`.
+
+The `token_id` of each leg is what `vike-data candles polymarket <token_id>` needs, so candles need no extra detail call.
 
 ## Reading the data
 
 - `mid` is the midpoint price as a probability (0.0 to 1.0). `0.42` means "the market thinks 42% chance".
 - A bid/ask spread > 0.05 (5 cents) = thin liquidity; the price is noisier.
-- `end_date` is when the market resolves. Sort priority for action-oriented users: markets ending in the next 7 days.
+- `end_date` is when the market resolves. Sort priority for action-oriented users: markets ending in the next 7 days. Check `ended`: a market that closed earlier today can still rank by its 24h volume.
 
 ## Anti-patterns
 
 - Don't quote `mid` as a percentage without saying so. "Yes is 0.42" is the raw probability; "42% chance" is the user-friendly translation.
 - For tiny markets (<$50k 24h volume) the quotes are often stale or one-sided. Skip them unless explicitly asked.
+- Don't call a list of markets "what smart money is doing": for that use `polymarket smart-money`.
 
 ## Pairs well with
 
 - `vike-polymarket-market-detail` — deep-dive on one market once you have its condition_id
-- `vike-polymarket-smart-money` — see which markets cohort wallets are buying/selling
-- `vike-polymarket-screener` — composite multi-call screener
+- `vike-polymarket-smart-money` — which markets cohort wallets are buying, and a full market overview
+- `vike-candles` — probability history for a leg's `token_id`

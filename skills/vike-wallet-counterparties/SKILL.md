@@ -16,6 +16,8 @@ vike-data wallet counterparties <address>
   [--json]
 ```
 
+`--chain base` is accepted, but per-wallet transfer data is documented for Ethereum and BSC: treat an empty Base result as "not covered", not "no activity".
+
 ## Example
 
 ```bash
@@ -28,6 +30,8 @@ vike-data wallet counterparties 0xd8da6bf26964af9d7eed9e03e53415d37aa96045 --win
 
 ## Reading
 
+- `sent_usd` / `received_usd` are from the QUERIED wallet's side: `sent_usd` is what it sent to that counterparty.
+- `first_seen` is the first contact inside the window, not the first ever (widening the window moves it).
 - **Sent + Received roughly equal** = active trading partner (DEX router, MM, regular counterparty)
 - **Sent >> Received** = wallet pays this counterparty (deposit address, contract call)
 - **Received >> Sent** = wallet receives from this counterparty (funding source, employer, airdrop)
@@ -37,7 +41,7 @@ vike-data wallet counterparties 0xd8da6bf26964af9d7eed9e03e53415d37aa96045 --win
 
 ## Anti-patterns
 
-- Don't claim two wallets are "controlled by the same person" from counterparties alone — many people deposit to the same Binance address. Pair with `vike-wallet-clustering` (deferred) or manual investigation.
+- Don't claim two wallets are "controlled by the same person" from counterparties alone — many people deposit to the same Binance address. There is no clustering tool; use `vike-data wallet compare` (shared counterparties and tokens) and `vike-data wallet trace` as evidence, and say it is only evidence.
 - Window matters: a 24h view captures recent activity but misses long-standing relationships. Default to 30d, expand to `all` for full history.
 - For tokens with high churn (memecoins), top counterparties will be dominated by Uniswap routers; filter mentally for non-DEX rows for human counterparties.
 

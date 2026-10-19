@@ -4,16 +4,15 @@
   "groupings": [
     {
       "title": "Quick start",
-      "description": "Start here. The umbrella skill auto-routes user questions to the right specialized skill below.",
+      "description": "Start here. The umbrella skill routes user questions to the right specialized skill below; vike-core covers install and auth.",
       "skills": [
         "vike",
-        "vike-router",
         "vike-core"
       ]
     },
     {
       "title": "Tokens",
-      "description": "Resolve, screen, and research tokens across 11 chains. Smart-money inflow, holders, recent transfers.",
+      "description": "Resolve, screen, and research tokens on Ethereum, BSC and Base. Smart-money inflow (Ethereum), holders, top buyers and sellers.",
       "skills": [
         "vike-token-search",
         "vike-token-research",
@@ -25,7 +24,7 @@
     },
     {
       "title": "Wallets",
-      "description": "Per-wallet profile, PnL, counterparty graphs, ENS, batch labelling, label provenance.",
+      "description": "Per-wallet profile, flows, counterparty graphs, ENS, batch labelling, label provenance.",
       "skills": [
         "vike-wallet-summary",
         "vike-wallet-portfolio",
@@ -43,20 +42,17 @@
     },
     {
       "title": "CEX perps",
-      "description": "Funding-rate arb + cross-venue mark-price spreads across Binance, Bybit, OKX, Aster, Hyperliquid.",
+      "description": "Funding-rate arb and per-symbol venue comparison, plus cross-venue perp price gaps and a market snapshot.",
       "skills": [
-        "vike-perp-funding-arb",
-        "vike-perp-spread-arb",
-        "vike-perp-screener",
-        "vike-cross-venue-perps"
+        "vike-perp-funding",
+        "vike-perp-overview"
       ]
     },
     {
       "title": "Hyperliquid perps",
-      "description": "Deep on-chain HL coverage: top traders, full trader profiles, and share-card reverse-lookup.",
+      "description": "Top traders (and checking one address against the leaderboard) and share-card reverse-lookup.",
       "skills": [
         "vike-hl-top-traders",
-        "vike-hl-trader-profile",
         "vike-hl-position-match"
       ]
     },
@@ -69,18 +65,17 @@
     },
     {
       "title": "Polymarket",
-      "description": "Prediction-market discovery, single-market deep-dives, trader profiles, and smart-money leaderboards.",
+      "description": "Prediction-market discovery, single-market deep-dives, trader profiles, and smart-money signals with a market overview.",
       "skills": [
         "vike-polymarket-markets",
         "vike-polymarket-market-detail",
         "vike-polymarket-trader",
-        "vike-polymarket-smart-money",
-        "vike-polymarket-screener"
+        "vike-polymarket-smart-money"
       ]
     },
     {
       "title": "Alerts",
-      "description": "Create, list, edit, delete price + flow alerts; register HTTPS webhooks with HMAC delivery.",
+      "description": "Create, list, edit, delete on-chain transfer alerts (USD thresholds per token); register HTTPS webhooks with HMAC delivery.",
       "skills": [
         "vike-alerts-setup",
         "vike-alerts-webhook"

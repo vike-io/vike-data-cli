@@ -1,74 +1,68 @@
 ---
 name: vike-smart-money-discovery
-description: Multi-signal smart money discovery — find wallets currently accumulating a token, ranked by realized PnL track record. Use when the user asks "is smart money buying X" / "find smart money on Y chain" / "any alpha wallets in Z".
+description: Smart-money discovery on Ethereum — which tokens the smart-money cohort is flowing into, and who the biggest net buyers of one token are. Use when the user asks "is smart money buying X" / "find smart money" / "any alpha wallets in Z".
 allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-smart-money-discovery
 
-Composite playbook — combines wallet leaderboards + token-side buyer list + label inspection.
+Composite playbook built on `token screener --smart-money-only`. Smart money here means the cohort behind the screener's `smart_inflow` and `--smart-money-only`, which exist for **Ethereum only** (a 400 on bsc and base).
+
+**What this can and cannot say.** It can say which tokens the cohort is flowing into and how much, and who the biggest net buyers of a token are. It cannot list which of those buyers belong to the cohort: no tool returns cohort membership. State that limit in the answer.
 
 ## Workflow
 
-### A. Top realized-PnL wallets on a chain
+### A. Which tokens is the cohort buying?
 
 ```bash
-vike-data wallet discover --sort pnl --window 90d --chain ethereum --size 20 --json
+vike-data token screener --chain ethereum --window 7d --sort smart_inflow --smart-money-only --limit 100 --json
 ```
 
-Keep only rows where:
-- `realized_pnl_usd > 100_000` (real conviction, not noise)
-- `tx_count > 20` (not a single lucky trade)
-- `label` is empty OR not a known CEX (these are real wallets, not exchanges)
+- Skip the row `0x0000000000000000000000000000000000000000`: it is the native coin, not a token you can drill into.
+- Rows carry `token_address` (the `symbol` is often blank): identify tokens by address, and resolve names with `vike-data token search`.
+- If the user named a token: resolve it (`vike-data token search <symbol> --limit 3 --json`) and look for its `token_address` in the rows. Present means the cohort moved it; absent from the top 100 means no visible cohort inflow in that window.
 
-That set = your "smart money universe" for the next step.
-
-### B. Cross-reference with a specific token
-
-If the user asks about a specific token, resolve it first:
+### B. Who is accumulating it?
 
 ```bash
-vike-data token search <symbol> --chain <chain> --limit 3 --json
+vike-data token transfers <addr> --tab bought --period 7d --json
 ```
 
-Then list its recent buyers:
+The list is the **top 10 by volume**, not the cohort. **Rank on `net_tokens`**, not `bought`: `bought` counts every inbound transfer, flash-loan and router round trips included. Keep rows with a clearly positive `net_tokens`; drop rows where `net_tokens` is near zero.
+
+### C. Strip the intermediaries
 
 ```bash
-vike-data token transfers <addr> --tab bought --period 7d --chain <chain> --json
+vike-data wallet batch <addr1> <addr2> ... --json
 ```
 
-**Intersect** the buyer addresses with your smart-money universe from step A. Any overlap = a smart-money wallet currently accumulating this token.
+Drop rows labelled `cex`, `dex`, router or contract. What is left are the real net buyers of the token.
 
-### C. Profile each match
-
-For every overlap address, run:
+### D. Profile the survivors (cap at 5)
 
 ```bash
 vike-data wallet summary <addr> --json
 ```
 
-Report:
-- Address
-- Known label (if any)
-- 90d realized PnL
-- 7d net flow on this token
-- 30d total volume
+Report address, label (if any), the token's `net_tokens` and `net_usd` over the window, and the wallet's 30d volume.
 
 ## Verdict template
 
-> **Smart-money take on $TOKEN:** N of top-20 90d-PnL wallets (>$100k realized) bought $TOKEN in the last 7 days. Strongest names: `<addr1> (+$X PnL, label?)`, `<addr2> ...`. Aggregate net flow into $TOKEN from this cohort: $Y. **Read: accumulation / churn / no-signal.**
+> **Smart-money take on $TOKEN (7d):** the cohort's `smart_inflow` into $TOKEN is $Y (screener rank #R by `smart_inflow`). Among the top-10 net buyers, N survive the label filter; the largest are `<addr1> (net_tokens X, label?)`. **Read: accumulation / churn / no-signal.** The cohort members themselves are not listed by any tool.
 
 ## Anti-patterns
 
-- Don't accept any wallet labeled as a CEX (binance/coinbase/bybit/etc.) as "smart money" — they're aggregators.
-- Don't lower the PnL threshold to <$50k just to find more matches; below that, signal-to-noise is poor.
-- Single-token wallets (`unique_tokens < 3`) are usually airdrop-flippers, not strategic.
+- Don't rank wallets by `wallet discover --sort pnl` and intersect them with a token's buyers: `realized_pnl` is stored wrongly for many wallets and is only an ordering key, and the overlap with a 10-row buyer list is almost always empty.
+- Don't accept any wallet labeled as a CEX (binance/coinbase/bybit/etc.) as "smart money": they are aggregators.
+- Don't use `--window 24h` for the screen: smart money usually positions before the 24h window.
+- Single-token wallets (`tokens_traded < 3` in `wallet summary`) are usually airdrop-flippers, not strategic.
 
 ## Cost note
 
-3 calls per discovery: 1× `wallet discover`, 1× `token transfers`, then 1× `wallet summary` per match (cap at 5).
+Screener (3 credits) + `token transfers` (2) + `wallet batch` (2) + up to 5 × `wallet summary` (2).
 
 ## Pairs well with
 
+- `vike-token-screener` for the filters and the column meanings
 - `vike-token-research` for the price/flow context
-- `vike-perp-funding-arb` if the token has a perp listing (positioning bias)
+- `vike-perp-funding` if the token has a perp listing (positioning bias)

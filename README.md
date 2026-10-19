@@ -140,7 +140,7 @@ Every data command is one `tools/call` to the MCP server. `vike-data <group> --h
 | `vike-data token` | `search`, `transfers`, `screener`, `holders` (`--chain ethereum\|bsc\|base`) | `token_search`, `token_transfers`, `token_screener`, `token_holders` |
 | `vike-data wallet` | `summary`, `transactions` (`txs`), `compare`, `trace`, `batch`, `counterparties`, `pnl-history`, `balances`, `ens`, `discover` | `wallet_summary`, `wallet_transactions`, `wallet_compare`, `wallet_trace`, `wallet_batch_labels`, `wallet_counterparties`, `wallet_pnl_history`, `wallet_token_balances`, `wallet_ens`, `wallet_discover` |
 | `vike-data labels <address>` | multi-source label provenance for one wallet | `wallet_label_provenance` |
-| `vike-data perp` | `top-traders`, `find-position` (Hyperliquid); `funding`, `spreads` (cross-venue funding rates and spot-perp spreads) | `hl_perp_top_traders`, `hl_position_match`, `perp_funding`, `perp_spreads` |
+| `vike-data perp` | `top-traders`, `find-position` (Hyperliquid); `funding`, `spreads` (cross-venue funding rates and perp-vs-perp price gaps) | `hl_perp_top_traders`, `hl_position_match`, `perp_funding`, `perp_spreads` |
 | `vike-data candles` | `hl <symbol>` (Hyperliquid perp or spot, from executed fills), `polymarket <token_id>` (one outcome token) | `hl_ohlcv`, `polymarket_ohlcv` |
 | `vike-data polymarket` (`pm`) | `markets`, `market <condition_id>`, `wallet <address>`, `smart-money` | `polymarket_markets`, `polymarket_market_detail`, `polymarket_wallet`, `polymarket_smart_money` |
 | `vike-data alerts` | `list`, `channels`, `create`, `edit`, `delete`, `register-webhook` (email, Discord, or an HTTPS webhook, HMAC-signed when you set a secret) | `alerts_*` |
@@ -173,7 +173,7 @@ Downloads go to `./vike-archive/`.
 
 ## For AI agents
 
-This package ships **36 skill playbooks** under [`skills/`](skills/): markdown files an AI coding
+This package ships **31 skill playbooks** under [`skills/`](skills/): markdown files an AI coding
 agent loads so it knows when and how to call each command. [`skills.sh.json`](skills.sh.json) groups
 them by domain (Tokens, Wallets, CEX perps, Hyperliquid perps, Candles, Polymarket, Alerts). The
 entry point is the umbrella skill `vike`, which routes a question to the specialised skill.
