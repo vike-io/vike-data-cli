@@ -10,13 +10,13 @@ allowed-tools: Bash(vike-data:*)
 
 ```bash
 vike-data wallet counterparties <address>
-  [--chain ethereum|bsc|base]
+  [--chain ethereum|bsc|base|hyperevm]
   [--window 24h|7d|30d|90d|180d|all]
   [--limit N]   (max 50)
   [--json]
 ```
 
-`--chain base` is accepted, but per-wallet transfer data is documented for Ethereum and BSC: treat an empty Base result as "not covered", not "no activity".
+Chains: `ethereum`, `bsc`, `base`, `hyperevm`. `entity` / `wallet_type` come from THAT chain's label table (empty string when unlabelled). A wallet's `wallet summary` names the chain it was most recently active on; run this per chain for the others.
 
 ## Example
 

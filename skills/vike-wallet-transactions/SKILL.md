@@ -10,7 +10,7 @@ allowed-tools: Bash(vike-data:*)
 
 ```bash
 vike-data wallet transactions <address>     # alias: vike-data wallet txs
-  [--chain ethereum|bsc|base]
+  [--chain ethereum|bsc|base|hyperevm]
   [--direction in|out|all]
   [--days N]   (max 365)
   [--limit N]  (max 500)
@@ -19,7 +19,7 @@ vike-data wallet transactions <address>     # alias: vike-data wallet txs
   [--json]
 ```
 
-`--chain base` is accepted, but per-wallet transfer data is documented for Ethereum and BSC: treat an empty Base result as "not covered", not "no activity".
+Chains: `ethereum`, `bsc`, `base`, `hyperevm`. The same address has separate histories per chain: `wallet summary` only shows the one it was most recently active on, so pass `--chain` for the others.
 
 ## Examples
 

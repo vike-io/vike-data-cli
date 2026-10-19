@@ -1,12 +1,12 @@
 ---
 name: vike-smart-money-discovery
-description: Smart-money discovery on Ethereum — which tokens the smart-money cohort is flowing into, and who the biggest net buyers of one token are. Use when the user asks "is smart money buying X" / "find smart money" / "any alpha wallets in Z".
+description: Smart-money discovery on Ethereum — which tokens the smart-money cohort is flowing into right now, and who the biggest net buyers of one token are. Use when the user asks "which tokens is smart money buying" / "find smart money" / "any alpha wallets in Z" / "is smart money buying X this week" (for the trend over time use vike-token-smart-money-trend).
 allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-smart-money-discovery
 
-Composite playbook built on `token screener --smart-money-only`. Smart money here means the cohort behind the screener's `smart_inflow` and `--smart-money-only`, which exist for **Ethereum only** (a 400 on bsc and base).
+Composite playbook built on `token screener --smart-money-only`. Smart money here means the cohort behind the screener's `smart_inflow` and `--smart-money-only`, which exist for **Ethereum only** (a 400 on bsc, base and hyperevm).
 
 **What this can and cannot say.** It can say which tokens the cohort is flowing into and how much, and who the biggest net buyers of a token are. It cannot list which of those buyers belong to the cohort: no tool returns cohort membership. State that limit in the answer.
 
@@ -63,6 +63,7 @@ Screener (3 credits) + `token transfers` (2) + `wallet batch` (2) + up to 5 × `
 
 ## Pairs well with
 
+- `vike-token-smart-money-trend` for whether the cohort is entering, holding or exiting ONE token over 24h / 7d / 30d / 90d
 - `vike-token-screener` for the filters and the column meanings
 - `vike-token-research` for the price/flow context
 - `vike-perp-funding` if the token has a perp listing (positioning bias)

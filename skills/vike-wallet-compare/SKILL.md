@@ -10,13 +10,13 @@ allowed-tools: Bash(vike-data:*)
 
 ```bash
 vike-data wallet compare <address_a> <address_b>
-  [--chain ethereum|bsc|base]
+  [--chain ethereum|bsc|base|hyperevm]
   [--window 24h|7d|30d|90d|180d|all]
   [--limit N]   (max 50)
   [--json]
 ```
 
-Compares exactly two wallets. `--chain base` is accepted, but per-wallet transfer data is documented for Ethereum and BSC: treat an empty Base result as "not covered", not "no shared activity".
+Compares exactly two wallets on one chain (`ethereum`, `bsc`, `base` or `hyperevm`; shared-counterparty labels come from that chain's own label table). Busy wallets are slow: a pair of market-maker wallets took about 20 s at `--window 30d`. For the full verdict with exchanges and routers removed, use `vike-wallets-related`.
 
 ## Output
 

@@ -12,7 +12,7 @@ allowed-tools: Bash(vike-data:*)
 vike-data token transfers <token_address>
   [--tab bought|sold]            # default sold; ONE side per call
   [--period 1h|24h|7d|30d]       # default 24h
-  [--chain ethereum|bsc|base|all]
+  [--chain ethereum|bsc|base|hyperevm|all]
   [--json]
 ```
 
@@ -50,3 +50,4 @@ There is no `qty`, `usd_value`, `label` or `tx_count` column. To label an addres
 
 - `vike-data wallet batch <addr...>` to label the rows and drop CEX / router rows
 - `vike-data wallet summary <addr>` to profile any interesting buyer/seller
+- `vike-token-smart-money-trend` to put the buyers next to the smart-money cohort's flow over time

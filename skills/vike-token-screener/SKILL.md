@@ -10,7 +10,7 @@ allowed-tools: Bash(vike-data:*)
 
 ```bash
 vike-data token screener
-  [--chain ethereum|bsc|base]
+  [--chain ethereum|bsc|base|hyperevm]
   [--window 24h|7d|30d|90d]
   [--sort volume|net_inflow|holders|smart_inflow]
   [--limit N]                (default 20, max 100)
@@ -20,7 +20,7 @@ vike-data token screener
   [--json]
 ```
 
-`--smart-money-only` and `--sort smart_inflow` exist for `--chain ethereum` only; on `bsc` and `base` they are a 400.
+`--smart-money-only` and `--sort smart_inflow` exist for `--chain ethereum` only; on `bsc`, `base` and `hyperevm` they are a 400 ("smart_money_only / sort=smart_inflow is available for chain=ethereum only").
 
 ## Examples
 
@@ -76,7 +76,7 @@ vike-data token screener --min-volume 1000000 --min-holders 100 --sort net_inflo
 - Don't use `--window 24h --sort smart_inflow` for hot-new-token discovery: smart money usually positions before the 24h window; try `--window 7d`.
 - Don't omit `--min-holders` when sorting by `holders`: junk airdrops with 50,000 one-transaction addresses dominate the top otherwise.
 - Don't omit `--min-volume` when sorting by `net_inflow`: tiny tokens with $100 net flow can rank high in % terms.
-- Don't use `--smart-money-only` on `bsc` or `base`: it is a 400, not an empty result.
+- Don't use `--smart-money-only` on `bsc`, `base` or `hyperevm`: it is a 400, not an empty result.
 
 ## Cost note
 
@@ -87,3 +87,4 @@ vike-data token screener --min-volume 1000000 --min-holders 100 --sort net_inflo
 - `vike-data token holders <addr>`: who moves the most of a flagged token
 - `vike-data token transfers <addr>`: WHO is buying/selling once a token is interesting (read `net_tokens`)
 - `vike-smart-money-discovery`: composite playbook starting from this screen
+- `vike-token-smart-money-trend`: the cohort's flow in ONE token across 24h / 7d / 30d / 90d, differenced

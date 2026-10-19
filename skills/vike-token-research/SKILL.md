@@ -54,5 +54,6 @@ Step 1: free. Step 2: 2 calls × 2 credits. Step 3 labels: 2 credits. Total ≈ 
 
 ## Pairs well with
 
-- `vike-smart-money-discovery` to see whether the smart-money cohort is flowing into the token
+- `vike-smart-money-discovery` to see whether the smart-money cohort is flowing into the token; `vike-token-smart-money-trend` for its direction over time
+- `vike-token-holder-diligence` for who sits at the top (exchanges, contracts, fresh wallets, risk flags)
 - `vike-perp-funding` if the token has a perp listing (BTC/ETH/SOL/major alts)

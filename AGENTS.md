@@ -23,8 +23,11 @@ src/
   commands/             # one file per command group
     auth.js             # login/logout (registerWhoami exists but is not registered in index.js)
     token.js            # token search|transfers|screener|holders
-    wallet.js           # wallet summary|discover
-    perp.js             # perp funding|spreads|top-traders
+    wallet.js           # wallet summary|transactions|compare|trace|batch|counterparties|pnl-history|balances|ens|discover
+    perp.js             # perp funding|spreads|top-traders|find-position|open-interest|long-short
+    hl.js               # hl cohort-metrics|segments|wallet|activity|leaderboard|liquidations|market|builders
+    polymarket.js       # polymarket markets|market|wallet|smart-money|tape|orderbook|stats|settlement|archive
+    tool-command.js     # addTool(): one thin command per MCP tool, flags forwarded as snake_case params
     candles.js          # candles hl|polymarket (Hyperliquid + Polymarket OHLCV)
     alerts.js           # alerts CRUD + channels
     init.js             # interactive setup
@@ -39,7 +42,7 @@ skills/
 ## When adding a new command
 
 1. Pick or create the right file under `src/commands/`. Group by domain.
-2. Use `callTool('<mcp_tool_name>', { ... })` from `mcp-client.js`. Don't write a fresh HTTP client.
+2. Use `callTool('<mcp_tool_name>', { ... })` from `mcp-client.js`. Don't write a fresh HTTP client. For a tool that is just a set of parameters, `addTool()` in `src/commands/tool-command.js` registers the whole command (flags become snake_case params, unset flags are not sent); `src/commands/hl.js` is the example.
 3. Wrap user-input arrays/strings — the MCP server already does defensive coercion, but the CLI should be readable.
 4. Add `--json` flag (use `emit(result, opts)` from `format.js`). Pipe detection is automatic.
 5. Add a `SKILL.md` under `skills/vike-<command>/` describing when to use it. Follow the existing structure: frontmatter → command → examples → reading tips → anti-patterns → pairs-well-with.

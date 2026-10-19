@@ -7,6 +7,7 @@ import { registerAlerts } from './commands/alerts.js';
 import { registerPolymarket } from './commands/polymarket.js';
 import { registerLabels } from './commands/labels.js';
 import { registerCandles } from './commands/candles.js';
+import { registerHl } from './commands/hl.js';
 // New wallet subcommands (counterparties, pnl-history, balances, ens) are
 // added under registerWallet.
 import { registerInit } from './commands/init.js';
@@ -64,6 +65,7 @@ registerAlerts(program);
 registerPolymarket(program);
 registerLabels(program);
 registerCandles(program);
+registerHl(program);
 
 const _parseT0 = Date.now();
 program.parseAsync(process.argv)

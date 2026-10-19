@@ -1,12 +1,12 @@
 ---
 name: vike-wallet-portfolio
-description: Composite wallet view — combines ENS + labels + token balances + recent flow + top counterparties in one report. Use when the user gives a wallet address and asks for a complete picture ("full report on X" / "everything about this wallet" / "wallet snapshot" / "who is this wallet").
+description: Holdings-and-activity snapshot of one wallet — token balances across Ethereum, BSC, Base and HyperEVM, recent flow, top counterparties, ENS and labels in one report. Use when the user gives a wallet address and asks for a complete picture ("full report on X" / "everything about this wallet" / "wallet snapshot" / "what does this wallet hold and do").
 allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-wallet-portfolio
 
-Multi-call playbook for a complete wallet snapshot. It reports what the tools return: identity, token balances, flows and counterparties. There is **no DeFi-position data** in any tool, so never report protocol positions.
+Multi-call playbook for a complete wallet snapshot. It reports what the tools return: identity, token balances, flows and counterparties. There is **no DeFi-position data** in any tool, so never report protocol positions. For identity alone ("who is this", "is it an exchange") use `vike-wallet-who-is`.
 
 ## Workflow (run in parallel where possible)
 
@@ -14,21 +14,23 @@ Multi-call playbook for a complete wallet snapshot. It reports what the tools re
 ADDR=0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
 
 vike-data wallet ens     $ADDR --json &     # 1 credit
-vike-data labels         $ADDR --json &     # 1 credit
-vike-data wallet summary $ADDR --json &     # 2 credits
-vike-data wallet balances $ADDR --json &    # 3 credits (Ethereum and BSC)
-vike-data wallet counterparties $ADDR --window 30d --limit 10 --json &   # 2 credits
+vike-data labels         $ADDR --json &     # 1 credit (Ethereum label sources)
+vike-data wallet summary $ADDR --json &     # 2 credits - names its `chain`
+vike-data wallet balances $ADDR --json &    # 3 credits - all four chains: about 30 s, add --chains to narrow
 wait
+vike-data wallet counterparties $ADDR --chain <summary.chain> --window 30d --limit 10 --json   # 2 credits
 ```
 
-Then label the counterparties in one call: `vike-data wallet batch <cp1> <cp2> ... --json` (2 credits). A top counterparty that is a CEX tells you which exchange the wallet uses; an unlabelled high-volume counterparty is worth a `wallet compare` or `wallet trace`.
+Then label the counterparties with an empty `entity` in one call: `vike-data wallet batch <cp1> <cp2> ... --chain <summary.chain> --json` (2 credits). A top counterparty that is a CEX tells you which exchange the wallet uses; an unlabelled high-volume counterparty is worth a `wallet compare` or `wallet trace`.
+
+**The summary and the balances can sit on different chains.** `wallet summary` covers the ONE chain the wallet was most recently active on (its `chain` field); `wallet balances` lists every chain, each holding with its own `chain`. Report them side by side and say which chain the flows are for.
 
 ## Report template
 
 > **`<ENS or 0x...>` — wallet snapshot**
 > - **Identity:** `<ens.eth>` · `<entity (from labels)>` · `<wallet_type>` (confidence: `<H/M/L>`). If `labels` says `found: false`, say "not in our label table".
-> - **Priced token holdings:** `$X` (floor: unpriced tokens and the native coin are excluded from the total) across `<chains_scanned>`. Top 3 by USD: `<symbol1 $X>`, ... Native balance: `<n ETH/BNB>`.
-> - **30d flow:** `+/-$Z` net (`summary["30d"].net_flow`), one chain.
+> - **Priced token holdings:** `$X` (floor: unpriced tokens and the native coin are excluded from the total; on Base and HyperEVM only mapped and priced tokens show) across `<chains_scanned>`. Top 3 by USD: `<symbol1 $X on chain>`, ... Native balance: `<n ETH/BNB/HYPE>`.
+> - **30d flow on `<chain>`:** `+/-$Z` net (`summary["30d"].net_flow`), one chain.
 > - **Activity:** `<tx_count>` transfers in 30d, `<tokens_traded>` tokens traded all-time.
 > - **Top counterparties:** `<entity or address>` · `$volume`, ...
 > - **Vibe check:** `<saver / trader / farmer / institutional / inactive / fresh>`
@@ -51,9 +53,11 @@ Then label the counterparties in one call: `vike-data wallet batch <cp1> <cp2> .
 
 ## When to use a focused skill instead
 
+- "Who is X" / "is it an exchange" → `vike-wallet-who-is`
 - "Just labels for X" → `vike-wallet-label-provenance`
 - "What does X hold" → `vike-wallet-balances`
 - "Top counterparties of X" → `vike-wallet-counterparties`
+- "X's Hyperliquid account" → `vike-hl-trader-profile`
 
 ## Pairs well with
 

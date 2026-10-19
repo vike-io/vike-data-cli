@@ -1,6 +1,7 @@
 import { callTool } from '../mcp-client.js';
 import { emit, emitError } from '../format.js';
 import { parseInt10 } from '../util.js';
+import { addTool } from './tool-command.js';
 
 export function registerPerp(program) {
   const cmd = program
@@ -30,6 +31,27 @@ export function registerPerp(program) {
         emit(r, opts);
       } catch (err) { emitError(err, opts); }
     });
+
+  const venue = [
+    ['--exchange <e>', 'One venue, lower case (e.g. binance). Omit for all.'],
+    ['--hours <n>', 'Omit for the latest print per venue; 1-168 for an hourly series'],
+  ];
+
+  addTool(cmd, 'open-interest', {
+    tool: 'perp_open_interest',
+    arg: 'symbol',
+    desc: 'Open interest of one symbol per venue (oi_usd is USD notional): latest print or hourly series',
+    options: venue,
+    ints: ['hours'],
+  });
+
+  addTool(cmd, 'long-short', {
+    tool: 'perp_long_short',
+    arg: 'symbol',
+    desc: 'Long/short share of one symbol per venue (each venue counts something different: read `basis`)',
+    options: venue,
+    ints: ['hours'],
+  });
 
   cmd
     .command('find-position')

@@ -13,10 +13,12 @@ vike-data wallet discover
   [--window 24h|7d|30d|90d|all]
   [--sort volume|inflow|outflow|net_flow|tx_count|pnl]
   [--order asc|desc]
-  [--chain ethereum|bsc]
+  [--chain ethereum|bsc|base|hyperevm]
   [--size N]      # default 10, max 20
   [--json]
 ```
+
+**`base` and `hyperevm` serve `--window all` only** (their 24h / 7d / 30d / 90d tables are not refreshed): any other window there is an error, and the default window for them is `all`. `ethereum` and `bsc` take every window (default `30d`).
 
 ## When to use
 
@@ -41,7 +43,7 @@ There is **no label column** and no `*_usd` suffix. To name the wallets, pass th
 - **`realized_pnl` is a ranking key, not a dollar figure.** Stored values are wrong for many wallets (a measurement found 233 of 500 sampled Ethereum leaderboard wallets at 10× or more above the rebuilt value, and the top rows can show a profit thousands of times the wallet's own volume). Use `--sort pnl` only to order wallets against each other, never quote `realized_pnl`, and never call `pnl_available: 1` a guarantee. It is computed from on-chain transfers; Hyperliquid PnL is a different dataset (`vike-data perp top-traders`, realized PnL only: open positions are not included).
 - `first_seen` here is not a lifetime first-seen (it disagrees with `wallet summary`); read it as "first seen in this dataset".
 - Labeled wallets first: after `wallet batch`, `entity = "binance"` / `wallet_type = "cex"` means a CEX hot or cold wallet, not a discretionary trader. Filter those out if the user wants "real traders".
-- Top volume wallets are almost always bots, routers and venues. `net_flow` is the more informative sort for "who is accumulating", and even then check the wallet type.
+- Top volume wallets are almost always bots, routers and venues. `net_flow` is the more informative sort for "who is accumulating", and even then check the wallet type. On `base` the top by volume showed $10.9 trillion of lifetime volume over 183 million transfers for one address (a pool or bot), and on `hyperevm` single addresses with billions of net flow: label the rows (`wallet batch --chain`) before reading any of them as a trader.
 
 ## Anti-patterns
 

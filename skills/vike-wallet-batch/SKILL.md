@@ -10,7 +10,7 @@ allowed-tools: Bash(vike-data:*)
 
 ```bash
 vike-data wallet batch <addr1> <addr2> <addr3> ...
-  [--chain ethereum|bsc|base]     # default ethereum; labels and flows are read from THAT chain's tables
+  [--chain ethereum|bsc|base|hyperevm]     # default ethereum; labels and flows are read from THAT chain's tables
   [--json]
 ```
 
@@ -38,7 +38,7 @@ One row per INPUT address (preserves input order — useful when joining back to
 
 - `--chain` picks the label table and the 30-day flow table. Before 2026-10-19 it was accepted and ignored (`bsc` and `base` returned Ethereum labels), so earlier results for those chains are Ethereum's.
 - **The four 30-day fields (`net_30d_usd`, `volume_30d_usd`, `tx_30d`, `tokens_30d_count`) are `null`, not 0,** where we hold no flow data: every `bsc` address, and any address we have no label for (`found: false`). Don't report null as zero activity.
-- `found: false` = the address is not in that chain's label table. It is not proof the wallet is new or clean.
+- `found: false` = the address is not in that chain's label table. It is not proof the wallet is new or clean. `hyperevm` has labels for only a few hundred wallets, so most `hyperevm` rows will be `found: false`.
 
 ## Reading
 

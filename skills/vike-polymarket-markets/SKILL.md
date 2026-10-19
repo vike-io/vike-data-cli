@@ -28,7 +28,7 @@ One row per market, ranked by **24h volume only** (there is no liquidity or vola
 
 `condition_id`, `slug`, `question`, `end_date`, `ended` (true once `end_date` has passed), `volume_24h` (USD), `liquidity`, `latest_ts`, and `outcomes`: a list with one entry per outcome leg, each with `token_id`, `outcome` (Yes / No or the leg's name), `mid`, `bid`, `ask`, `snap_vol_24h`.
 
-The `token_id` of each leg is what `vike-data candles polymarket <token_id>` needs, so candles need no extra detail call.
+The `token_id` of each leg is what `vike-data candles polymarket <token_id>`, `polymarket orderbook`, `polymarket stats` and `polymarket tape` need, so none of them needs a detail call. Read the leg by its `outcome` label, not by position: live rows listed `No` before `Yes` and `Down` before `Up`. The `condition_id` is the other id (for `polymarket market` and `polymarket settlement`); never pass it where a token id is wanted.
 
 ## Reading the data
 
@@ -45,5 +45,6 @@ The `token_id` of each leg is what `vike-data candles polymarket <token_id>` nee
 ## Pairs well with
 
 - `vike-polymarket-market-detail` — deep-dive on one market once you have its condition_id
+- `vike-pm-market-diligence` — spread, depth, large prints, holders and on-chain resolution of one market
 - `vike-polymarket-smart-money` — which markets cohort wallets are buying, and a full market overview
 - `vike-candles` — probability history for a leg's `token_id`

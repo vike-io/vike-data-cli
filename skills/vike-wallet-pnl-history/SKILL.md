@@ -10,12 +10,12 @@ allowed-tools: Bash(vike-data:*)
 
 ```bash
 vike-data wallet pnl-history <address>
-  [--chain ethereum|bsc|base]
+  [--chain ethereum|bsc|base|hyperevm]
   [--days N]   (max 365, default 30)
   [--json]
 ```
 
-`--chain base` is accepted, but per-wallet transfer data is documented for Ethereum and BSC: treat an empty Base result as "not covered", not "no activity".
+Chains: `ethereum`, `bsc`, `base`, `hyperevm`, one chain per call.
 
 ## Output
 

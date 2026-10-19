@@ -1,87 +1,72 @@
 ---
 name: vike-hl-top-traders
-description: Rank top Hyperliquid perp traders by PnL / ROI / win rate / volume / trade count / drawdown across a window, and check whether one HL address is on that leaderboard. Use when the user asks "top HL traders" / "best Hyperliquid wallets" / "HL leaderboard" / "is this trader any good" / "profile this address" / "what's this wallet's HL track record".
+description: Rank Hyperliquid perp traders by PnL / ROI / win rate / volume / trade count / drawdown over a window, either the short top-20 list or the full leaderboard with Calmar, profit factor, streaks, cohort filters, deep paging and PnL net of deposits. Use when the user asks "top HL traders" / "best Hyperliquid wallets" / "HL leaderboard" / "who made the most on Hyperliquid this week" / "top traders net of deposits".
 allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-hl-top-traders
 
-## Command
+Two rankings over the same wallets. Pick by the question:
+
+| Need | Command |
+|---|---|
+| a quick top 20 | `vike-data perp top-traders` (2 credits) |
+| more than 20 rows, paging, Calmar / profit factor / streaks, a cohort filter, a sort on any of 20 keys, PnL that excludes deposits | `vike-data hl leaderboard` (1 credit) |
+| one specific address | `vike-hl-trader-profile` |
+
+## `perp top-traders`
 
 ```bash
 vike-data perp top-traders
-  [--window 1d|7d|30d|all]
-  [--sort pnl|roi|win_rate|volume|trade_count|drawdown]
-  [--order asc|desc]
-  [--min-trades N]       # default 3; 0-2 are treated as 3
-  [--min-win-rate P]     # percent, 0-100
-  [--min-volume USD]
-  [--size N]             # default 10, max 20
+  [--window 1d|7d|30d|all] [--sort pnl|roi|win_rate|volume|trade_count|drawdown] [--order asc|desc]
+  [--min-trades N]       # default 3; 0-2 are raised to 3
+  [--min-win-rate P]     # PERCENT 0-100
+  [--min-volume USD] [--size N]   # default 10, max 20, no paging
   [--json]
 ```
-
-## Common queries
 
 | Question | Flags |
 |---|---|
 | "Top HL traders this week" | `--window 7d --sort pnl` |
-| "Best ROI traders last 30d w/ >=10 trades" | `--sort roi --min-trades 10` |
-| "Sharpshooters: win rate >75% min $1M vol" | `--sort win_rate --min-win-rate 75 --min-volume 1000000` |
-| "Most active traders today" | `--window 1d --sort trade_count` |
-| "Smallest drawdown winners" | `--sort drawdown --order asc --min-trades 20` |
+| "Best ROI last 30d with >=10 trades" | `--sort roi --min-trades 10` |
+| "Win rate over 75%, min $1M volume" | `--sort win_rate --min-win-rate 75 --min-volume 1000000` |
+| "Most active today" | `--window 1d --sort trade_count` |
 
-## Output
+Output `{ "traders": [...], "total": N }`; each trader: `address`, `total_realized_pnl` (USD), `roi_pct`, `win_rate_pct`, `long_win_rate_pct`, `short_win_rate_pct`, `win_count`, `loss_count`, `trade_count`, `total_volume` (USD), `long_pnl`, `short_pnl`, `max_drawdown_pct`, `account_value` (USD), `avg_leverage`. All `*_pct` are percents (`12.5` = 12.5%). `avg_leverage` reads 0: ignore it. Pass an exact `--sort`: a typo silently falls back to PnL.
 
-An object `{ "traders": [...], "total": N }`; each trader:
-
-`address`, `total_realized_pnl` (USD), `roi_pct`, `win_rate_pct`, `long_win_rate_pct`, `short_win_rate_pct`, `win_count`, `loss_count`, `trade_count`, `total_volume` (USD), `long_pnl`, `short_pnl`, `max_drawdown_pct`, `account_value` (USD), `avg_leverage`.
-
-All `*_pct` fields are percents: `12.5` means 12.5%. (Before 2026-10-19 `roi_pct` and `max_drawdown_pct` came back 100× too large; a transcript showing a 1,750% ROI is from that period.) `avg_leverage` is not populated (reads 0): ignore it. There is no `pnl_usd` and no `max_drawdown_usd`.
-
-## Reading
-
-- **`roi_pct` is realized only.** It is the window's realized PnL divided by the wallet's CURRENT account value. Open positions are not counted, and a wallet that has since withdrawn most of its equity looks better than it was (and a recent deposit makes it look worse).
-- **`max_drawdown_pct` is account-level and all-time**, built from the account's hourly equity history. It does not change with `--window`.
-- **Windows are UTC days:** `1d`, `7d`, `30d` mean today plus the previous 1, 7 or 30 days; `all` is the last 365 days.
-- **`trade_count` counts completed trades only**, filed under the UTC day the position opened. A trade still open, or opened before the window and closed inside it, is not counted, so a wallet's count here differs from a per-wallet trade summary (which counts both).
-- A wallet with 90% win rate on 4 trades is statistical noise. Min trades 10–20 for any "skill" claim.
-- Top by PnL ≠ top by ROI. Whales win big in $ but small in % terms; ROI sort surfaces smaller-account discretionary skill.
-- The leaderboard rewards survivors: wallets that blew up don't appear, so the PnL distribution is right-skewed.
-
-## Is this specific address any good?
-
-There is **no per-wallet Hyperliquid command or tool** yet, and `top-traders` cannot filter by address. The only check is to scan the leaderboard and look for the address:
+## `hl leaderboard`
 
 ```bash
-vike-data perp top-traders --window 30d --sort pnl --size 20 --json
-vike-data perp top-traders --window 7d  --sort pnl --size 20 --json
-vike-data perp top-traders --window 30d --sort roi --min-trades 10 --size 20 --json
-vike-data perp top-traders --window 30d --sort win_rate --min-trades 10 --size 20 --json
+vike-data hl leaderboard
+  [--view ranking|flow_adjusted] [--window 1d|7d|30d|all]
+  [--sort pnl|roi|win_rate|volume|trades|calmar|profit_factor|expectancy|max_drawdown|current_drawdown|win_streak|loss_streak|fees|account_value|...]  # 20 keys; an unknown one is refused
+  [--order asc|desc] [--cohort <label> --axis size|pnl|pnl_abs]
+  [--min-trades N] [--min-win-rate F] [--min-volume USD]   # win rate is a FRACTION: 0.6 = 60%; 60 is refused
+  [--limit N]            # default 25, max 500; page with nextCursor -> --cursor (resend the same window/sort/order/axis/cohort)
+  [--json]
 ```
 
-- **Found** → report that row for that window and sort (all columns above). That is the whole profile you can give.
-- **Not found** → say "not in the top 20 for this window and sort". Only the top 20 of thousands of wallets ever shows, so absence says nothing about quality.
-- `vike-data wallet summary` has **no Hyperliquid data** (it reads on-chain transfers on one chain): don't present it as the HL profile. `vike-data labels <addr>` shows whether the address is a known entity.
-- The REST API has per-wallet Hyperliquid routes (`/v1/hyperliquid/wallets/{address}`, `.../trades/summary`), but no CLI command or MCP tool exposes them yet. Say so if the user needs fills, funding or per-trade history.
+Output `{ traders, totalCount, nextCursor }`; each trader has `rank`, `wallet`, `account_value`, `total_realized_pnl`, `cum_realized_pnl`, `roi`, `pnl_pct`, `total_volume`, `total_fee`, `trade_count`, `win_rate` (fraction), `long_win_rate`, `short_win_rate`, `long_pnl`, `short_pnl`, `profit_factor`, `expectancy`, `max_drawdown_pct`, `current_drawdown_pct`, `calmar_ratio`, `recovery_factor`, streaks, `avg_duration_seconds`, `size_cohort`, `pnl_cohort`, `pnl_cohort_tag`, `style_cohort_tag`. The key is `wallet` here, `address` on `perp top-traders`.
 
-Classification of a found wallet:
+- Prefer `pnl_pct` to `roi`: `roi` is unguarded (it reaches values like 4.8e10 on a near-empty account) while `pnl_pct` is `null` under $1 of equity.
+- `--view flow_adjusted` ranks FILLS-DERIVED trading PnL, which excludes deposits by construction, and adds `attributed`, `flow` and `flow_unbalanced`. It takes only `--window`, `--limit` and `--cursor` (any other flag is refused, not ignored), so there is no `--min-trades` and a wallet with 3 trades can top it: the live #1 for 30d was `account_value: 0`, 3 trades, `total_realized_pnl` +$8.5M while its own `attributed.trading_pnl_total` was -$119.6M. Check that the two agree in sign and size; when `flow_unbalanced` is true (a `send` in the window) the `attributed` and `flow` blocks are unreliable.
 
-| Pattern | Label |
-|---|---|
-| Top-20 PnL + high ROI + many trades + low drawdown | **Sharp** |
-| Top-20 PnL + low ROI + huge volume | **Whale** (size matters more than skill) |
-| High win rate on <10 trades | **Unverified — too few data points** |
-| One big trade dominates PnL (`win_count` small, PnL large) | **One-shot** (lucky directional bet) |
+## Reading (both)
+
+- **`roi` / `roi_pct` is realized only**: window realized PnL over the wallet's CURRENT account value. A wallet that withdrew looks better than it was; a fresh deposit makes it look worse.
+- **Drawdown is not trustworthy here.** `max_drawdown_pct` is account-level and all-time (not per window), and on the live 30-day PnL board (50+ trades) it read exactly `100.0` for 43 of the top 50 and 381 of the top 500, and above 100 (an impossible drawdown) for 4 and 40 (up to 1,824); `calmar_ratio` and `recovery_factor` derive from it. Don't rank or quote on drawdown, Calmar or recovery without that caveat; `current_drawdown_pct` is better behaved.
+- **Windows are UTC days**: `1d`, `7d`, `30d` mean today plus the previous 1, 7 or 30 days; `all` is the last 365 days.
+- **`trade_count` counts completed trades**, filed under the UTC day the position opened. `vike-hl-trader-profile`'s trade summary also counts open trades, so the two disagree by design.
+- A 90% win rate on 4 trades is noise: use 10-20 or more trades for any skill claim. Top by PnL is not top by ROI: whales win big in dollars, small in percent.
+- The board rewards survivors; a wallet outside the top rows says nothing about quality.
 
 ## Anti-patterns
 
-- Don't claim a wallet is "the best HL trader" from a 1d window. Anything < 30d is short-term.
-- Don't claim "this is one of the best HL traders" from win rate alone — need volume + trade count for context.
-- Pass an exact `--sort` value: a typo is not rejected, it silently falls back to a PnL ranking.
-- Don't describe a wallet outside the top 20 as bad.
+- Don't claim "the best HL trader" from a 1d window or from win rate alone.
+- Don't mix `win_rate_pct` (percent) with `win_rate` (fraction) in one table, or pass `60` where a fraction is expected.
+- Don't describe a wallet absent from a top list as bad.
 
 ## Pairs well with
 
-- `vike-hl-position-match` to find the wallet behind a share card first
-- `vike-perp-funding` to see whether the leaders are positioned against funding
-- `vike-candles` for the price action behind a period of PnL
+- `vike-hl-trader-profile` for one address, `vike-hl-position-match` to find a wallet from a share card
+- `vike-hl-cohort-positioning` for how the leaders as a group are positioned, `vike-perp-funding`, `vike-candles`

@@ -78,9 +78,10 @@ The response includes `tolerance_used` so the caller knows which band matched (`
 
 - Don't fabricate matches when the tool returns `match_count: 0`. Say "no open position matches that share card" — closed positions, post-card adds, or non-HL cards all produce empty results.
 - Don't strip the address when displaying — share-card investigations always want the full 0x...40hex (users copy-paste it).
-- Don't infer trader skill from a single share-card match. Use `vike-data perp top-traders` for leaderboard context (see `vike-hl-top-traders` for what it can and cannot say about one address).
+- Don't infer trader skill from a single share-card match. Profile the wallet with `vike-hl-trader-profile` (`vike-data hl wallet <address>`).
 
 ## Pairs well with
 
-- `vike-hl-top-traders` — check if the matched wallet is on a leaderboard. (`vike-data wallet summary` has no Hyperliquid data: it shows on-chain transfer activity on one chain only.)
+- `vike-hl-trader-profile` — track record, equity, open positions, funding and deposits of the matched wallet.
+- `vike-hl-top-traders` — where the wallet ranks. (`vike-data wallet summary` has no Hyperliquid data: it shows on-chain transfer activity on one chain only.)
 - `vike-wallet-label-provenance` — find out if the wallet is a known CEX/fund/MM rather than a retail trader.

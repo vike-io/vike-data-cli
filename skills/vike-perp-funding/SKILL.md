@@ -39,7 +39,7 @@ daily_pct = funding_rate × (24 / interval_h) × 100
 annualised_pct = daily_pct × 365
 ```
 
-`vol_24h_usd` is the venue's 24h perp notional: use it as the liquidity check.
+`vol_24h_usd` is the venue's 24h perp notional: use it as the liquidity check. A row with `vol_24h_usd` 0 and `next_ts` 0 is a halted or stale feed (live BTC: coinbase, which still shows a rate): leave it out of the comparison. `next_ts` is 0 on many healthy venues too (live: hyperliquid, bitget, mexc), so it alone proves nothing.
 
 ## Venue comparison (one symbol)
 
@@ -75,8 +75,11 @@ A funding arb at 0.4–1% daily is real. Anything much higher on a liquid pair i
 - Don't blindly pick the lowest-funding venue without checking `vol_24h_usd` — Hyperliquid funding looks great on small alts but the book can be thin.
 - Don't read `funding_rate` of an 8h venue against a 1h venue without normalising.
 - Don't promise a price comparison from this tool: for price gaps across venues use `vike-perp-overview` (`perp spreads`).
+- The arb list often leads with thin tokens (live: CT, UNITREE, H100). Run mode B and read `vol_24h_usd` on both legs before calling a row a trade.
+- Funding is the cost of carrying a position, not how crowded it is: for open interest and long/short per venue use `perp open-interest` / `perp long-short` (`vike-perp-overview`), and `vike-perp-crowding` for the combined read.
 
 ## Pairs well with
 
-- `vike-perp-overview` for cross-venue price gaps and the market snapshot
-- `vike-hl-top-traders` to see how Hyperliquid's best traders are doing
+- `vike-perp-overview` for cross-venue price gaps, open interest, long/short and the market snapshot
+- `vike-perp-crowding` to put a funding number next to open interest and positioning
+- `vike-hl-top-traders` to see how Hyperliquid's best traders are doing; `vike-hl-asset-briefing` for one Hyperliquid symbol
