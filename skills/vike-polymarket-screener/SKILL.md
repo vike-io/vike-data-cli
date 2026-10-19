@@ -1,7 +1,7 @@
 ---
 name: vike-polymarket-screener
 description: Polymarket market screener combining trending markets + smart-money flows + mispricings in one pass. Use when the user asks "give me a Polymarket overview" / "what's happening in prediction markets today".
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-polymarket-screener

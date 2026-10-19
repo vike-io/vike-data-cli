@@ -1,7 +1,7 @@
 ---
 name: vike-perp-spread-arb
 description: Cross-venue perp price spread (buy on venue A, sell on venue B). Use when the user asks "any perp arb today" / "price differences across exchanges" / "where's X cheapest".
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-perp-spread-arb

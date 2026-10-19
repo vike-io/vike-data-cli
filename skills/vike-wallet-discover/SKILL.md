@@ -1,7 +1,7 @@
 ---
 name: vike-wallet-discover
 description: Rank wallets by volume / inflow / outflow / pnl / net_flow / tx_count across a time window. Use when the user asks "top wallets on X" / "best traders by PnL" / "biggest buyers last 7d".
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-wallet-discover

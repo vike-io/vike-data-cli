@@ -1,7 +1,7 @@
 ---
 name: vike-polymarket-smart-money
 description: Smart-money signals on Polymarket. Two modes — flows (markets with largest net cohort inflow) or mispricings (markets where cohort bought meaningfully below current mid). Use when the user asks "what is smart money buying on Polymarket" or "any prediction-market alpha".
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-polymarket-smart-money

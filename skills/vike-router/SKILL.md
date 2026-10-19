@@ -1,7 +1,7 @@
 ---
 name: vike-router
 description: Entry point — decide which vike skill to use. Read this first when the user asks anything about on-chain analytics, perps, prediction markets, wallets, or tokens.
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-router

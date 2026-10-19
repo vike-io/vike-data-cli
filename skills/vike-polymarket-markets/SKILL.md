@@ -1,7 +1,7 @@
 ---
 name: vike-polymarket-markets
 description: List trending Polymarket prediction markets ranked by 24h volume, filterable by category (Crypto / Sports / Politics / Pop-Culture / Tech). Use when the user asks "what's hot on Polymarket" / "top crypto prediction markets" / "trending markets today".
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-polymarket-markets

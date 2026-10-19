@@ -1,7 +1,7 @@
 ---
 name: vike-token-transfers
 description: Top buyers or top sellers of a specific token over a window. Use when the user asks "who bought X" / "who sold X" / "is whale Y buying Z".
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-token-transfers

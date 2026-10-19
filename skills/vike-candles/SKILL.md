@@ -1,7 +1,7 @@
 ---
 name: vike-candles
 description: Historical OHLCV candles for a Hyperliquid perp or spot market, or for one Polymarket outcome token. Use when the user asks for a price chart, candles, OHLCV, or price history of a Hyperliquid asset or a Polymarket outcome (its probability over time).
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-candles

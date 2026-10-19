@@ -1,7 +1,7 @@
 ---
 name: vike-hl-position-match
 description: Reverse-lookup a Hyperliquid open position from share-card details (coin + side + leverage + entry price). Use when the user pastes or describes a HL share card and asks "whose card is this?", "find this trader", or "who has a 25x ETH long open at $3,200?". Returns matching wallet(s) ranked by entry-price proximity.
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-hl-position-match

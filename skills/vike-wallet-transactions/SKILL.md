@@ -1,7 +1,7 @@
 ---
 name: vike-wallet-transactions
 description: Raw per-wallet transfer list (individual transactions, not aggregates) with direction, day, USD, and token filters. Use when the user asks "show me recent transfers for X" / "last 100 transactions of Y" / "all USDC moves from this wallet" / any forensic audit query.
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-wallet-transactions

@@ -1,7 +1,7 @@
 ---
 name: vike-wallet-compare
 description: Diff two wallets — find their shared counterparties (both transacted with these addresses) and shared tokens (both touched these tokens) within a window. Use when the user asks "are these two wallets related" / "what do X and Y have in common" / "find connections between wallet A and B".
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-wallet-compare

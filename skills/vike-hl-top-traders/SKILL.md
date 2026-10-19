@@ -1,7 +1,7 @@
 ---
 name: vike-hl-top-traders
 description: Rank top Hyperliquid perp traders by PnL / ROI / win rate / volume / trade count / drawdown across a window. Use when the user asks "top HL traders" / "best Hyperliquid wallets" / "HL leaderboard".
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-hl-top-traders

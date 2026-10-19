@@ -1,7 +1,7 @@
 ---
 name: vike-token-screener
 description: Token discovery filter — rank tokens by volume / net inflow / holder count / smart-money inflow within a window, with min-volume and min-holder filters. Use when the user asks "what tokens are trending today" / "find tokens with smart money accumulating" / "rising tokens this week" / token discovery from scratch.
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-token-screener

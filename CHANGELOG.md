@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.13.1
+
+### Patch Changes
+
+- Skills: `allowed-tools` is `Bash(vike-data:*)` and `vike-core` requires the `vike-data` binary. 0.13.0 renamed the command but left all 35 skills granting `Bash(vike:*)`, which does not match `vike-data …`, so an agent was asked to approve, or was refused, every call.
+
 ## 0.13.0
 
 ### Minor Changes

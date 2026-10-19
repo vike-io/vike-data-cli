@@ -1,7 +1,7 @@
 ---
 name: vike-smart-money-discovery
 description: Multi-signal smart money discovery — find wallets currently accumulating a token, ranked by realized PnL track record. Use when the user asks "is smart money buying X" / "find smart money on Y chain" / "any alpha wallets in Z".
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-smart-money-discovery

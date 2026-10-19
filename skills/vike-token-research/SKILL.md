@@ -1,7 +1,7 @@
 ---
 name: vike-token-research
 description: Full token research playbook — search → transfers → chart → flow direction → buyer/seller verdict. Use when the user asks "research <token>" or "what's happening with <token>".
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-token-research

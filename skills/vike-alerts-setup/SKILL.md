@@ -1,7 +1,7 @@
 ---
 name: vike-alerts-setup
 description: Create, list, edit, and delete on-chain transfer alerts. Alerts fire when a token transfer crosses USD thresholds you set and deliver to email or Discord. Use when the user asks "alert me when X" / "watch for big transfers" / "notify on whale moves".
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-alerts-setup

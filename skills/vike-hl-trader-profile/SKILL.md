@@ -1,7 +1,7 @@
 ---
 name: vike-hl-trader-profile
 description: Profile a single Hyperliquid perp trader — leaderboard rank, recent performance, on-chain identity. Use when the user gives an HL wallet address and asks "is this trader any good" / "profile this address" / "what's this wallet's HL track record".
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-hl-trader-profile

@@ -1,7 +1,7 @@
 ---
 name: vike-polymarket-trader
 description: Profile a Polymarket wallet — realized PnL across 24h / 7d / 30d / all, hit-rate on resolved markets, total volume, top categories traded, recent positions. Use when the user gives a Polymarket wallet address.
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-polymarket-trader
