@@ -20,7 +20,7 @@ A JSON object with a `chain` field (`ethereum`, `bsc`, `base` or `hyperevm`) and
 
 `total_volume`, `total_inflow`, `total_outflow`, `net_flow` (USD), `tx_count`, `tokens_traded`, `first_seen`, `last_active`.
 
-- **One chain only, and it is named in `chain`.** Without `--chain` the figures are for the more recently active of Ethereum and BSC, never summed; Base or HyperEVM answer by default only for a wallet that has no Ethereum or BSC activity at all, so a dust transfer on another chain cannot change the answer. Pass `--chain base` (or `bsc`, `hyperevm`, `ethereum`) to ask for one chain; an unknown name is a 400. Always say which chain the numbers are for. `wallet balances` shows which chain holds the value.
+- **One chain only, and it is named in `chain`.** Without `--chain` the figures are for the more recently active of Ethereum and BSC, never summed; Base or HyperEVM answer by default only for a wallet that has no priced Ethereum or BSC volume (a lone unpriced transfer does not count), so a dust transfer on another chain cannot change the answer. Pass `--chain base` (or `bsc`, `hyperevm`, `ethereum`) to ask for one chain; an unknown name is a 400. Always say which chain the numbers are for. `wallet balances` shows which chain holds the value.
 - **`tokens_traded`, `first_seen` and `last_active` are all-time** and repeat in every window: read them from `all` and ignore the copies. There is no per-window token count.
 - A window with no activity is present and zeroed (`24h` often is), not omitted.
 - Refreshed nightly: a wallet active in the last hours may not show yet.
