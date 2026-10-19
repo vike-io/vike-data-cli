@@ -44,7 +44,7 @@ export function registerInit(program) {
         server: info.name,
         version: info.version,
         protocol: body?.result?.protocolVersion,
-        next: 'Try: vike token search BTC',
+        next: 'Try: vike-data token search BTC',
       });
     });
 }

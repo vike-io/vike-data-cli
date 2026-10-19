@@ -9,7 +9,7 @@ allowed-tools: Bash(vike:*)
 ## Command
 
 ```bash
-vike token transfers <token_address>
+vike-data token transfers <token_address>
   [--tab bought|sold]
   [--period 1h|24h|7d|30d]
   [--chain ethereum|bsc|base|all]
@@ -29,7 +29,7 @@ Each row is one wallet: `address`, `qty`, `usd_value`, `label` (if known), `tx_c
 ## Reading tips
 
 - The same wallet appearing in both `bought` and `sold` lists for the same period = market maker / churn (not a signal).
-- High `usd_value` with low `tx_count` = a single large discretionary trade. Worth investigating with `vike wallet summary <address>`.
+- High `usd_value` with low `tx_count` = a single large discretionary trade. Worth investigating with `vike-data wallet summary <address>`.
 - Many small transfers from labeled exchanges = retail flow via that CEX (Binance, Coinbase, etc.).
 
 ## Anti-patterns
@@ -39,4 +39,4 @@ Each row is one wallet: `address`, `qty`, `usd_value`, `label` (if known), `tx_c
 
 ## Pairs well with
 
-- `vike wallet summary <addr>` to profile any interesting buyer/seller
+- `vike-data wallet summary <addr>` to profile any interesting buyer/seller

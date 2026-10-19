@@ -33,19 +33,19 @@ Route the user's question to the right `vike-*` skill.
 ## Quick command map
 
 ```
-vike token   search | transfers | screener | holders
-vike wallet  summary | discover
-vike perp    funding | spreads | top-traders
-vike candles hl <symbol> | polymarket <token_id>
-vike alerts  list | channels | create | edit | delete
-vike init | doctor | schema | whoami | login | logout
+vike-data token   search | transfers | screener | holders
+vike-data wallet  summary | discover
+vike-data perp    funding | spreads | top-traders
+vike-data candles hl <symbol> | polymarket <token_id>
+vike-data alerts  list | channels | create | edit | delete
+vike-data init | doctor | schema | whoami | login | logout
 ```
 
 ## Bias
 
 - If unsure between two skills, prefer the **task skill** (specific workflow) over the **per-tool skill** (single command).
 - If the user wants raw data, use the per-tool skill with `--json`.
-- If the user is exploring, lead with `vike schema --pretty` to show what's available.
+- If the user is exploring, lead with `vike-data schema --pretty` to show what's available.
 
 ## Cost note
 

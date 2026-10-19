@@ -9,7 +9,7 @@ allowed-tools: Bash(vike:*)
 ## Pre-check: what channels does the user have set up?
 
 ```bash
-vike alerts channels --json
+vike-data alerts channels --json
 ```
 
 Returns enabled email + Discord channels. **If a user creates an alert with a channel they haven't verified, the alert is saved but won't fire notifications.** Always check first.
@@ -19,14 +19,14 @@ Returns enabled email + Discord channels. **If a user creates an alert with a ch
 ### List
 
 ```bash
-vike alerts list --json                    # active alerts
-vike alerts list --include-inactive --json # also paused/deleted
+vike-data alerts list --json                    # active alerts
+vike-data alerts list --include-inactive --json # also paused/deleted
 ```
 
 ### Create
 
 ```bash
-vike alerts create \
+vike-data alerts create \
   --label "Big USDC moves" \
   --token USDC \
   --chain eth \
@@ -40,16 +40,16 @@ Required: `--label`. Common: `--token`, `--chain eth|bsc`, `--min-usd`, `--chann
 ### Edit (partial update — only fields you pass are changed)
 
 ```bash
-vike alerts edit 42 --min-usd 5000000          # raise threshold
-vike alerts edit 42 --active false             # pause
-vike alerts edit 42 --channel email --channel discord  # add second channel
+vike-data alerts edit 42 --min-usd 5000000          # raise threshold
+vike-data alerts edit 42 --active false             # pause
+vike-data alerts edit 42 --channel email --channel discord  # add second channel
 ```
 
 ### Delete
 
 ```bash
-vike alerts delete 42                          # soft-delete (pauses, keeps history)
-vike alerts delete 42 --hard                   # permanently remove
+vike-data alerts delete 42                          # soft-delete (pauses, keeps history)
+vike-data alerts delete 42 --hard                   # permanently remove
 ```
 
 ## Notes + gotchas
@@ -58,7 +58,7 @@ vike alerts delete 42 --hard                   # permanently remove
 - Thresholds are in **USD value** of the transfer at fire time, not token quantity.
 - `--cooldown` is per-alert minimum gap between triggers (default 60 min). Useful to avoid spam during high-volume hours.
 - Tokens are matched by symbol (UPPERCASE). For cross-chain symbols like `USDC` that exist on multiple chains, be explicit with `--chain`.
-- Alerts created without a verified channel will be **silently inactive at fire time** — there is no automatic warning. Use `vike alerts channels` first.
+- Alerts created without a verified channel will be **silently inactive at fire time** — there is no automatic warning. Use `vike-data alerts channels` first.
 
 ## Confirmation flow with the user
 
@@ -66,7 +66,7 @@ Before creating an alert, summarize back what will be created:
 
 > Creating alert "**Big USDC moves**": will fire when a USDC transfer on **eth** exceeds **$1M**, delivered via **email**, with a 60-minute cooldown. OK to proceed?
 
-Wait for confirmation, then run `vike alerts create`.
+Wait for confirmation, then run `vike-data alerts create`.
 
 ## Anti-patterns
 

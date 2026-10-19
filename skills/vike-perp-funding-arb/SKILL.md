@@ -13,7 +13,7 @@ Cross-venue funding rates across Binance, Bybit, OKX, Aster, and Hyperliquid.
 ### A. All arb opportunities (default)
 
 ```bash
-vike perp funding --json
+vike-data perp funding --json
 ```
 
 Returns pre-ranked rows where the spread between the highest-funding venue and the lowest is ≥ 0.3% (daily normalized). Each row already includes:
@@ -27,7 +27,7 @@ Returns pre-ranked rows where the spread between the highest-funding venue and t
 ### B. Single symbol per-venue rates
 
 ```bash
-vike perp funding --symbol BTC --json
+vike-data perp funding --symbol BTC --json
 ```
 
 Returns one row per venue: `{exchange, funding_rate_daily_pct, mark_price, ...}`.
@@ -39,7 +39,7 @@ spread_daily_pct = 0.42%   →  ~$420/day per $100k notional, gross
                               (before fees, slippage, transfer costs)
 ```
 
-A funding arb at 0.4–1% daily is real. > 3% daily on a liquid pair is almost always a halted-trading / venue-mispricing artifact — verify with `vike perp spreads --symbol <sym>` to make sure the underlying spot/perp prices are sane.
+A funding arb at 0.4–1% daily is real. > 3% daily on a liquid pair is almost always a halted-trading / venue-mispricing artifact — verify with `vike-data perp spreads --symbol <sym>` to make sure the underlying spot/perp prices are sane.
 
 ## Anti-patterns
 

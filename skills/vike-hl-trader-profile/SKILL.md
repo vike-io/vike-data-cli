@@ -13,7 +13,7 @@ Composite profile combining ranking, identity, and trading metrics.
 ### 1. On-chain identity + balance
 
 ```bash
-vike wallet summary <address> --json
+vike-data wallet summary <address> --json
 ```
 
 Captures: total volume, inflow/outflow, tx count, unique tokens across ETH/BSC/Base. Tells you if the address is HL-only or also active on spot chains.
@@ -21,8 +21,8 @@ Captures: total volume, inflow/outflow, tx count, unique tokens across ETH/BSC/B
 ### 2. HL leaderboard rank
 
 ```bash
-vike perp top-traders --window 30d --sort pnl --size 20 --json
-vike perp top-traders --window 7d  --sort pnl --size 20 --json
+vike-data perp top-traders --window 30d --sort pnl --size 20 --json
+vike-data perp top-traders --window 7d  --sort pnl --size 20 --json
 ```
 
 Search the returned rows for the address. Report rank if found, "outside top 20" otherwise.
@@ -30,8 +30,8 @@ Search the returned rows for the address. Report rank if found, "outside top 20"
 ### 3. ROI + win rate context
 
 ```bash
-vike perp top-traders --sort roi --window 30d --min-trades 10 --size 20 --json
-vike perp top-traders --sort win_rate --window 30d --min-trades 10 --size 20 --json
+vike-data perp top-traders --sort roi --window 30d --min-trades 10 --size 20 --json
+vike-data perp top-traders --sort win_rate --window 30d --min-trades 10 --size 20 --json
 ```
 
 Same address-search; report rank or "not in top 20".

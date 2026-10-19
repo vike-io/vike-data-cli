@@ -14,13 +14,13 @@ The "smart-money cohort" is wallets meeting all three criteria:
 ## Command
 
 ```bash
-vike polymarket smart-money --mode flows|mispricings [--hours N] [--category C] [--limit N] [--json]
+vike-data polymarket smart-money --mode flows|mispricings [--hours N] [--category C] [--limit N] [--json]
 ```
 
 ## Mode A — flows (default)
 
 ```bash
-vike polymarket smart-money --mode flows --hours 24 --category all
+vike-data polymarket smart-money --mode flows --hours 24 --category all
 ```
 
 Markets with the largest **net buy** from cohort wallets in the last N hours.
@@ -31,7 +31,7 @@ Output: `condition_id`, `title`, `slug`, `smart_wallets` (cohort count), `buy_in
 ## Mode B — mispricings
 
 ```bash
-vike polymarket smart-money --mode mispricings --hours 24 --category Crypto
+vike-data polymarket smart-money --mode mispricings --hours 24 --category Crypto
 ```
 
 Markets where cohort wallets recently bought meaningfully **below** the current mid — i.e. the market has moved away from where cohort got their fills.

@@ -9,16 +9,16 @@ allowed-tools: Bash(vike:*)
 ## Command
 
 ```bash
-vike token holders <token_address> [--chain ethereum|bsc|base] [--limit N] [--json]
+vike-data token holders <token_address> [--chain ethereum|bsc|base] [--limit N] [--json]
 ```
 
 ## Examples
 
 ```bash
 # Resolve symbol first if needed:
-vike token search PEPE --chain ethereum --limit 1 --json
+vike-data token search PEPE --chain ethereum --limit 1 --json
 # Then holders:
-vike token holders 0x6982508145454ce325ddbe47a25d4ec3d2311933 --limit 20
+vike-data token holders 0x6982508145454ce325ddbe47a25d4ec3d2311933 --limit 20
 ```
 
 ## Output columns
@@ -40,6 +40,6 @@ vike token holders 0x6982508145454ce325ddbe47a25d4ec3d2311933 --limit 20
 
 ## Pairs well with
 
-- `vike labels <addr>` — drill into any holder's full label cascade
-- `vike token transfers <addr>` — see who's currently buying/selling in last 24h
-- `vike wallet summary <addr>` — full activity profile of any holder
+- `vike-data labels <addr>` — drill into any holder's full label cascade
+- `vike-data token transfers <addr>` — see who's currently buying/selling in last 24h
+- `vike-data wallet summary <addr>` — full activity profile of any holder

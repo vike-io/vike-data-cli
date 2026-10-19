@@ -9,7 +9,7 @@ allowed-tools: Bash(vike:*)
 ## Command
 
 ```bash
-vike polymarket markets [--category C] [--limit N] [--json]
+vike-data polymarket markets [--category C] [--limit N] [--json]
 ```
 
 `C` is one of: `Crypto`, `Sports`, `Politics`, `Pop-Culture`, `Tech`, `all` (default).
@@ -17,9 +17,9 @@ vike polymarket markets [--category C] [--limit N] [--json]
 ## Examples
 
 ```bash
-vike polymarket markets --category Crypto --limit 10
-vike polymarket markets --category Politics --limit 20
-vike pm markets --json                    # `pm` alias
+vike-data polymarket markets --category Crypto --limit 10
+vike-data polymarket markets --category Politics --limit 20
+vike-data pm markets --json                    # `pm` alias
 ```
 
 ## Output columns

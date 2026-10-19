@@ -13,7 +13,7 @@ Composite playbook — combines wallet leaderboards + token-side buyer list + la
 ### A. Top realized-PnL wallets on a chain
 
 ```bash
-vike wallet discover --sort pnl --window 90d --chain ethereum --size 20 --json
+vike-data wallet discover --sort pnl --window 90d --chain ethereum --size 20 --json
 ```
 
 Keep only rows where:
@@ -28,13 +28,13 @@ That set = your "smart money universe" for the next step.
 If the user asks about a specific token, resolve it first:
 
 ```bash
-vike token search <symbol> --chain <chain> --limit 3 --json
+vike-data token search <symbol> --chain <chain> --limit 3 --json
 ```
 
 Then list its recent buyers:
 
 ```bash
-vike token transfers <addr> --tab bought --period 7d --chain <chain> --json
+vike-data token transfers <addr> --tab bought --period 7d --chain <chain> --json
 ```
 
 **Intersect** the buyer addresses with your smart-money universe from step A. Any overlap = a smart-money wallet currently accumulating this token.
@@ -44,7 +44,7 @@ vike token transfers <addr> --tab bought --period 7d --chain <chain> --json
 For every overlap address, run:
 
 ```bash
-vike wallet summary <addr> --json
+vike-data wallet summary <addr> --json
 ```
 
 Report:

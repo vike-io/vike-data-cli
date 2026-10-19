@@ -24,7 +24,7 @@ export function registerDoctor(program) {
         ok: Boolean(key),
         detail: key
           ? `${key.slice(0, 8)}... (source: ${process.env.VIKE_API_KEY ? 'env' : 'config'})`
-          : 'Not set. Run `vike init` or `vike login --api-key <key>`',
+          : 'Not set. Run `vike-data init` or `vike-data login --api-key <key>`',
       });
 
       // 3. Endpoint
@@ -81,7 +81,7 @@ export function registerDoctor(program) {
         console.log(`\n${failed} check(s) failed.`);
         process.exitCode = 1;
       } else {
-        console.log('\nAll checks passed. Try: vike token search BTC');
+        console.log('\nAll checks passed. Try: vike-data token search BTC');
       }
     });
 }

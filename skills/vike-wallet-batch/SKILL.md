@@ -9,7 +9,7 @@ allowed-tools: Bash(vike:*)
 ## Command
 
 ```bash
-vike wallet batch <addr1> <addr2> <addr3> ...
+vike-data wallet batch <addr1> <addr2> <addr3> ...
   [--chain ethereum|bsc|base]
   [--json]
 ```
@@ -19,7 +19,7 @@ Caps at 100 addresses per call. For larger lists, split into chunks.
 ## Example
 
 ```bash
-vike wallet batch 0xd8da... 0xabc... 0xdef... --json
+vike-data wallet batch 0xd8da... 0xabc... 0xdef... --json
 ```
 
 ## Output
@@ -45,11 +45,11 @@ One row per INPUT address (preserves input order — useful when joining back to
 
 ## Anti-patterns
 
-- Don't run individual `vike wallet summary` in a loop for >5 addresses — this batch is ~20× faster
+- Don't run individual `vike-data wallet summary` in a loop for >5 addresses — this batch is ~20× faster
 - Don't pass mixed-case addresses inconsistently — they're normalised but cleaner CSVs help readers
 - Don't expect lifetime data — this is 30d window. For lifetime use the individual `wallet summary`
 
 ## Pairs well with
 
-- `vike labels <addr>` — drill into any address showing high-confidence labels
-- `vike wallet compare <a> <b>` — pick two interesting batch results and diff them
+- `vike-data labels <addr>` — drill into any address showing high-confidence labels
+- `vike-data wallet compare <a> <b>` — pick two interesting batch results and diff them

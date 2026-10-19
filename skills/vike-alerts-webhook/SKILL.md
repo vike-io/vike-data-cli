@@ -9,7 +9,7 @@ allowed-tools: Bash(vike:*)
 ## Registration
 
 ```bash
-vike alerts register-webhook <https://your-server.com/vike-hook>
+vike-data alerts register-webhook <https://your-server.com/vike-hook>
   [--secret <16+ char HMAC secret>]
   [--json]
 ```
@@ -23,7 +23,7 @@ The secret is **optional but strongly recommended** — without it we still POST
 openssl rand -hex 32
 # → 7f5c8b...  (paste below)
 
-vike alerts register-webhook https://api.mycoolbot.com/vike-alert \
+vike-data alerts register-webhook https://api.mycoolbot.com/vike-alert \
   --secret 7f5c8b... \
   --json
 # → { "ok": true, "channel_id": 42, "url_preview": "https://api.myc...", "signed": true }
@@ -80,5 +80,5 @@ def verify(secret, headers, body):
 
 ## Pairs well with
 
-- `vike alerts create` — create the alert that fires to your webhook
-- `vike alerts list` / `vike alerts channels` — confirm registration
+- `vike-data alerts create` — create the alert that fires to your webhook
+- `vike-data alerts list` / `vike-data alerts channels` — confirm registration

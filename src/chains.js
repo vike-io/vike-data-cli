@@ -62,7 +62,7 @@ export function normaliseChain(input, fallback = 'ethereum') {
   return CHAIN_ALIASES[key] ?? input;
 }
 
-// Address-format expectations per chain. Used by `vike doctor` and
+// Address-format expectations per chain. Used by `vike-data doctor` and
 // future input validation. EVM = 0x + 40 hex; Solana = base58 32-44 chars;
 // BTC = various encodings; privacy chains = chain-specific.
 export const ADDRESS_FORMATS = {

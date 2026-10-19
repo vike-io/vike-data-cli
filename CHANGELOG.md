@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.13.0
+
+### Minor Changes
+
+- The command is `vike-data`. The `vike` binary is removed with no alias: run `vike-data init`, `vike-data token search PEPE` and so on. README, `--help`, error messages and all 36 skill playbooks now name `vike-data`; installed skills that still call `vike` need `npx skills add vike-io/vike-data-cli` again. The skill names, the umbrella skill `vike` and its install path `~/.claude/skills/vike/` are unchanged.
+
 ## 0.12.1
 
 ### Patch Changes

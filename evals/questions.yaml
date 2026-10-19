@@ -19,94 +19,94 @@ questions:
   # ─── Single-step: token domain ───────────────────────────────────────
   - id: token-search
     q: "Find the address of the PEPE token on Ethereum."
-    expected_commands: ["vike token search"]
+    expected_commands: ["vike-data token search"]
     expected_flags: ["--chain"]
-    forbidden: ["--network", "vike search token", "--token"]
+    forbidden: ["--network", "vike-data search token", "--token"]
     skill: vike-token-search
 
   - id: token-holders
     q: "Show me the top 10 holders of USDC by net inflow."
-    expected_commands: ["vike token holders"]
+    expected_commands: ["vike-data token holders"]
     expected_flags: ["--limit"]
     forbidden: ["--top"]
     skill: vike-token-holders
 
   - id: token-screener
     q: "Find tokens on Ethereum with smart money accumulating in the last 7 days."
-    expected_commands: ["vike token screener"]
+    expected_commands: ["vike-data token screener"]
     expected_flags: ["--sort", "--smart-money-only"]
-    forbidden: ["--smart", "vike screener"]
+    forbidden: ["--smart", "vike-data screener"]
     skill: vike-token-screener
 
   # ─── Single-step: wallet domain ───────────────────────────────────────
   - id: hl-top-traders
     q: "Top Hyperliquid traders by PnL in the last 30 days, win rate above 75%."
-    expected_commands: ["vike perp top-traders"]
+    expected_commands: ["vike-data perp top-traders"]
     expected_flags: ["--window", "--sort", "--min-win-rate"]
     forbidden: ["--winrate"]
     skill: vike-hl-top-traders
 
   - id: perp-funding-arb
     q: "Find cross-venue funding-rate arb opportunities right now."
-    expected_commands: ["vike perp funding"]
+    expected_commands: ["vike-data perp funding"]
     forbidden: ["--arb"]
     skill: vike-perp-funding-arb
 
   - id: wallet-counterparties
     q: "Who are the main trading counterparties of 0xd8da6bf26964af9d7eed9e03e53415d37aa96045?"
-    expected_commands: ["vike wallet counterparties"]
+    expected_commands: ["vike-data wallet counterparties"]
     expected_flags: ["--limit"]
     forbidden: ["--depth"]
     skill: vike-wallet-counterparties
 
   - id: wallet-balances
     q: "Show me current ERC-20 token balances for a wallet across all major chains."
-    expected_commands: ["vike wallet balances"]
+    expected_commands: ["vike-data wallet balances"]
     expected_flags: ["--chains", "--min-usd"]
     forbidden: ["--all-chains"]
     skill: vike-wallet-balances
 
   - id: wallet-transactions
     q: "Show me the last 50 outgoing USDC transfers from 0xabc... in the past week."
-    expected_commands: ["vike wallet transactions", "vike wallet txs"]
+    expected_commands: ["vike-data wallet transactions", "vike-data wallet txs"]
     expected_flags: ["--direction", "--days", "--token"]
     forbidden: ["--from", "--type"]
     skill: vike-wallet-transactions
 
   - id: wallet-trace
     q: "Trace the money from wallet 0xabc... outward for 3 hops, showing only flows above $50k."
-    expected_commands: ["vike wallet trace"]
+    expected_commands: ["vike-data wallet trace"]
     expected_flags: ["--depth", "--min-usd"]
     forbidden: ["--levels", "--hops"]
     skill: vike-wallet-trace
 
   - id: wallet-compare
     q: "Are wallets 0xabc... and 0xdef... related — do they share counterparties or tokens?"
-    expected_commands: ["vike wallet compare"]
-    forbidden: ["vike compare", "vike wallet diff"]
+    expected_commands: ["vike-data wallet compare"]
+    forbidden: ["vike-data compare", "vike-data wallet diff"]
     skill: vike-wallet-compare
 
   - id: wallet-batch
     q: "Enrich this list of 50 addresses with labels and 30-day flow summary."
-    expected_commands: ["vike wallet batch"]
-    forbidden: ["vike batch", "--csv"]
+    expected_commands: ["vike-data wallet batch"]
+    forbidden: ["vike-data batch", "--csv"]
     skill: vike-wallet-batch
 
   - id: wallet-labels
     q: "Multi-source label cascade for 0x28C6c06298d514Db089934071355E5743bf21d60."
-    expected_commands: ["vike labels"]
-    forbidden: ["vike wallet labels", "--source"]
+    expected_commands: ["vike-data labels"]
+    forbidden: ["vike-data wallet labels", "--source"]
     skill: vike-wallet-label-provenance
 
   - id: wallet-ens
     q: "Reverse-ENS lookup for 0xd8da6bf26964af9d7eed9e03e53415d37aa96045."
-    expected_commands: ["vike wallet ens"]
-    forbidden: ["vike ens"]
+    expected_commands: ["vike-data wallet ens"]
+    forbidden: ["vike-data ens"]
     skill: vike-wallet-ens
 
   - id: wallet-pnl-history
     q: "Daily PnL series for wallet 0xabc... over the last 60 days."
-    expected_commands: ["vike wallet pnl-history"]
+    expected_commands: ["vike-data wallet pnl-history"]
     expected_flags: ["--days"]
     forbidden: ["--period"]
     skill: vike-wallet-pnl-history
@@ -114,38 +114,38 @@ questions:
   # ─── Single-step: prediction markets, alerts ──────────────────────────
   - id: pm-markets
     q: "Trending Polymarket crypto markets, top 10."
-    expected_commands: ["vike polymarket markets", "vike pm markets"]
+    expected_commands: ["vike-data polymarket markets", "vike-data pm markets"]
     expected_flags: ["--category", "--limit"]
-    forbidden: ["vike pm crypto"]
+    forbidden: ["vike-data pm crypto"]
     skill: vike-polymarket-markets
 
   - id: pm-smart-money-mispricings
     q: "Detect Polymarket smart-money mispricings in the last 24h."
-    expected_commands: ["vike polymarket smart-money", "vike pm smart-money"]
+    expected_commands: ["vike-data polymarket smart-money", "vike-data pm smart-money"]
     expected_flags: ["--mode", "--hours"]
     forbidden: ["--mispricings"]
     skill: vike-polymarket-smart-money
 
   - id: candles-hl
     q: "Give me hourly BTC perp candles for the last week."
-    expected_commands: ["vike candles hl"]
+    expected_commands: ["vike-data candles hl"]
     expected_flags: ["--interval", "--limit"]
-    forbidden: ["vike ohlcv", "vike token chart", "vike candles BTC"]
+    forbidden: ["vike-data ohlcv", "vike-data token chart", "vike-data candles BTC"]
     skill: vike-candles
     multi_step: false
 
   - id: candles-polymarket
     q: "Show me the price history of the YES outcome of a Polymarket market, hourly."
     expected_commands:
-      - "vike polymarket market"
-      - "vike candles polymarket"
-    forbidden: ["vike candles hl", "--condition-id"]
+      - "vike-data polymarket market"
+      - "vike-data candles polymarket"
+    forbidden: ["vike-data candles hl", "--condition-id"]
     skill: vike-candles
     multi_step: true
 
   - id: alerts-register-webhook
     q: "Register a webhook for alert delivery at https://my.app/hook with secret abc12345abc12345."
-    expected_commands: ["vike alerts register-webhook"]
+    expected_commands: ["vike-data alerts register-webhook"]
     expected_flags: ["--secret"]
     forbidden: ["--url", "--hmac"]
     skill: vike-alerts-webhook
@@ -154,94 +154,94 @@ questions:
   - id: composite-smart-money-on-token
     q: "I want to know if smart money is currently accumulating PEPE — search for the token, find its top buyers in the last 7 days, and profile any wallet that looks like a real trader (not an exchange)."
     expected_commands:
-      - "vike token search"
-      - "vike token transfers"
-      - "vike wallet summary"
+      - "vike-data token search"
+      - "vike-data token transfers"
+      - "vike-data wallet summary"
     expected_flags: ["--tab", "--period", "--chain"]
-    forbidden: ["--smart-money", "vike smartmoney"]
+    forbidden: ["--smart-money", "vike-data smartmoney"]
     skill: vike-smart-money-discovery
     multi_step: true
 
   - id: composite-wallet-portfolio
     q: "Give me a full snapshot of 0xd8da6bf26964af9d7eed9e03e53415d37aa96045 — ENS, labels, ERC-20 balances, recent net flow."
     expected_commands:
-      - "vike wallet ens"
-      - "vike labels"
-      - "vike wallet balances"
-      - "vike wallet pnl-history"
-    forbidden: ["vike profile", "vike snapshot"]
+      - "vike-data wallet ens"
+      - "vike-data labels"
+      - "vike-data wallet balances"
+      - "vike-data wallet pnl-history"
+    forbidden: ["vike-data profile", "vike-data snapshot"]
     skill: vike-wallet-portfolio
     multi_step: true
 
   - id: composite-polymarket-overview
     q: "Give me a Polymarket market overview — trending markets, top smart-money inflows, and current mispricings."
     expected_commands:
-      - "vike polymarket markets"
-      - "vike polymarket smart-money"
+      - "vike-data polymarket markets"
+      - "vike-data polymarket smart-money"
     expected_flags: ["--mode"]
-    forbidden: ["vike pm overview", "vike pm screener"]
+    forbidden: ["vike-data pm overview", "vike-data pm screener"]
     skill: vike-polymarket-screener
     multi_step: true
 
   - id: composite-perp-market-snapshot
     q: "Give me a perp-market snapshot — funding arbs, cross-venue spreads, and the top HL traders by PnL today."
     expected_commands:
-      - "vike perp funding"
-      - "vike perp spreads"
-      - "vike perp top-traders"
+      - "vike-data perp funding"
+      - "vike-data perp spreads"
+      - "vike-data perp top-traders"
     expected_flags: ["--window"]
-    forbidden: ["vike perp screener", "vike perp summary"]
+    forbidden: ["vike-data perp screener", "vike-data perp summary"]
     skill: vike-perp-screener
     multi_step: true
 
   - id: composite-token-research
     q: "Research $TOKEN — resolve its address, and see top buyers + sellers in the last 24h."
     expected_commands:
-      - "vike token search"
-      - "vike token transfers"
+      - "vike-data token search"
+      - "vike-data token transfers"
     expected_flags: ["--tab", "--period"]
-    forbidden: ["vike token research", "vike research"]
+    forbidden: ["vike-data token research", "vike-data research"]
     skill: vike-token-research
     multi_step: true
 
   - id: composite-hl-trader-profile
     q: "Profile HL trader 0xabc... — leaderboard rank by PnL + win rate + drawdown, plus their spot activity."
     expected_commands:
-      - "vike perp top-traders"
-      - "vike wallet summary"
+      - "vike-data perp top-traders"
+      - "vike-data wallet summary"
     expected_flags: ["--sort", "--window"]
-    forbidden: ["vike hl profile", "vike perp profile"]
+    forbidden: ["vike-data hl profile", "vike-data perp profile"]
     skill: vike-hl-trader-profile
     multi_step: true
 
   - id: composite-cross-venue-perp
     q: "Compare BTC perp across all venues — funding rates and cross-venue spreads."
     expected_commands:
-      - "vike perp funding"
-      - "vike perp spreads"
+      - "vike-data perp funding"
+      - "vike-data perp spreads"
     expected_flags: ["--symbol"]
-    forbidden: ["vike cross-venue", "vike perp compare"]
+    forbidden: ["vike-data cross-venue", "vike-data perp compare"]
     skill: vike-cross-venue-perps
     multi_step: true
 
   - id: composite-wallet-investigation
     q: "Investigate 0xabc... — check its labels, see who it trades with most, and trace 2 hops outward to surface related wallets."
     expected_commands:
-      - "vike labels"
-      - "vike wallet counterparties"
-      - "vike wallet trace"
+      - "vike-data labels"
+      - "vike-data wallet counterparties"
+      - "vike-data wallet trace"
     expected_flags: ["--depth"]
-    forbidden: ["vike investigate", "vike wallet investigate"]
+    forbidden: ["vike-data investigate", "vike-data wallet investigate"]
     skill: vike-wallet-trace
     multi_step: true
 
   - id: composite-alerts-setup
     q: "Set up an alert for big USDC transfers over $1M on ethereum, delivered via email — first check my available channels."
     expected_commands:
-      - "vike alerts channels"
-      - "vike alerts create"
+      - "vike-data alerts channels"
+      - "vike-data alerts create"
     expected_flags: ["--label", "--token", "--chain", "--min-usd", "--channel"]
-    forbidden: ["vike alert", "--type"]
+    forbidden: ["vike-data alert", "--type"]
     skill: vike-alerts-setup
     multi_step: true
 
@@ -249,50 +249,50 @@ questions:
   - id: ambig-suspicious-transfer
     q: "I just saw a $50M USDC transfer to a wallet created yesterday. Should I worry?"
     expected_commands:
-      - "vike labels"
-      - "vike wallet trace"
+      - "vike-data labels"
+      - "vike-data wallet trace"
     expected_flags: ["--depth"]
-    forbidden: ["vike alert", "vike worry"]
+    forbidden: ["vike-data alert", "vike-data worry"]
     skill: vike-wallet-trace
     multi_step: true
 
   - id: ambig-dormant-wallet-wakes
     q: "This wallet hasn't moved in 2 years and just transferred 100k ETH out. What should I look at?"
     expected_commands:
-      - "vike wallet summary"
-      - "vike wallet transactions"
-      - "vike labels"
+      - "vike-data wallet summary"
+      - "vike-data wallet transactions"
+      - "vike-data labels"
     expected_flags: ["--direction", "--days"]
-    forbidden: ["vike monitor"]
+    forbidden: ["vike-data monitor"]
     skill: vike-wallet-transactions
     multi_step: true
 
   - id: ambig-frontrunning-hunt
     q: "Figure out who's been front-running my trades on Hyperliquid recently."
     expected_commands:
-      - "vike perp top-traders"
-      - "vike wallet counterparties"
+      - "vike-data perp top-traders"
+      - "vike-data wallet counterparties"
     expected_flags: ["--window"]
-    forbidden: ["vike frontrun", "vike mempool"]
+    forbidden: ["vike-data frontrun", "vike-data mempool"]
     skill: vike-hl-trader-profile
     multi_step: true
 
   - id: ambig-pm-insider-signal
     q: "Find me Polymarket markets where insiders are betting heavily against the consensus right now."
     expected_commands:
-      - "vike polymarket smart-money"
+      - "vike-data polymarket smart-money"
     expected_flags: ["--mode"]
-    forbidden: ["vike pm insiders", "vike polymarket insiders"]
+    forbidden: ["vike-data pm insiders", "vike-data polymarket insiders"]
     skill: vike-polymarket-smart-money
     multi_step: false
 
   - id: ambig-cross-asset-rotation
     q: "I want to see when smart money rotated from ETH into SOL over the last 30 days."
     expected_commands:
-      - "vike token transfers"
-      - "vike token holders"
+      - "vike-data token transfers"
+      - "vike-data token holders"
     expected_flags: ["--chain", "--period"]
-    forbidden: ["vike rotation"]
+    forbidden: ["vike-data rotation"]
     skill: vike-token-research
     multi_step: true
 
@@ -303,17 +303,17 @@ questions:
   - id: trap-cex-overlap-relatedness
     q: "Are 0xabc... and 0xdef... controlled by the same person? They both deposit to Binance hot wallet 14."
     expected_commands:
-      - "vike wallet compare"
-      - "vike labels"     # ← the skill says: label shared CPs before claiming relatedness
-    forbidden: ["vike wallet confirm-related", "vike check-ownership"]
+      - "vike-data wallet compare"
+      - "vike-data labels"     # ← the skill says: label shared CPs before claiming relatedness
+    forbidden: ["vike-data wallet confirm-related", "vike-data check-ownership"]
     skill: vike-wallet-compare
     multi_step: true
 
   - id: trap-pnl-history-as-pnl
     q: "Get me the lifetime PnL of wallet 0xabc."
     expected_commands:
-      - "vike wallet discover"        # ← right tool: --sort pnl --window all
-      - "vike wallet summary"          # ← OK alternative
+      - "vike-data wallet discover"        # ← right tool: --sort pnl --window all
+      - "vike-data wallet summary"          # ← OK alternative
     expected_flags: ["--sort"]
     forbidden: ["pnl-history --days all"]   # pnl-history is daily net flow, NOT realized PnL
     skill: vike-wallet-pnl-history
@@ -322,7 +322,7 @@ questions:
   - id: trap-small-sample-winrate
     q: "Show me Hyperliquid traders with 90%+ win rate so I can copy-trade them."
     expected_commands:
-      - "vike perp top-traders"
+      - "vike-data perp top-traders"
     expected_flags: ["--min-win-rate", "--min-trades"]   # ← skill warns: filter min-trades to avoid noise
     forbidden: ["--size 100"]
     skill: vike-hl-top-traders
@@ -331,10 +331,10 @@ questions:
   - id: trap-holders-vs-buyers
     q: "Top 20 wallets accumulating PEPE right now."
     expected_commands:
-      - "vike token transfers"   # ← recent BUYERS via --tab bought (skill emphasizes this)
-      - "vike token holders"     # ← acceptable alt (lifetime net inflow)
+      - "vike-data token transfers"   # ← recent BUYERS via --tab bought (skill emphasizes this)
+      - "vike-data token holders"     # ← acceptable alt (lifetime net inflow)
     expected_flags: ["--tab", "--period"]
-    forbidden: ["--accumulators", "vike token accumulating"]
+    forbidden: ["--accumulators", "vike-data token accumulating"]
     skill: vike-token-transfers
     multi_step: false
 

@@ -9,7 +9,7 @@ allowed-tools: Bash(vike:*)
 ## Command
 
 ```bash
-vike wallet summary <address> [--json]
+vike-data wallet summary <address> [--json]
 ```
 
 ## Output
@@ -26,10 +26,10 @@ Per-window rows: `window`, `volume_usd`, `inflow_usd`, `outflow_usd`, `net_flow_
 
 ## Anti-patterns
 
-- Don't claim a wallet is "smart money" based on summary alone — cross-reference with labels and PnL: `vike wallet discover --sort pnl` to see if this address is in the top-PnL set.
+- Don't claim a wallet is "smart money" based on summary alone — cross-reference with labels and PnL: `vike-data wallet discover --sort pnl` to see if this address is in the top-PnL set.
 - A single big inflow can dominate `net_flow_usd` for a window — eyeball `tx_count` to gauge whether it's one trade or many.
 
 ## Pairs well with
 
-- `vike wallet discover` to see if this wallet ranks in any leaderboard
-- `vike token transfers` after identifying which tokens the wallet trades
+- `vike-data wallet discover` to see if this wallet ranks in any leaderboard
+- `vike-data token transfers` after identifying which tokens the wallet trades

@@ -9,7 +9,7 @@ allowed-tools: Bash(vike:*)
 ## Command
 
 ```bash
-vike wallet discover
+vike-data wallet discover
   [--window 24h|7d|30d|90d|all]
   [--sort volume|inflow|outflow|net_flow|tx_count|pnl]
   [--order asc|desc]
@@ -36,7 +36,7 @@ vike wallet discover
 
 - Labeled wallets first — `label = "binance_cold_t1"` means it's a CEX hot/cold wallet, not a discretionary trader.
 - Always filter mentally for unlabeled wallets first if the user wants "real traders" (not exchanges).
-- For PnL sort, realized PnL only — open positions are NOT counted. Use `vike perp top-traders` for HL perps PnL (which includes unrealized).
+- For PnL sort, realized PnL only — open positions are NOT counted. Use `vike-data perp top-traders` for HL perps PnL (which includes unrealized).
 
 ## Anti-patterns
 
@@ -45,5 +45,5 @@ vike wallet discover
 
 ## Pairs well with
 
-- `vike wallet summary <address>` to drill into any interesting row
+- `vike-data wallet summary <address>` to drill into any interesting row
 - `vike-smart-money-discovery` for a composite multi-signal read

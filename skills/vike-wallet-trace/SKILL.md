@@ -9,7 +9,7 @@ allowed-tools: Bash(vike:*)
 ## Command
 
 ```bash
-vike wallet trace <address>
+vike-data wallet trace <address>
   [--chain ethereum|bsc|base]
   [--depth N]    (1-5, default 2)
   [--width N]    (1-10, default 5)
@@ -45,7 +45,7 @@ vike wallet trace <address>
 - **Depth 2-3** = "friend-of-friend" — useful for finding where funds end up.
 - **Edge volume_usd** = the volume between those two specific addresses, NOT cumulative.
 - **`wallet_type = "cex"`** at depth 1 = funds went to / came from an exchange. Often the END of the trail (anonymous from there).
-- **Unlabeled wallet with high volume at depth 1-2** = potentially related wallet, investigate with `vike labels`.
+- **Unlabeled wallet with high volume at depth 1-2** = potentially related wallet, investigate with `vike-data labels`.
 
 ## Parameter tuning
 
@@ -80,6 +80,6 @@ Tell them to click the **Graph** tab. It renders the same trace data as a force-
 
 ## Pairs well with
 
-- `vike labels <addr>` — identify any interesting node
-- `vike wallet compare <addr_a> <addr_b>` — confirm relatedness once trace surfaces candidates
-- `vike wallet transactions <addr>` — drill into specific transfers between two nodes
+- `vike-data labels <addr>` — identify any interesting node
+- `vike-data wallet compare <addr_a> <addr_b>` — confirm relatedness once trace surfaces candidates
+- `vike-data wallet transactions <addr>` — drill into specific transfers between two nodes

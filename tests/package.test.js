@@ -3,7 +3,7 @@
 // Catches the most expensive bug: `npm publish` succeeds but the
 // resulting tarball is missing files that runtime needs (typically
 // because of an over-narrow `"files"` array in package.json or a typo
-// in `.npmignore`). Replays the publish locally and runs `vike --help`
+// in `.npmignore`). Replays the publish locally and runs `vike-data --help`
 // against the extracted tarball.
 
 import { execSync } from 'node:child_process';
@@ -33,11 +33,11 @@ describe('npm pack', { timeout: 60_000 }, () => {
 
       // 3. The bin must exist + execute --help without error
       const bin = join(work, 'node_modules', '.bin',
-                       process.platform === 'win32' ? 'vike.cmd' : 'vike');
+                       process.platform === 'win32' ? 'vike-data.cmd' : 'vike-data');
       expect(existsSync(bin), `bin should exist at ${bin}`).toBe(true);
 
       const out = execSync(`"${bin}" --help`, { cwd: work, encoding: 'utf8' });
-      expect(out).toMatch(/Usage: vike/);
+      expect(out).toMatch(/Usage: vike-data/);
 
       // 4. Critical sanity: the skills/ folder ships with the package
       const skillsDir = join(work, 'node_modules', '@vike-io', 'cli', 'skills');

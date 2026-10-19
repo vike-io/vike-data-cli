@@ -9,16 +9,16 @@ allowed-tools: Bash(vike:*)
 ## Command
 
 ```bash
-vike wallet ens <address> [--json]
+vike-data wallet ens <address> [--json]
 ```
 
 ## Example
 
 ```bash
-vike wallet ens 0xd8da6bf26964af9d7eed9e03e53415d37aa96045
+vike-data wallet ens 0xd8da6bf26964af9d7eed9e03e53415d37aa96045
 # → { "address": "0xd8da...", "ens": "vitalik.eth" }
 
-vike wallet ens 0x28c6c06298d514db089934071355e5743bf21d60
+vike-data wallet ens 0x28c6c06298d514db089934071355e5743bf21d60
 # → { "address": "0x28c6...", "ens": null }      (most exchange wallets have no ENS)
 ```
 
@@ -36,5 +36,5 @@ vike wallet ens 0x28c6c06298d514db089934071355e5743bf21d60
 
 ## Pairs well with
 
-- `vike labels <addr>` — combine ENS + labels for the fullest identity view
-- `vike wallet summary <addr>` — ENS + activity profile
+- `vike-data labels <addr>` — combine ENS + labels for the fullest identity view
+- `vike-data wallet summary <addr>` — ENS + activity profile

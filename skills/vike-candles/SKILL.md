@@ -15,7 +15,7 @@ rather than guessing a venue.
 Hyperliquid (perp or spot), built from HL's own executed fills:
 
 ```bash
-vike candles hl <symbol>
+vike-data candles hl <symbol>
   [--interval 1m|5m|15m|30m|1h|4h|1d]   # default 1h
   [--market perp|spot]                  # default perp
   [--dex <name>]                        # HIP-3 builder DEX; default HL (the core venue)
@@ -27,7 +27,7 @@ vike candles hl <symbol>
 Polymarket, ONE outcome token (a probability, 0-1):
 
 ```bash
-vike candles polymarket <token_id>
+vike-data candles polymarket <token_id>
   [--interval 1m|5m|1h|1d]              # default 1h
   [--from <epoch-ms>] [--to <epoch-ms>] # both inclusive
   [--limit N]                           # default 500, max 1000
@@ -38,10 +38,10 @@ vike candles polymarket <token_id>
 
 | Question | Command |
 |---|---|
-| "Hourly BTC perp candles, last week" | `vike candles hl BTC --interval 1h --limit 168` |
-| "HYPE spot daily candles" | `vike candles hl HYPE --market spot --interval 1d` |
-| "4h ETH, 200 bars" | `vike candles hl ETH --interval 4h --limit 200` |
-| "Price history of the YES outcome of market X" | get `clob_token_ids` from `vike polymarket market <condition_id>`, then `vike candles polymarket <token_id> --interval 1h` |
+| "Hourly BTC perp candles, last week" | `vike-data candles hl BTC --interval 1h --limit 168` |
+| "HYPE spot daily candles" | `vike-data candles hl HYPE --market spot --interval 1d` |
+| "4h ETH, 200 bars" | `vike-data candles hl ETH --interval 4h --limit 200` |
+| "Price history of the YES outcome of market X" | get `clob_token_ids` from `vike-data polymarket market <condition_id>`, then `vike-data candles polymarket <token_id> --interval 1h` |
 
 ## Output
 
@@ -50,12 +50,12 @@ Polymarket: `ts`, `open`, `high`, `low`, `close`, `volume`, `trades`, oldest fir
 
 ## Pitfalls
 
-- Polymarket takes an **outcome token id**, not a `condition_id`. A condition id returns nothing useful; read the token ids off `clob_token_ids` in `vike polymarket market`.
+- Polymarket takes an **outcome token id**, not a `condition_id`. A condition id returns nothing useful; read the token ids off `clob_token_ids` in `vike-data polymarket market`.
 - Polymarket has no cursor: a window wider than `--limit` is truncated at the **old** end. Raise `--from` to reach the recent end.
 - Polymarket `--from` / `--to` are epoch **milliseconds**; HL `--start` / `--end` also accept ISO-8601.
 - HL buckets are left-aligned UTC and the window is half-open.
 
 ## Pairs well with
 
-- `vike polymarket market <condition_id>` — to find the token ids
-- `vike perp top-traders` — who is trading the asset behind the candles
+- `vike-data polymarket market <condition_id>` — to find the token ids
+- `vike-data perp top-traders` — who is trading the asset behind the candles

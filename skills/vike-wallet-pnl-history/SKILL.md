@@ -9,7 +9,7 @@ allowed-tools: Bash(vike:*)
 ## Command
 
 ```bash
-vike wallet pnl-history <address>
+vike-data wallet pnl-history <address>
   [--chain ethereum|bsc|base]
   [--days N]   (max 365, default 30)
   [--json]
@@ -35,7 +35,7 @@ vike wallet pnl-history <address>
 
 **This is NET INFLOW USD, not realized PnL.** True realized PnL requires WAC (weighted-average cost) accounting per token, which we don't do in this fast tool. A wallet that bought $10K and sold $10K of the same token at the SAME price would show $0 here — but if they sold higher, true PnL would be positive (and this tool wouldn't reflect that). Use this for direction + trend, not for tax-grade PnL.
 
-For lifetime realized PnL: `vike wallet discover --sort pnl --window all`.
+For lifetime realized PnL: `vike-data wallet discover --sort pnl --window all`.
 
 ## Reading
 
@@ -53,5 +53,5 @@ For lifetime realized PnL: `vike wallet discover --sort pnl --window all`.
 
 ## Pairs well with
 
-- `vike wallet summary <addr>` for the aggregate context
-- `vike wallet counterparties <addr>` to see WHO they traded with
+- `vike-data wallet summary <addr>` for the aggregate context
+- `vike-data wallet counterparties <addr>` to see WHO they traded with

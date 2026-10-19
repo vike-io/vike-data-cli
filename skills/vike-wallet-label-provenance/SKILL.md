@@ -11,13 +11,13 @@ The headline differentiator: we don't just show a label, we show **which sources
 ## Command
 
 ```bash
-vike labels <address> [--json]
+vike-data labels <address> [--json]
 ```
 
 ## Example
 
 ```bash
-vike labels 0x28C6c06298d514Db089934071355E5743bf21d60     # Binance Hot Wallet 14
+vike-data labels 0x28C6c06298d514Db089934071355E5743bf21d60     # Binance Hot Wallet 14
 ```
 
 ## Output shape
@@ -60,4 +60,4 @@ vike labels 0x28C6c06298d514Db089934071355E5743bf21d60     # Binance Hot Wallet 
 
 ## Pairs well with
 
-- `vike wallet summary <addr>` — for the flow metrics of the labeled wallet
+- `vike-data wallet summary <addr>` — for the flow metrics of the labeled wallet

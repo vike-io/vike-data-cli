@@ -9,7 +9,7 @@ allowed-tools: Bash(vike:*)
 ## Command
 
 ```bash
-vike wallet counterparties <address>
+vike-data wallet counterparties <address>
   [--chain ethereum|bsc|base]
   [--window 24h|7d|30d|90d|180d|all]
   [--limit N]   (max 50)
@@ -19,7 +19,7 @@ vike wallet counterparties <address>
 ## Example
 
 ```bash
-vike wallet counterparties 0xd8da6bf26964af9d7eed9e03e53415d37aa96045 --window 30d
+vike-data wallet counterparties 0xd8da6bf26964af9d7eed9e03e53415d37aa96045 --window 30d
 ```
 
 ## Output columns
@@ -33,7 +33,7 @@ vike wallet counterparties 0xd8da6bf26964af9d7eed9e03e53415d37aa96045 --window 3
 - **Received >> Sent** = wallet receives from this counterparty (funding source, employer, airdrop)
 - `entity = "Binance"` (CEX) on the top row = the wallet deposits to / withdraws from that exchange
 - `wallet_type = "dex"` = router contracts (Uniswap, 1inch, Curve routers) — typical for active traders
-- Unlabeled top counterparty with high volume = potentially related wallet worth investigating with `vike labels`
+- Unlabeled top counterparty with high volume = potentially related wallet worth investigating with `vike-data labels`
 
 ## Anti-patterns
 
@@ -43,6 +43,6 @@ vike wallet counterparties 0xd8da6bf26964af9d7eed9e03e53415d37aa96045 --window 3
 
 ## Pairs well with
 
-- `vike labels <addr>` — drill into any interesting counterparty's full label cascade
-- `vike wallet summary <addr>` — total activity of any counterparty
-- `vike wallet balances <addr>` — see what tokens that counterparty currently holds
+- `vike-data labels <addr>` — drill into any interesting counterparty's full label cascade
+- `vike-data wallet summary <addr>` — total activity of any counterparty
+- `vike-data wallet balances <addr>` — see what tokens that counterparty currently holds

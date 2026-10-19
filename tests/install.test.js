@@ -1,4 +1,4 @@
-// `vike install` — verifies multi-IDE skill installer:
+// `vike-data install` — verifies multi-IDE skill installer:
 // - writes SKILL.md content to each requested target
 // - is idempotent (re-running --cursor doesn't duplicate)
 // - replaces only the marked block when the target file pre-exists
@@ -20,7 +20,7 @@ function run(args, cwd) {
   });
 }
 
-describe('vike install', () => {
+describe('vike-data install', () => {
   let dir;
   beforeEach(() => { dir = mkdtempSync(join(tmpdir(), 'vike-install-')); });
   afterEach(() => { try { rmSync(dir, { recursive: true, force: true }); } catch { /* ignore */ } });
