@@ -12,8 +12,8 @@
 positions, fills, funding, liquidations, candles, and hourly long/short positioning by wallet
 cohort), **Polymarket** (markets, the trade and event tape, order-book snapshots, candles and
 on-chain settlements, plus a daily Parquet archive of the full L2 order book since 2026-07-25,
-licensed CC BY 4.0), and **labelled EVM wallets** on Ethereum and BNB Chain, with Base for token
-transfers. The same data is served three ways: an **MCP server** at `https://vike.io/mcp` (the one
+licensed CC BY 4.0), and **labelled EVM wallets** on Ethereum and BNB Chain, with Base and HyperEVM
+for the wallet and token tools. The same data is served three ways: an **MCP server** at `https://vike.io/mcp` (the one
 this CLI calls), a **REST API** at `https://data.vike.io/v1/`, and the **Parquet archive** at
 `https://data.vike.io/archive/`. A key allows 20,000 requests an hour, and an account can hold up
 to 5 keys; archive downloads are not counted. The archive manifest and a sample market need no key
@@ -41,6 +41,7 @@ vike-data doctor                                 # Node version, key, MCP connec
 vike-data token search PEPE                      # first query
 vike-data perp top-traders --window 7d           # Hyperliquid wallets ranked by PnL
 vike-data candles hl BTC --interval 1h --limit 48
+vike-data hl cohort-metrics BTC --axis size --hours 1   # are whales long or short BTC
 vike-data polymarket markets --category Crypto   # trending markets by 24h volume
 ```
 
@@ -137,12 +138,13 @@ Every data command is one `tools/call` to the MCP server. `vike-data <group> --h
 
 | Command | Subcommands | MCP tool |
 |---|---|---|
-| `vike-data token` | `search`, `transfers`, `screener`, `holders` (`--chain ethereum\|bsc\|base`) | `token_search`, `token_transfers`, `token_screener`, `token_holders` |
+| `vike-data token` | `search`, `transfers`, `screener`, `holders` (`--chain ethereum\|bsc\|base\|hyperevm`) | `token_search`, `token_transfers`, `token_screener`, `token_holders` |
 | `vike-data wallet` | `summary`, `transactions` (`txs`), `compare`, `trace`, `batch`, `counterparties`, `pnl-history`, `balances`, `ens`, `discover` | `wallet_summary`, `wallet_transactions`, `wallet_compare`, `wallet_trace`, `wallet_batch_labels`, `wallet_counterparties`, `wallet_pnl_history`, `wallet_token_balances`, `wallet_ens`, `wallet_discover` |
 | `vike-data labels <address>` | multi-source label provenance for one wallet | `wallet_label_provenance` |
-| `vike-data perp` | `top-traders`, `find-position` (Hyperliquid); `funding`, `spreads` (cross-venue funding rates and perp-vs-perp price gaps) | `hl_perp_top_traders`, `hl_position_match`, `perp_funding`, `perp_spreads` |
+| `vike-data perp` | `top-traders`, `find-position` (Hyperliquid); `funding`, `spreads` (cross-venue funding rates and perp-vs-perp price gaps); `open-interest`, `long-short` (per venue) | `hl_perp_top_traders`, `hl_position_match`, `perp_funding`, `perp_spreads`, `perp_open_interest`, `perp_long_short` |
+| `vike-data hl` | `cohort-metrics`, `segments` (wallet-cohort long/short), `wallet`, `activity` (one wallet), `leaderboard`, `liquidations`, `market`, `builders` | `hl_cohort_metrics`, `hl_segments`, `hl_wallet`, `hl_wallet_activity`, `hl_leaderboard`, `hl_liquidations`, `hl_market`, `hl_builders` |
 | `vike-data candles` | `hl <symbol>` (Hyperliquid perp or spot, from executed fills), `polymarket <token_id>` (one outcome token) | `hl_ohlcv`, `polymarket_ohlcv` |
-| `vike-data polymarket` (`pm`) | `markets`, `market <condition_id>`, `wallet <address>`, `smart-money` | `polymarket_markets`, `polymarket_market_detail`, `polymarket_wallet`, `polymarket_smart_money` |
+| `vike-data polymarket` (`pm`) | `markets`, `market <condition_id>`, `wallet <address>`, `smart-money`; the recorded L2 feed: `tape`, `orderbook`, `stats` (outcome token id), `settlement` (condition id), `archive` | `polymarket_markets`, `polymarket_market_detail`, `polymarket_wallet`, `polymarket_smart_money`, `polymarket_tape`, `polymarket_orderbook`, `polymarket_market_stats`, `polymarket_settlement`, `polymarket_archive` |
 | `vike-data alerts` | `list`, `channels`, `create`, `edit`, `delete`, `register-webhook` (email, Discord, or an HTTPS webhook, HMAC-signed when you set a secret) | `alerts_*` |
 | setup | `init`, `login`, `logout`, `doctor`, `schema`, `install` | — |
 
@@ -173,10 +175,13 @@ Downloads go to `./vike-archive/`.
 
 ## For AI agents
 
-This package ships **31 skill playbooks** under [`skills/`](skills/): markdown files an AI coding
+This package ships **46 skill playbooks** under [`skills/`](skills/): markdown files an AI coding
 agent loads so it knows when and how to call each command. [`skills.sh.json`](skills.sh.json) groups
-them by domain (Tokens, Wallets, CEX perps, Hyperliquid perps, Candles, Polymarket, Alerts). The
-entry point is the umbrella skill `vike`, which routes a question to the specialised skill.
+them by domain (Quick start, Tokens, Wallets, CEX perps, Hyperliquid perps, Candles, Polymarket, Alerts). The
+entry point is the umbrella skill `vike`, which routes a question to the specialised skill. Per-tool
+skills read one command; the playbooks chain several: who a wallet is, where its money went,
+whether two wallets are related, cohort positioning on Hyperliquid and how to backtest it, a
+Polymarket market's due diligence, the free L2 archive, a cross-market daily brief.
 
 ```bash
 npx skills add vike-io/vike-data-cli --list    # see them first

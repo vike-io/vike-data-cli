@@ -4,35 +4,41 @@
   "groupings": [
     {
       "title": "Quick start",
-      "description": "Start here. The umbrella skill routes user questions to the right specialized skill below; vike-core covers install and auth.",
+      "description": "Start here. The umbrella skill routes user questions to the right specialized skill below; vike-core covers install and auth; vike-daily-brief is a cheap cross-market rundown.",
       "skills": [
         "vike",
-        "vike-core"
+        "vike-core",
+        "vike-daily-brief"
       ]
     },
     {
       "title": "Tokens",
-      "description": "Resolve, screen, and research tokens on Ethereum, BSC and Base. Smart-money inflow (Ethereum), holders, top buyers and sellers.",
+      "description": "Resolve, screen, and research tokens on Ethereum, BSC, Base and HyperEVM. Smart-money inflow and its trend over time (Ethereum), holders and holder due diligence, top buyers and sellers.",
       "skills": [
         "vike-token-search",
         "vike-token-research",
         "vike-token-transfers",
         "vike-token-holders",
+        "vike-token-holder-diligence",
         "vike-token-screener",
-        "vike-smart-money-discovery"
+        "vike-smart-money-discovery",
+        "vike-token-smart-money-trend"
       ]
     },
     {
       "title": "Wallets",
-      "description": "Per-wallet profile, flows, counterparty graphs, ENS, batch labelling, label provenance.",
+      "description": "Who a wallet is, per-wallet profile, flows, counterparty graphs, incident tracing, relatedness evidence, ENS, batch labelling, label provenance, on Ethereum, BSC, Base and HyperEVM.",
       "skills": [
+        "vike-wallet-who-is",
         "vike-wallet-summary",
         "vike-wallet-portfolio",
         "vike-wallet-discover",
         "vike-wallet-transactions",
         "vike-wallet-counterparties",
         "vike-wallet-trace",
+        "vike-follow-the-money",
         "vike-wallet-compare",
+        "vike-wallets-related",
         "vike-wallet-batch",
         "vike-wallet-pnl-history",
         "vike-wallet-balances",
@@ -42,18 +48,25 @@
     },
     {
       "title": "CEX perps",
-      "description": "Funding-rate arb and per-symbol venue comparison, plus cross-venue perp price gaps and a market snapshot.",
+      "description": "Funding-rate arb and per-symbol venue comparison, cross-venue perp price gaps, open interest and long/short lean per venue, and a crowding read that nets open interest against price.",
       "skills": [
         "vike-perp-funding",
-        "vike-perp-overview"
+        "vike-perp-overview",
+        "vike-perp-crowding"
       ]
     },
     {
       "title": "Hyperliquid perps",
-      "description": "Top traders (and checking one address against the leaderboard) and share-card reverse-lookup.",
+      "description": "Wallet-cohort positioning and its backtest method, one-wallet profiles, leaderboards (including PnL net of deposits), single-symbol briefings, liquidation risk, builder codes, and share-card reverse-lookup.",
       "skills": [
         "vike-hl-top-traders",
-        "vike-hl-position-match"
+        "vike-hl-trader-profile",
+        "vike-hl-position-match",
+        "vike-hl-cohort-positioning",
+        "vike-hl-cohort-backtest",
+        "vike-hl-asset-briefing",
+        "vike-hl-liquidation-radar",
+        "vike-hl-builder-intel"
       ]
     },
     {
@@ -65,12 +78,14 @@
     },
     {
       "title": "Polymarket",
-      "description": "Prediction-market discovery, single-market deep-dives, trader profiles, and smart-money signals with a market overview.",
+      "description": "Prediction-market discovery, single-market deep-dives and due diligence (order book, tape, holders, on-chain settlement), trader profiles, smart-money signals, and the free L2 Parquet archive.",
       "skills": [
         "vike-polymarket-markets",
         "vike-polymarket-market-detail",
+        "vike-pm-market-diligence",
         "vike-polymarket-trader",
-        "vike-polymarket-smart-money"
+        "vike-polymarket-smart-money",
+        "vike-pm-l2-archive"
       ]
     },
     {

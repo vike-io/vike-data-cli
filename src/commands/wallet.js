@@ -9,11 +9,12 @@ export function registerWallet(program) {
 
   cmd
     .command('summary <address>')
-    .description('Aggregate metrics: volume / inflow / outflow / net flow / tx count across 24h-all windows')
+    .description('Aggregate metrics: volume / inflow / outflow / net flow / tx count across 24h-all windows, for one chain (named in `chain`): the more recently active of ethereum and bsc unless --chain says otherwise')
+    .option('--chain <name>', 'ethereum | bsc | base | hyperevm (default: ethereum/bsc, whichever was more recently active)')
     .option('--json', 'Emit JSON')
     .action(async (address, opts) => {
       try {
-        const r = await callTool('wallet_summary', { address });
+        const r = await callTool('wallet_summary', { address, ...(opts.chain ? { chain: opts.chain } : {}) });
         emit(r, opts);
       } catch (err) { emitError(err, opts); }
     });
@@ -22,7 +23,7 @@ export function registerWallet(program) {
     .command('transactions <address>')
     .alias('txs')
     .description('Raw per-wallet transfer list with filters')
-    .option('--chain <c>', 'ethereum | bsc | base', 'ethereum')
+    .option('--chain <c>', 'ethereum | bsc | base | hyperevm', 'ethereum')
     .option('--direction <d>', 'in | out | all', 'all')
     .option('--days <n>', 'Days back (max 365)', '30')
     .option('--limit <n>', 'Max txs (max 500)', '50')
@@ -47,7 +48,7 @@ export function registerWallet(program) {
   cmd
     .command('compare <address_a> <address_b>')
     .description('Diff two wallets — shared counterparties + shared tokens')
-    .option('--chain <c>', 'ethereum | bsc | base', 'ethereum')
+    .option('--chain <c>', 'ethereum | bsc | base | hyperevm', 'ethereum')
     .option('--window <w>', '24h | 7d | 30d | 90d | 180d | all', '30d')
     .option('--limit <n>', 'Max shared items per category (max 50)', '10')
     .option('--json', 'Emit JSON')
@@ -65,7 +66,7 @@ export function registerWallet(program) {
   cmd
     .command('trace <address>')
     .description('Counterparty graph traversal from a root wallet')
-    .option('--chain <c>', 'ethereum | bsc | base', 'ethereum')
+    .option('--chain <c>', 'ethereum | bsc | base | hyperevm', 'ethereum')
     .option('--depth <n>', 'Hops to follow (1-5)', '2')
     .option('--width <n>', 'Top counterparties per hop (1-10)', '5')
     .option('--window <w>', '24h | 7d | 30d | 90d | all', '30d')
@@ -88,7 +89,7 @@ export function registerWallet(program) {
   cmd
     .command('batch <addresses...>')
     .description('Bulk label + 30d summary lookup for many addresses (max 100)')
-    .option('--chain <c>', 'ethereum | bsc | base', 'ethereum')
+    .option('--chain <c>', 'ethereum | bsc | base | hyperevm', 'ethereum')
     .option('--json', 'Emit JSON')
     .action(async (addresses, opts) => {
       try {
@@ -102,7 +103,7 @@ export function registerWallet(program) {
   cmd
     .command('counterparties <address>')
     .description('Top trading partners of a wallet by combined transfer volume')
-    .option('--chain <c>', 'ethereum | bsc | base', 'ethereum')
+    .option('--chain <c>', 'ethereum | bsc | base | hyperevm', 'ethereum')
     .option('--window <w>', '24h | 7d | 30d | 90d | 180d | all', '30d')
     .option('--limit <n>', 'Max counterparties returned (default 10, max 50)', '10')
     .option('--json', 'Emit JSON')
@@ -121,7 +122,7 @@ export function registerWallet(program) {
   cmd
     .command('pnl-history <address>')
     .description('Daily net-flow series (proxy for daily PnL)')
-    .option('--chain <c>', 'ethereum | bsc | base', 'ethereum')
+    .option('--chain <c>', 'ethereum | bsc | base | hyperevm', 'ethereum')
     .option('--days <n>', 'Days back (max 365)', '30')
     .option('--json', 'Emit JSON')
     .action(async (address, opts) => {
@@ -166,15 +167,16 @@ export function registerWallet(program) {
   cmd
     .command('discover')
     .description('Top wallets ranked by volume / inflow / outflow / pnl / net_flow / tx_count')
-    .option('--window <w>', '24h | 7d | 30d | 90d | all', '30d')
+    .option('--window <w>', '24h | 7d | 30d | 90d | all (default 30d; base and hyperevm serve all only)')
     .option('--sort <s>', 'volume | inflow | outflow | net_flow | tx_count | pnl', 'volume')
     .option('--order <o>', 'asc | desc', 'desc')
-    .option('--chain <c>', 'ethereum | bsc', 'ethereum')
+    .option('--chain <c>', 'ethereum | bsc | base | hyperevm', 'ethereum')
     .option('--size <n>', 'Page size (max 20)', '10')
     .option('--json', 'Emit JSON')
     .action(async (opts) => {
       try {
         const r = await callTool('wallet_discover', {
+          // unset -> the server picks: 30d on ethereum and bsc, all on base and hyperevm
           window: opts.window,
           sort: opts.sort,
           order: opts.order,

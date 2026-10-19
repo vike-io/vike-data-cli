@@ -1,6 +1,6 @@
 ---
 name: vike-wallet-balances
-description: Current token balances for a wallet on the chains the server scans (Ethereum and BSC today), read from the chain at request time, with a USD value where the token is priced. Use when the user asks "what does this wallet hold" / "current portfolio of X" / "show top holdings".
+description: Current token balances for a wallet on Ethereum, BSC, Base and HyperEVM, read from the chain at request time, with a USD value where the token is priced. Use when the user asks "what does this wallet hold" / "current holdings of X" / "show top holdings" / "which chain is this wallet's money on".
 allowed-tools: Bash(vike-data:*)
 ---
 
@@ -10,12 +10,12 @@ allowed-tools: Bash(vike-data:*)
 
 ```bash
 vike-data wallet balances <address>
-  [--chains ethereum,bsc]   (default: every chain the server scans)
+  [--chains ethereum,bsc,base,hyperevm]   (default: all four)
   [--min-usd 1]             (hide holdings worth less; default 1)
   [--json]
 ```
 
-`vike-data schema --pretty` shows the current chain list. A chain the tool does not scan is not silently skipped: it is named in `chain_errors`.
+**Scanning all four chains is slow** (about 32 s for one wallet): pass `--chains` with the chain you need. Any other chain (arbitrum, polygon...) is not skipped silently: it is named in `chain_errors` ("chain not indexed; supported: ethereum, bsc, base, hyperevm"). Each holding carries its own `chain`, so this is also the quickest way to see WHERE a wallet's value is before choosing `--chain` for the per-chain wallet commands.
 
 ## Example
 
@@ -46,6 +46,8 @@ Holdings are sorted by `usd_value` descending with unpriced rows (the native coi
 - **The chain's native coin (ETH, BNB) is a row** with `usd_value: null`, and it is **left out of `total_usd`**. Report the native balance from its own `balance` field. It is always listed, whatever `--min-usd` says.
 - **Any `--min-usd` above 0 also drops unpriced holdings** (an unpriced holding cannot show it clears the floor). `--min-usd 0` lists everything, including airdrop spam.
 - `total_usd` covers `chains_scanned` only. The wallet may hold value on chains the tool does not scan: say so when relevant.
+- **On `base` and `hyperevm` a row has `symbol`, `name`, `balance` and `usd_value` only for tokens we map and price** (about 170 on `base`, about 50 on `hyperevm`). The default floor of $1 therefore lists priced tokens only. `--min-usd 0` adds every other token the wallet holds, with its contract `address` and `balance_raw` and the four named fields `null`: on Base that was 2,842 rows for a wallet worth $3.6k (airdrop spam), so use it deliberately and filter. The native coin (ETH, BNB, HYPE) is a row without a USD value.
+- `hyperevm` means the HyperEVM chain only: assets in HyperCore (spot or perp accounts) are not included; Hyperliquid perp equity is `vike-data hl wallet <address>`.
 - Stablecoin-heavy wallet → likely waiting for a buy / parked dry powder
 - WETH/WBTC + LSTs (stETH, wstETH, rETH) → "saver" wallet, low-risk
 - 50+ random tokens → airdrop farmer

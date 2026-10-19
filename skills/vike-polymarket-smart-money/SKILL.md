@@ -75,9 +75,11 @@ Trim aggressively if the user asked a narrower question. About 5 credits for the
 - Mispricings can be slow-to-resolve. A 5% mispricing on a market resolving in 3 months might be efficient pricing for tail risk, not edge.
 - Don't combine the cohort definition with strict ROI filters — the cohort is built on realized PnL, not Sharpe.
 - Don't report all three overview sections if the user asked a narrower question; trending markets that closed earlier today still rank by 24h volume, so check `ended` / `end_date` before recommending a position.
+- Without `--category`, the top flows and mispricings are often games that already ended (live: `yes_mid` 0.99, `current_mid` 0.9895 with a `delta` of 0.33). A `yes_mid` near 0 or 1 is a decided market: skip it, or filter with `--category`.
 
 ## Pairs well with
 
 - `vike-polymarket-markets` — the trending list without the cohort view
 - `vike-polymarket-market-detail` — drill into a flagged market
+- `vike-pm-market-diligence` — spread, depth, holders and resolution of a flagged market
 - `vike-polymarket-trader` — profile the top wallets active in flagged markets

@@ -25,12 +25,12 @@ vike-data wallet ens 0x28c6c06298d514db089934071355e5743bf21d60
 ## When to use
 
 - Right after any tool returns a wallet address — show ENS as a secondary label
-- When the user pastes an address and asks "what is its ENS name" (for "who is this", start with `vike-data labels <addr>`; ENS is a display name, not an identity)
+- When the user pastes an address and asks "what is its ENS name" (for "who is this", use `vike-wallet-who-is`; ENS is a display name, not an identity)
 - When you're about to display a leaderboard with addresses — enrich each row with ENS if available
 
 ## Direction
 
-**Reverse only: address → name.** There is no name → address lookup: if the user gives `vitalik.eth`, say the tool cannot resolve it and ask for the address. The only parameter is `address`.
+**Reverse only: address → name, Ethereum mainnet names only.** There is no name → address lookup: if the user gives `vitalik.eth`, say the tool cannot resolve it and ask for the address. The only parameter is `address`.
 
 ## Anti-patterns
 

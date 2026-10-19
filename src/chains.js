@@ -25,7 +25,7 @@ export const ALL_CHAINS = [...EVM_CHAINS, ...NON_EVM_CHAINS];
 // Chains the wallet_* tools currently support (subset of EVM_CHAINS where
 // we have indexed transfers + labels). Used by --chain validation in
 // commands like `wallet summary` / `wallet counterparties` / etc.
-export const WALLET_CHAINS = ['ethereum', 'bsc', 'base'];
+export const WALLET_CHAINS = ['ethereum', 'bsc', 'base', 'hyperevm'];
 
 // Chain abbreviation map: short → canonical. We accept both forms from
 // CLI input and normalise to canonical before sending to MCP.

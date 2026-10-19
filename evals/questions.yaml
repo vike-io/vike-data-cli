@@ -205,12 +205,12 @@ questions:
     multi_step: true
 
   - id: composite-hl-trader-profile
-    q: "Is HL trader 0xabc... any good — check whether it is on the leaderboard by PnL, ROI and win rate."
+    q: "Is Hyperliquid trader 0xabc... any good — show its equity, risk metrics and per-symbol trade record."
     expected_commands:
-      - "vike-data perp top-traders"
-    expected_flags: ["--sort", "--window"]
-    forbidden: ["vike-data hl profile", "vike-data perp profile"]
-    skill: vike-hl-top-traders
+      - "vike-data hl wallet"
+    expected_flags: ["--view", "--window"]
+    forbidden: ["vike-data hl profile", "vike-data perp profile", "vike-data wallet summary"]
+    skill: vike-hl-trader-profile
     multi_step: true
 
   - id: composite-cross-venue-perp
@@ -337,3 +337,179 @@ questions:
     skill: vike-token-transfers
     multi_step: false
 
+  # ─── Workflow skills and the tools added 2026-10-19 ──────────────────────
+  - id: wallet-who-is
+    q: "Who is 0x28C6c06298d514Db089934071355E5743bf21d60 — an exchange? Which chain is it active on?"
+    expected_commands:
+      - "vike-data labels"
+      - "vike-data wallet summary"
+      - "vike-data wallet counterparties"
+    forbidden: ["vike-data whois", "vike-data wallet whois", "vike-data wallet identity"]
+    skill: vike-wallet-who-is
+    multi_step: true
+
+  - id: follow-the-money
+    q: "0xabc... was drained. Where did the money go, and did it reach an exchange?"
+    expected_commands:
+      - "vike-data wallet trace"
+      - "vike-data wallet txs"
+      - "vike-data wallet batch"
+    expected_flags: ["--min-usd", "--direction"]
+    forbidden: ["vike-data trace", "--inflow", "vike-data wallet follow"]
+    skill: vike-follow-the-money
+    multi_step: true
+
+  - id: wallets-related-siblings
+    q: "Find wallets that may belong to the same owner as 0xabc... and say how strong the evidence is."
+    expected_commands:
+      - "vike-data wallet counterparties"
+      - "vike-data wallet compare"
+      - "vike-data wallet batch"
+    forbidden: ["vike-data wallet cluster", "vike-data wallet siblings"]
+    skill: vike-wallets-related
+    multi_step: true
+
+  - id: token-holder-diligence
+    q: "Who are the top 50 holders of token 0x57e114b691db790c35207b2e685d4a43181e6061 and how many are exchanges?"
+    expected_commands:
+      - "vike-data token holders"
+      - "vike-data wallet batch"
+    expected_flags: ["--limit"]
+    forbidden: ["vike-data token concentration", "--top"]
+    skill: vike-token-holder-diligence
+    multi_step: true
+
+  - id: token-smart-money-trend
+    q: "Has smart money been buying or selling ENA on Ethereum over the last 90 days?"
+    expected_commands:
+      - "vike-data token screener"
+    expected_flags: ["--window", "--smart-money-only", "--sort"]
+    forbidden: ["wallet discover --sort pnl", "--chain base", "--chain bsc"]
+    skill: vike-token-smart-money-trend
+    multi_step: true
+
+  - id: hl-cohort-positioning
+    q: "Are whales net long or short BTC on Hyperliquid right now?"
+    expected_commands:
+      - "vike-data hl cohort-metrics"
+    expected_flags: ["--axis", "--hours"]
+    forbidden: ["vike-data perp cohort", "vike-data hl whales", "vike-data perp top-traders"]
+    skill: vike-hl-cohort-positioning
+    multi_step: false
+
+  - id: hl-cohort-backtest
+    q: "Did smart-money positioning on BTC lead price over the last 3 months? Avoid look-ahead."
+    expected_commands:
+      - "vike-data hl cohort-metrics"
+      - "vike-data candles hl"
+    expected_flags: ["--label-basis", "--hours"]
+    forbidden: ["--axis pnl_abs", "--label-basis current"]
+    skill: vike-hl-cohort-backtest
+    multi_step: true
+
+  - id: hl-liquidation-radar
+    q: "Which Hyperliquid symbols with real open interest are closest to a liquidation cascade?"
+    expected_commands:
+      - "vike-data hl liquidations"
+    expected_flags: ["--view"]
+    forbidden: ["vike-data perp liquidations", "vike-data hl liquidation"]
+    skill: vike-hl-liquidation-radar
+    multi_step: false
+
+  - id: hl-leaderboard-net-of-deposits
+    q: "Who made the most from trading, not from deposits, on Hyperliquid this month?"
+    expected_commands:
+      - "vike-data hl leaderboard"
+    expected_flags: ["--view", "--window"]
+    forbidden: ["vike-data perp top-traders --sort roi"]
+    skill: vike-hl-top-traders
+    multi_step: false
+
+  - id: hl-builders
+    q: "Which Hyperliquid builder codes earned the most fees in the last 30 days?"
+    expected_commands:
+      - "vike-data hl builders"
+    expected_flags: ["--view", "--window"]
+    forbidden: ["vike-data hl builder-codes"]
+    skill: vike-hl-builder-intel
+    multi_step: false
+
+  - id: hl-asset-briefing
+    q: "Brief me on ETH on Hyperliquid: price, funding, open interest, cohort positioning and liquidations."
+    expected_commands:
+      - "vike-data candles hl"
+      - "vike-data perp funding"
+      - "vike-data perp open-interest"
+      - "vike-data hl cohort-metrics"
+      - "vike-data hl liquidations"
+    forbidden: ["vike-data hl briefing", "vike-data perp brief"]
+    skill: vike-hl-asset-briefing
+    multi_step: true
+
+  - id: perp-open-interest
+    q: "What is BTC open interest on each exchange right now?"
+    expected_commands:
+      - "vike-data perp open-interest"
+    forbidden: ["vike-data perp oi", "vike-data perp funding"]
+    skill: vike-perp-overview
+    multi_step: false
+
+  - id: perp-long-short
+    q: "Are Binance's top traders net long or short ETH?"
+    expected_commands:
+      - "vike-data perp long-short"
+    expected_flags: ["--exchange"]
+    forbidden: ["vike-data perp ratio", "vike-data perp sentiment"]
+    skill: vike-perp-overview
+    multi_step: false
+
+  - id: perp-crowding
+    q: "Is BTC long crowded across exchanges — funding, open interest and long/short?"
+    expected_commands:
+      - "vike-data perp funding"
+      - "vike-data perp open-interest"
+      - "vike-data perp long-short"
+    expected_flags: ["--hours"]
+    forbidden: ["vike-data perp crowding"]
+    skill: vike-perp-crowding
+    multi_step: true
+
+  - id: pm-market-diligence
+    q: "Is this Polymarket market liquid? Show the spread and depth of its outcome tokens and whether it resolved on-chain."
+    expected_commands:
+      - "vike-data polymarket market"
+      - "vike-data polymarket orderbook"
+      - "vike-data polymarket settlement"
+    expected_flags: ["--depth"]
+    forbidden: ["--condition-id", "vike-data polymarket spread"]
+    skill: vike-pm-market-diligence
+    multi_step: true
+
+  - id: pm-tape-large-prints
+    q: "Show me the largest trades on the Yes token of this Polymarket market in the last hour."
+    expected_commands:
+      - "vike-data polymarket tape"
+    expected_flags: ["--from-ms", "--to-ms", "--event-type"]
+    forbidden: ["vike-data polymarket trades"]
+    skill: vike-pm-market-diligence
+    multi_step: false
+
+  - id: pm-archive
+    q: "List the BTC 5-minute trade files in the Polymarket archive for the last week."
+    expected_commands:
+      - "vike-data polymarket archive"
+    expected_flags: ["--asset", "--tenor", "--stream", "--date-from"]
+    forbidden: ["vike-data polymarket download", "vike-data archive"]
+    skill: vike-pm-l2-archive
+    multi_step: false
+
+  - id: daily-brief
+    q: "Give me a daily brief across perps, Hyperliquid, Polymarket and on-chain smart money."
+    expected_commands:
+      - "vike-data perp funding"
+      - "vike-data hl cohort-metrics"
+      - "vike-data polymarket smart-money"
+      - "vike-data token screener"
+    forbidden: ["vike-data brief", "vike-data daily"]
+    skill: vike-daily-brief
+    multi_step: true

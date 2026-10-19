@@ -10,7 +10,7 @@ export function registerToken(program) {
   cmd
     .command('search <query>')
     .description('Search tokens by symbol or name')
-    .option('--chain <chain>', 'ethereum | bsc | base', 'ethereum')
+    .option('--chain <chain>', 'ethereum | bsc | base | hyperevm', 'ethereum')
     .option('--limit <n>', 'Max results', '10')
     .option('--json', 'Emit JSON')
     .action(async (query, opts) => {
@@ -29,7 +29,7 @@ export function registerToken(program) {
     .description('Top buyers/sellers for a token in a window')
     .option('--period <p>', '1h | 24h | 7d | 30d', '24h')
     .option('--tab <t>', 'bought | sold', 'sold')
-    .option('--chain <chain>', 'ethereum | bsc | base | all', 'ethereum')
+    .option('--chain <chain>', 'ethereum | bsc | base | hyperevm | all', 'ethereum')
     .option('--json', 'Emit JSON')
     .action(async (tokenAddress, opts) => {
       try {
@@ -46,7 +46,7 @@ export function registerToken(program) {
   cmd
     .command('screener')
     .description('Token discovery filter — rank tokens by volume / inflow / holders / smart-money inflow')
-    .option('--chain <c>', 'ethereum | bsc | base', 'ethereum')
+    .option('--chain <c>', 'ethereum | bsc | base | hyperevm', 'ethereum')
     .option('--window <w>', '24h | 7d | 30d | 90d', '24h')
     .option('--sort <s>', 'volume | net_inflow | holders | smart_inflow', 'volume')
     .option('--limit <n>', 'Max tokens (max 100)', '20')
@@ -72,7 +72,7 @@ export function registerToken(program) {
   cmd
     .command('holders <token_address>')
     .description('Top holders of a token by cumulative net inflow USD')
-    .option('--chain <chain>', 'ethereum | bsc | base', 'ethereum')
+    .option('--chain <chain>', 'ethereum | bsc | base | hyperevm', 'ethereum')
     .option('--limit <n>', 'Max holders (max 50)', '10')
     .option('--json', 'Emit JSON')
     .action(async (tokenAddress, opts) => {

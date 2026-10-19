@@ -9,7 +9,7 @@ allowed-tools: Bash(vike-data:*)
 ## Command
 
 ```bash
-vike-data token holders <token_address> [--chain ethereum|bsc|base] [--limit N] [--json]
+vike-data token holders <token_address> [--chain ethereum|bsc|base|hyperevm] [--limit N] [--json]
 ```
 
 ## Examples
@@ -34,10 +34,12 @@ vike-data token holders 0x6982508145454ce325ddbe47a25d4ec3d2311933 --limit 20
 
 ## Anti-patterns
 
-- "Top holders" here means cumulative net inflow over our recorded transfer history — NOT current on-chain balance. A wallet that bought $10M and sold $9M shows `net_flow_usd = $1M`, even if current balance is zero. The top rows are very often intermediaries (exchange wallets, lending protocols, MEV bots) with huge `volume_usd` against a small net: read this as "who moves the most of this token". **Always call this out** when reporting top holders. For what one specific wallet holds right now use `vike-data wallet balances <addr>` (Ethereum and BSC).
+- "Top holders" here means cumulative net inflow over our recorded transfer history — NOT current on-chain balance. A wallet that bought $10M and sold $9M shows `net_flow_usd = $1M`, even if current balance is zero. The top rows are very often intermediaries (exchange wallets, lending protocols, MEV bots) with huge `volume_usd` against a small net: read this as "who moves the most of this token". **Always call this out** when reporting top holders. For what one specific wallet holds right now use `vike-data wallet balances <addr> --chains <chain>`.
 - There is no concentration metric (top-N share of supply) in the output; don't compute one from `net_flow_usd`.
 - Don't list `tx_count = 1` whales as "smart money" without context — could be an airdrop receiver who never sold.
-- For BSC tokens, pass `--chain bsc` explicitly; default is ethereum.
+- Pass `--chain` explicitly for anything but Ethereum (`bsc`, `base`, `hyperevm`); the default is ethereum.
+- **It is slow on busy tokens**: the tool scans the whole chain for the token. ENA on ethereum took about 26 s at `--limit 50`; the busiest tokens on `base` take about a minute (WETH measured about 50 s); a `hyperevm` token about 2 s. Run it once and don't retry in a loop.
+- To classify the top holders (exchange, contract, fresh, risk-flagged) use `vike-token-holder-diligence`.
 
 ## Pairs well with
 

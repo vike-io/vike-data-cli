@@ -11,7 +11,7 @@ Symbol/name → address resolver.
 ## Command
 
 ```bash
-vike-data token search <query> [--chain ethereum|bsc|base] [--limit N] [--json]
+vike-data token search <query> [--chain ethereum|bsc|base|hyperevm] [--limit N] [--json]
 ```
 
 ## Example
@@ -26,6 +26,8 @@ vike-data token search PEPE --chain ethereum --limit 5
 ## When to use
 
 - Any time the user mentions a token by symbol — always confirm the address before downstream calls.
+- **The returned `token_address` has no `0x` prefix** on every chain (live: `a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48` for USDC on ethereum). The other token commands accept it either way, but show the user `0x` + the 40 hex characters.
+- `--chain hyperevm` searches a registry of about 50 tokens, so no match may only mean the token is not in it.
 - The default chain is **ethereum**; if the user asks "what's the address of CAKE", default to **bsc** if the symbol is bsc-native.
 
 ## Anti-patterns

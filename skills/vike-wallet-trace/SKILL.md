@@ -1,6 +1,6 @@
 ---
 name: vike-wallet-trace
-description: Counterparty graph traversal from a root wallet outward. At each hop, expand to the top N counterparties by USD volume; edges carry the direction of the flow. Use when the user asks "where did funds from X go" / "follow the money 3 hops out" / "trace the network around this wallet" / wallet investigation.
+description: Counterparty graph traversal from a root wallet outward. At each hop, expand to the top N counterparties by USD volume; edges carry the direction of the flow. Use when the user asks for "the counterparty graph of X" / "trace 3 hops around this wallet" / "show the network around X" / "who is connected to this wallet within N hops".
 allowed-tools: Bash(vike-data:*)
 ---
 
@@ -10,7 +10,7 @@ allowed-tools: Bash(vike-data:*)
 
 ```bash
 vike-data wallet trace <address>
-  [--chain ethereum|bsc|base]
+  [--chain ethereum|bsc|base|hyperevm]
   [--depth N]    (1-5, default 2)
   [--width N]    (1-10, default 5)
   [--window 24h|7d|30d|90d|all]
@@ -18,7 +18,7 @@ vike-data wallet trace <address>
   [--json]
 ```
 
-`--chain base` is accepted, but per-wallet transfer data is documented for Ethereum and BSC: treat an empty Base result as "not covered", not "no activity".
+Chains: `ethereum`, `bsc`, `base`, `hyperevm`; node labels come from that chain's own label table. A depth-2, width-3, 7-day, $1M trace of a busy wallet took about 12 s.
 
 ## Output
 
@@ -42,6 +42,7 @@ vike-data wallet trace <address>
 ## Reading the graph
 
 - **Direction lives in `out_usd` / `in_usd`, not in `from` / `to`.** `from` is the side that was expanded first, not the sender. For an edge, `out_usd` flowed `from → to`, `in_usd` flowed `to → from`, and `volume_usd` is their sum. To answer "where did X's money go", rank the root's edges by the outflow side, not by `volume_usd`.
+- **The graph is a two-way neighbourhood**: each hop expands to the top counterparties by combined volume, whichever way the money moved, so inbound edges (`in_usd` > 0, `out_usd` 0) appear next to outbound ones. "Where did it go" = follow `out_usd`; "where did it come from" = follow `in_usd`. Nodes carry `label` and `wallet_type`.
 - **Root (depth 0)** = the wallet you traced from. Its `total_volume_usd` is the sum of its own edges in this graph (not zero, and not its whole activity). The same holds for every node.
 - **Depth 1** = direct counterparties. Most useful layer.
 - **Depth 2-3** = "friend-of-friend" — useful for finding where funds end up.
@@ -87,3 +88,4 @@ Tell them to click the **Graph** tab. It renders the same trace data as a force-
 - `vike-data labels <addr>` / `vike-data wallet batch <addr...>` — identify the nodes
 - `vike-data wallet compare <addr_a> <addr_b>` — confirm relatedness once trace surfaces candidates
 - `vike-data wallet transactions <addr>` — drill into specific transfers between two nodes
+- `vike-follow-the-money` — the incident playbook (order of calls, stop rules); `vike-wallets-related` — evidence of a shared owner

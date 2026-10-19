@@ -1,12 +1,28 @@
 ---
 name: vike-perp-overview
-description: Perp-market snapshot and cross-venue price spreads — the top funding arbs, the widest perp price gaps between venues, and the Hyperliquid leaderboard in one read. Use when the user asks "what's happening in perps today" / "perp market overview" / "any perp arb today" / "price differences across exchanges" / "where's X cheapest".
+description: Perp-market snapshot and the venue-level reads of one symbol — the top funding arbs, the widest perp price gaps between venues, the Hyperliquid leaderboard, open interest per venue and each venue's long/short lean. Use when the user asks "what's happening in perps today" / "perp market overview" / "any perp arb today" / "price differences across exchanges" / "where's X cheapest" / "open interest of X" / "long short ratio of X".
 allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-perp-overview
 
-One-shot market overview for perpetuals, plus the cross-venue price-gap tool. The overview is exactly what these three tools return: funding arbs, price gaps and the HL leaderboard. There is **no open-interest, market-wide volume or per-venue mark-price tool** in the CLI; say so if asked.
+One-shot market overview for perpetuals, plus the cross-venue price-gap, open-interest and long/short tools. The overview is exactly what these tools return: funding arbs, price gaps, the HL leaderboard, and per symbol the open interest and long/short lean of each venue. There is **no market-wide volume or per-venue mark-price tool** in the CLI; say so if asked.
+
+## Open interest and long/short (one symbol, per venue)
+
+```bash
+vike-data perp open-interest BTC --json                 # latest print per venue
+vike-data perp open-interest BTC --exchange binance --hours 48 --json   # hourly series (1-168)
+vike-data perp long-short BTC --json
+vike-data perp long-short ETH --exchange okx --hours 24 --json
+```
+
+Pass the base asset (`BTC`, not `BTCUSDT`); `--exchange` is lower case.
+
+- **`oi_usd` is USD notional** (open contracts x mark price when polled): not a contract count, so venues add up, and it moves with price even when no position opens or closes. Venues polled: aster, binance, bitget, bybit, hyperliquid, kucoin, okx (each print `ts` UTC and `age_s`, a few minutes is normal). A venue whose newest print is over an hour old is listed under `stale_venues` with its `last_ts` and is NOT in `venues` (live: coinbase, halted since 2026-10-01), so never add it into a total. The series is `{symbol, interval: "1h", hours, series, unit}` with `[hour, oi_usd]` pairs, `hours + 1` points, the first hour partial.
+- **`long_share` / `short_share` are fractions of 1** (they sum to 1); `long_short_ratio` = long / short, above 1 = long-heavy. **Each venue counts something different, named in the row's `basis`**: binance `top traders, by positions`; okx and gate `top traders, by accounts`; bybit `all accounts`. Never average across venues; compare a venue with its own history (the series is `[hour, long_short_ratio]`). Hyperliquid and BingX return nothing here.
+- About 40 major symbols per venue: any other symbol returns empty lists and a `note`, never zeros.
+- Whether a symbol is crowded: `vike-perp-crowding`.
 
 ## Price spreads
 
@@ -49,10 +65,12 @@ wait
 > - `0xabc...` +$X (`total_realized_pnl`), ROI Y%, rank #1 — ...
 > - ...
 
+Add `perp open-interest BTC` and `perp long-short BTC` (and ETH) when the user wants positioning too: 1 credit each, one short section "OI by venue (`oi_usd`, stale venues named) and long share by venue with its basis".
+
 ## When to skip the 3-call snapshot
 
 - User asked about one symbol's funding or venues → `vike-perp-funding`.
-- User asked about one HL trader → `vike-hl-top-traders`.
+- User asked about one HL trader → `vike-hl-trader-profile` (or `vike-hl-top-traders` for a ranking).
 - User only wants price gaps → run `perp spreads` alone.
 
 ## Anti-patterns
@@ -66,4 +84,6 @@ wait
 ## Pairs well with
 
 - `vike-perp-funding` for the funding deep dive and one-symbol venue comparison
+- `vike-perp-crowding` for funding + open interest net of price + long/short on one symbol
 - `vike-hl-top-traders` for the leaderboard filters and how to read its columns
+- `vike-daily-brief` for the perp section inside a cross-market brief
