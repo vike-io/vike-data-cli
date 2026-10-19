@@ -16,6 +16,8 @@ vike-data wallet compare <address_a> <address_b>
   [--json]
 ```
 
+Compares exactly two wallets. `--chain base` is accepted, but per-wallet transfer data is documented for Ethereum and BSC: treat an empty Base result as "not covered", not "no shared activity".
+
 ## Output
 
 ```json

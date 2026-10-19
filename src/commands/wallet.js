@@ -9,7 +9,7 @@ export function registerWallet(program) {
 
   cmd
     .command('summary <address>')
-    .description('Aggregate metrics: volume / inflow / outflow / pnl across windows')
+    .description('Aggregate metrics: volume / inflow / outflow / net flow / tx count across 24h-all windows')
     .option('--json', 'Emit JSON')
     .action(async (address, opts) => {
       try {
@@ -137,8 +137,8 @@ export function registerWallet(program) {
 
   cmd
     .command('balances <address>')
-    .description('Current ERC-20 holdings across major EVM chains')
-    .option('--chains <list>', 'Comma-separated chains (eth,bsc,base,arbitrum,polygon,optimism)')
+    .description('Current token holdings, read from the chain, on the chains the server scans')
+    .option('--chains <list>', 'Comma-separated chain names to scan (default: all the server scans; see `vike-data schema --pretty`)')
     .option('--min-usd <n>', 'Filter dust below this USD value (default $1; recommend $100+ for noisy wallets)', '1')
     .option('--json', 'Emit JSON')
     .action(async (address, opts) => {

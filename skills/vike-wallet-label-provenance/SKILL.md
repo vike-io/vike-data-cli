@@ -1,6 +1,6 @@
 ---
 name: vike-wallet-label-provenance
-description: Multi-source label cascade for any ETH wallet — shows what every upstream label provider AND our in-house heuristic classifier says about an address, with consensus entity/type and per-source attribution. Use when the user asks "who is this address" / "what do you know about this wallet" / "is this address labeled".
+description: Multi-source label cascade for an Ethereum wallet — shows what each upstream label source AND our in-house heuristic classifier says about an address, with consensus entity/type and per-source attribution. Use when the user asks "who is this address" / "what do you know about this wallet" / "is this address labeled" / "why is this wallet labeled X".
 allowed-tools: Bash(vike-data:*)
 ---
 
@@ -13,6 +13,8 @@ The headline differentiator: we don't just show a label, we show **which sources
 ```bash
 vike-data labels <address> [--json]
 ```
+
+Ethereum wallets only. For another chain, or many addresses, use `vike-data wallet batch --chain ethereum|bsc|base`, which reads each chain's own label table.
 
 ## Example
 
@@ -27,37 +29,44 @@ vike-data labels 0x28C6c06298d514Db089934071355E5743bf21d60     # Binance Hot Wa
   "address": "0x...",
   "found": true,
   "consensus": {
-    "entity": "Binance",
+    "entity": "binance",
     "wallet_type": "cex",
-    "cex_product": "spot",
-    "user_subtype": "",
-    "risk_flag": "",
-    "confidence": "High"
+    "cex_product": "retail",
+    "user_subtype": "active",
+    "risk_flag": null,
+    "confidence": "medium"
   },
   "sources": [
-    { "source": "provider_a", "label": "Binance 14",        "entity": "Binance", "category": "CEX" },
-    { "source": "provider_b", "label": "Binance Hot Wallet" },
-    { "source": "provider_c", "label": "Binance: Hot Wallet 14" },
-    { "source": "provider_d", "label": "Binance" },
-    { "source": "heuristic:cold_t1", "confidence": 0.94 }
+    { "source": "provider_a", "label": "Binance: Hot Wallet (0x28C)", "entity": "Binance", "category": "Hot Wallet" },
+    { "source": "provider_b", "label": "Binance 14", "entity": "binance", "category": null },
+    { "source": "provider_c", "label": "Binance: Hot Wallet", "entity": "binance", "category": "exchange" },
+    { "source": "provider_d", "label": "binance", "entity": "binance", "category": null },
+    { "source": "heuristic:cold_t1", "label": "binance", "confidence": 0.94 }
   ],
   "source_count": 5
 }
 ```
 
+Sources are anonymised on the wire (`provider_a`, `provider_b`, ...). There are at most 6 raw sources (Arkham, OLI, Blockscout, Dune, the MEW darklist, Etherscan tags), plus the heuristic classifier as a `heuristic:*` source. `source_count` includes the heuristic.
+
 ## Reading
 
-- **5+ sources agree** → very high confidence; ship the label without caveats
-- **2-3 sources agree on same entity** → high confidence
-- **Only 1 source + heuristic** → moderate; mention "labeled by X"
-- **0 sources, only heuristic** → low; mention "predicted by heuristic"
-- **0 sources, no heuristic** → genuinely unknown wallet (most retail addresses)
+- **4+ raw sources agree on the entity** → very high confidence; ship the label without caveats. Six is the ceiling, and most labelled wallets have 1-3.
+- **2-3 sources agree on the same entity** → high confidence
+- **Only 1 source (± heuristic)** → moderate; mention "labeled by one source"
+- **Only the heuristic** → low; mention "predicted by heuristic"
+- **`found: true` with no sources** → the wallet is in our label table but no raw source labels it
+- **`found: false`** → the wallet is missing from our labelled-wallet table, and no source is consulted at all. It does NOT prove that no provider labels it. Say "not in our label table", not "unlabeled" or "clean".
+
+Early answers (before 2026-10-19) carried only the Arkham-derived source and the heuristic, so older transcripts undercount sources.
 
 ## Anti-patterns
 
 - Don't quote any single provider's category field as "the category" — provider taxonomies vary; the `consensus.wallet_type` is the unified field.
 - A `risk_flag` of `scam` / `sanctioned` / `phishing` is high-stakes — always mention it explicitly, never bury it.
+- Don't use this for a BSC or Base address: it reads Ethereum tables only.
 
 ## Pairs well with
 
 - `vike-data wallet summary <addr>` — for the flow metrics of the labeled wallet
+- `vike-data wallet batch <addr...>` — label many addresses, or another chain

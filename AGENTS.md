@@ -21,7 +21,7 @@ src/
   format.js             # table/JSON output
   util.js               # small helpers (version read, type coerce)
   commands/             # one file per command group
-    auth.js             # login/logout/whoami
+    auth.js             # login/logout (registerWhoami exists but is not registered in index.js)
     token.js            # token search|transfers|screener|holders
     wallet.js           # wallet summary|discover
     perp.js             # perp funding|spreads|top-traders
@@ -61,7 +61,7 @@ Every `SKILL.md` has:
 ---
 name: vike-<topic-or-task>
 description: One sentence ending with "Use when ..."
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 ```
 

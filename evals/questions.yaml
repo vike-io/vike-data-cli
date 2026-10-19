@@ -11,7 +11,7 @@
 #
 # Single-step questions exercise individual tools.
 # Multi-step questions exercise composite skills (smart-money-discovery,
-# polymarket-screener, wallet-portfolio, etc.) — answer should list 2+
+# polymarket-smart-money overview, wallet-portfolio, etc.) — answer should list 2+
 # commands separated by " && " or "; ".
 
 questions:
@@ -50,7 +50,7 @@ questions:
     q: "Find cross-venue funding-rate arb opportunities right now."
     expected_commands: ["vike-data perp funding"]
     forbidden: ["--arb"]
-    skill: vike-perp-funding-arb
+    skill: vike-perp-funding
 
   - id: wallet-counterparties
     q: "Who are the main trading counterparties of 0xd8da6bf26964af9d7eed9e03e53415d37aa96045?"
@@ -60,9 +60,9 @@ questions:
     skill: vike-wallet-counterparties
 
   - id: wallet-balances
-    q: "Show me current ERC-20 token balances for a wallet across all major chains."
+    q: "Show me current token balances for a wallet, hiding anything worth under $100."
     expected_commands: ["vike-data wallet balances"]
-    expected_flags: ["--chains", "--min-usd"]
+    expected_flags: ["--min-usd"]
     forbidden: ["--all-chains"]
     skill: vike-wallet-balances
 
@@ -152,23 +152,23 @@ questions:
 
   # ─── Multi-step composites — these exercise PLAYBOOK skills ────────────
   - id: composite-smart-money-on-token
-    q: "I want to know if smart money is currently accumulating PEPE — search for the token, find its top buyers in the last 7 days, and profile any wallet that looks like a real trader (not an exchange)."
+    q: "I want to know if smart money is currently accumulating PEPE — search for the token, check whether the smart-money cohort is flowing into it, and find its biggest net buyers in the last 7 days."
     expected_commands:
       - "vike-data token search"
+      - "vike-data token screener"
       - "vike-data token transfers"
-      - "vike-data wallet summary"
-    expected_flags: ["--tab", "--period", "--chain"]
-    forbidden: ["--smart-money", "vike-data smartmoney"]
+    expected_flags: ["--smart-money-only", "--tab", "--period"]
+    forbidden: ["vike-data smartmoney", "wallet discover --sort pnl"]
     skill: vike-smart-money-discovery
     multi_step: true
 
   - id: composite-wallet-portfolio
-    q: "Give me a full snapshot of 0xd8da6bf26964af9d7eed9e03e53415d37aa96045 — ENS, labels, ERC-20 balances, recent net flow."
+    q: "Give me a full snapshot of 0xd8da6bf26964af9d7eed9e03e53415d37aa96045 — ENS, labels, token balances, recent net flow."
     expected_commands:
       - "vike-data wallet ens"
       - "vike-data labels"
       - "vike-data wallet balances"
-      - "vike-data wallet pnl-history"
+      - "vike-data wallet summary"
     forbidden: ["vike-data profile", "vike-data snapshot"]
     skill: vike-wallet-portfolio
     multi_step: true
@@ -180,7 +180,7 @@ questions:
       - "vike-data polymarket smart-money"
     expected_flags: ["--mode"]
     forbidden: ["vike-data pm overview", "vike-data pm screener"]
-    skill: vike-polymarket-screener
+    skill: vike-polymarket-smart-money
     multi_step: true
 
   - id: composite-perp-market-snapshot
@@ -191,7 +191,7 @@ questions:
       - "vike-data perp top-traders"
     expected_flags: ["--window"]
     forbidden: ["vike-data perp screener", "vike-data perp summary"]
-    skill: vike-perp-screener
+    skill: vike-perp-overview
     multi_step: true
 
   - id: composite-token-research
@@ -205,13 +205,12 @@ questions:
     multi_step: true
 
   - id: composite-hl-trader-profile
-    q: "Profile HL trader 0xabc... — leaderboard rank by PnL + win rate + drawdown, plus their spot activity."
+    q: "Is HL trader 0xabc... any good — check whether it is on the leaderboard by PnL, ROI and win rate."
     expected_commands:
       - "vike-data perp top-traders"
-      - "vike-data wallet summary"
     expected_flags: ["--sort", "--window"]
     forbidden: ["vike-data hl profile", "vike-data perp profile"]
-    skill: vike-hl-trader-profile
+    skill: vike-hl-top-traders
     multi_step: true
 
   - id: composite-cross-venue-perp
@@ -221,7 +220,7 @@ questions:
       - "vike-data perp spreads"
     expected_flags: ["--symbol"]
     forbidden: ["vike-data cross-venue", "vike-data perp compare"]
-    skill: vike-cross-venue-perps
+    skill: vike-perp-funding
     multi_step: true
 
   - id: composite-wallet-investigation
@@ -274,7 +273,7 @@ questions:
       - "vike-data wallet counterparties"
     expected_flags: ["--window"]
     forbidden: ["vike-data frontrun", "vike-data mempool"]
-    skill: vike-hl-trader-profile
+    skill: vike-hl-top-traders
     multi_step: true
 
   - id: ambig-pm-insider-signal

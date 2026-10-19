@@ -9,7 +9,7 @@ export function registerPerp(program) {
 
   cmd
     .command('funding')
-    .description('Funding rates per venue, or cross-venue funding-arb opportunities')
+    .description('Funding rates per venue (raw per-interval rate + interval_h), or the top 5 cross-venue funding-arb rows')
     .option('--symbol <s>', 'Specific symbol (e.g. BTC). Omit for top arb opportunities.')
     .option('--json', 'Emit JSON')
     .action(async (opts) => {
@@ -21,8 +21,8 @@ export function registerPerp(program) {
 
   cmd
     .command('spreads')
-    .description('Cross-venue spot-perp spread arbitrage opportunities')
-    .option('--symbol <s>', 'Specific symbol. Omit for full matrix.')
+    .description('Cross-venue perp price gaps: the 10 widest (buy on one venue, sell on another)')
+    .option('--symbol <s>', 'Filter those 10 to one symbol (often empty). Omit for all.')
     .option('--json', 'Emit JSON')
     .action(async (opts) => {
       try {
@@ -43,8 +43,9 @@ export function registerPerp(program) {
     .option('--json', 'Emit JSON')
     .action(async (opts) => {
       try {
+        // The tool renamed `coin` to `symbol` on 2026-10-19; `--coin` stays the flag users know.
         const r = await callTool('hl_position_match', {
-          coin: opts.coin,
+          symbol: opts.coin,
           side: opts.side,
           leverage: Number(opts.leverage),
           entry_price: Number(opts.entry),

@@ -1,6 +1,6 @@
 ---
 name: vike-wallet-balances
-description: Current ERC-20 token balances for a wallet across major EVM chains (eth, bsc, base, arbitrum, polygon, optimism). Dust filtered. Use when the user asks "what does this wallet hold" / "current portfolio of X" / "show top holdings".
+description: Current token balances for a wallet on the chains the server scans (Ethereum and BSC today), read from the chain at request time, with a USD value where the token is priced. Use when the user asks "what does this wallet hold" / "current portfolio of X" / "show top holdings".
 allowed-tools: Bash(vike-data:*)
 ---
 
@@ -10,15 +10,17 @@ allowed-tools: Bash(vike-data:*)
 
 ```bash
 vike-data wallet balances <address>
-  [--chains eth,bsc,base,arbitrum,polygon,optimism]  (default = all 6)
-  [--min-usd 1]   (filter dust below this)
+  [--chains ethereum,bsc]   (default: every chain the server scans)
+  [--min-usd 1]             (hide holdings worth less; default 1)
   [--json]
 ```
+
+`vike-data schema --pretty` shows the current chain list. A chain the tool does not scan is not silently skipped: it is named in `chain_errors`.
 
 ## Example
 
 ```bash
-vike-data wallet balances 0xd8da6bf26964af9d7eed9e03e53415d37aa96045 --chains eth,arbitrum
+vike-data wallet balances 0xd8da6bf26964af9d7eed9e03e53415d37aa96045 --chains ethereum
 ```
 
 ## Output
@@ -26,30 +28,34 @@ vike-data wallet balances 0xd8da6bf26964af9d7eed9e03e53415d37aa96045 --chains et
 ```json
 {
   "address": "0x...",
-  "total_usd": 123456.78,
-  "chains_scanned": ["eth", "bsc", "base", "arbitrum", "polygon", "optimism"],
+  "total_usd": 10532.82,
+  "chains_scanned": ["ethereum"],
   "holdings": [
-    { "chain": "eth", "symbol": "WETH", "name": "Wrapped Ether", "address": "0xc02a...", "balance": "12.34", "usd_value": 26345.67, "usd_price": 2134.94 },
-    { "chain": "arbitrum", "symbol": "USDC", "address": "0xaf88...", "balance": "5000.00", "usd_value": 5000.00, "usd_price": 1.0 },
-    ...
+    { "chain": "ethereum", "symbol": "ENS", "name": "Ethereum Name Service", "address": "0xc183...", "balance": 1144.04, "balance_raw": "1144036076063671431479", "usd_value": 6843.62, "usd_price": 5.982 },
+    { "chain": "ethereum", "symbol": "WEI", "address": "0x0000...", "balance": 1.0, "balance_raw": "1", "usd_value": null, "usd_price": null },
+    { "chain": "ethereum", "symbol": "ETH", "name": "ETH", "address": null, "balance": 2.5, "balance_raw": "2500000000000000000", "usd_value": null, "usd_price": null }
   ]
 }
 ```
 
-Holdings sorted by `usd_value` descending.
+Holdings are sorted by `usd_value` descending with unpriced rows (the native coin among them) last. `chain_errors` appears only when a requested chain was refused or failed.
 
 ## Reading
 
-- `total_usd` = sum across all chains scanned. Wallet might still hold value on chains not scanned (e.g. zkSync, Linea) — say so when relevant.
+- **`usd_value: null` is a holding, not an error**: the token has no price feed. `total_usd` sums only priced holdings, so read it as a floor, never as net worth, and never infer "worthless" from a null.
+- **The chain's native coin (ETH, BNB) is a row** with `usd_value: null`, and it is **left out of `total_usd`**. Report the native balance from its own `balance` field. It is always listed, whatever `--min-usd` says.
+- **Any `--min-usd` above 0 also drops unpriced holdings** (an unpriced holding cannot show it clears the floor). `--min-usd 0` lists everything, including airdrop spam.
+- `total_usd` covers `chains_scanned` only. The wallet may hold value on chains the tool does not scan: say so when relevant.
 - Stablecoin-heavy wallet → likely waiting for a buy / parked dry powder
 - WETH/WBTC + LSTs (stETH, wstETH, rETH) → "saver" wallet, low-risk
 - 50+ random tokens → airdrop farmer
-- Empty `holdings` array → either no balance OR the address hasn't been indexed yet (very new wallets)
+- Empty `holdings` array → no priced balance above the floor, or a very new wallet we have not seen yet.
 
 ## Anti-patterns
 
-- This is ERC-20 only — does NOT include native ETH/BNB/MATIC (would need separate calls; not in our current tool surface). Mention this when reporting "total holdings".
+- Don't report `total_usd` as the wallet's value without "of priced tokens" and the native balance next to it.
 - For wallets with 100+ tokens, the response is large — use `--min-usd 100` or higher to focus on meaningful holdings.
+- This is a point-in-time read, not history. For how the wallet got here use `wallet pnl-history`.
 
 ## Pairs well with
 

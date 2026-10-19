@@ -12,7 +12,7 @@ Find the wallet(s) holding an open Hyperliquid perp position that match a share 
 
 ```bash
 vike-data perp find-position
-  --coin <SYM>         # e.g. BTC, ETH, SOL
+  --coin <SYM>         # the asset symbol, e.g. BTC, ETH, SOL (sent to the tool as `symbol`)
   --side long|short
   --leverage <X>       # e.g. 25
   --entry <PRICE>      # entry price from the card
@@ -49,11 +49,11 @@ The response includes `tolerance_used` so the caller knows which band matched (`
 {
   "match_count": 3,
   "tolerance_used": "tight",          // tight | loose | fallback | no_match
-  "query": { "coin": "ETH", "side": "long", "leverage": 25, "entry_price": 3210, "mark_price_hint": 3215 },
+  "query": { "symbol": "ETH", "side": "long", "leverage": 25, "entry_price": 3210, "mark_price_hint": 3215 },
   "matches": [
     {
       "address": "0x...",
-      "coin": "ETH", "side": "long",
+      "symbol": "ETH", "side": "long",
       "snapshot_ts": 1716700000,       // unix seconds — how fresh the snapshot is
       "size_token": 12.5, "size_usd": 40250,
       "entry_price": 3209.8, "mark_price": 3215.3,
@@ -71,16 +71,16 @@ The response includes `tolerance_used` so the caller knows which band matched (`
 - **Multiple matches at the exact same entry** (e.g. five wallets long ETH at 3210.00) — popular round-number entries collide. Treat as ambiguous; surface all and let the user disambiguate by size or address. Don't claim "this is the wallet" when `match_count > 1` in the tight band.
 - **`tolerance_used: fallback`** — the closest match is >0.5% off the queried entry. The card might be from a previous fill that's since been added to (size-weighted entry moves on add) or from a different exchange. Treat as low-confidence.
 - **`tolerance_used: no_match`** — the position is closed, the entry was from a margin-changing event, or the wallet was outside our HL coverage. Don't suggest a wallet anyway.
-- **`snapshot_ts`** is the snapshot time of that position row. The pipeline refreshes <5 min behind live; older `snapshot_ts` doesn't mean the position is stale, just that the wallet hasn't transacted since.
+- **`snapshot_ts`** is the snapshot time of that position row. Only positions seen within 15 minutes of the newest snapshot batch are matched (older rows are ghosts of closed positions), so a match is a position that was open in the last quarter hour; it does not mean the position is still open now.
+- **Response keys:** each match and the `query` block name the asset `symbol`. Servers before 2026-10-19 called it `coin` (or `asset`) and renamed it on 2026-10-19, so read `symbol` and fall back to `coin` if it is missing.
 
 ## Anti-patterns
 
 - Don't fabricate matches when the tool returns `match_count: 0`. Say "no open position matches that share card" — closed positions, post-card adds, or non-HL cards all produce empty results.
 - Don't strip the address when displaying — share-card investigations always want the full 0x...40hex (users copy-paste it).
-- Don't infer trader skill from a single share-card match. Use `vike-data perp top-traders` or `vike-data wallet summary` for profile context.
+- Don't infer trader skill from a single share-card match. Use `vike-data perp top-traders` for leaderboard context (see `vike-hl-top-traders` for what it can and cannot say about one address).
 
 ## Pairs well with
 
-- `vike-wallet-summary` — once you have the address, get the trader's HL profile + multi-chain identity.
-- `vike-hl-top-traders` — check if the matched wallet is on a leaderboard.
+- `vike-hl-top-traders` — check if the matched wallet is on a leaderboard. (`vike-data wallet summary` has no Hyperliquid data: it shows on-chain transfer activity on one chain only.)
 - `vike-wallet-label-provenance` — find out if the wallet is a known CEX/fund/MM rather than a retail trader.
