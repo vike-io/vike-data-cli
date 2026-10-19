@@ -19,7 +19,7 @@ vike-data wallet transactions <address>     # alias: vike-data wallet txs
   [--json]
 ```
 
-Chains: `ethereum`, `bsc`, `base`, `hyperevm`. The same address has separate histories per chain: `wallet summary` only shows the one it was most recently active on, so pass `--chain` for the others.
+Chains: `ethereum`, `bsc`, `base`, `hyperevm`. The same address has separate histories per chain: `wallet summary` shows one chain (ethereum or bsc by default), so pass `--chain` for the others.
 
 ## Examples
 

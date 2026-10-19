@@ -1,6 +1,6 @@
 ---
 name: vike-wallet-summary
-description: Aggregate metrics for a single wallet — volume, inflow, outflow, net flow, tx count, tokens traded across 24h / 7d / 30d / 90d / all windows, for the one chain (Ethereum, BSC, Base or HyperEVM) it was most recently active on. Use when the user gives an address and asks "what's this wallet doing".
+description: Aggregate metrics for a single wallet — volume, inflow, outflow, net flow, tx count, tokens traded across 24h / 7d / 30d / 90d / all windows, for one chain: the more recently active of Ethereum and BSC by default, or the chain you pass with `--chain`. Use when the user gives an address and asks "what's this wallet doing".
 allowed-tools: Bash(vike-data:*)
 ---
 
@@ -20,7 +20,7 @@ A JSON object with a `chain` field (`ethereum`, `bsc`, `base` or `hyperevm`) and
 
 `total_volume`, `total_inflow`, `total_outflow`, `net_flow` (USD), `tx_count`, `tokens_traded`, `first_seen`, `last_active`.
 
-- **One chain only, and it is named in `chain`.** The figures are for the chain where the wallet was most recently active (a tie goes to the larger all-time volume), never summed. **That is not necessarily its main chain**: `0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045` answers `chain: "base"` with under $1M all-time volume and $0.05 of 24h inflow (airdrop dust) while its Ethereum activity is not shown. Always say which chain the numbers are for. To see another chain, use `wallet transactions --chain`, `wallet counterparties --chain` or `wallet pnl-history --chain`; `wallet balances` shows which chain holds the value.
+- **One chain only, and it is named in `chain`.** Without `--chain` the figures are for the more recently active of Ethereum and BSC, never summed; Base or HyperEVM answer by default only for a wallet that has no Ethereum or BSC activity at all, so a dust transfer on another chain cannot change the answer. Pass `--chain base` (or `bsc`, `hyperevm`, `ethereum`) to ask for one chain; an unknown name is a 400. Always say which chain the numbers are for. `wallet balances` shows which chain holds the value.
 - **`tokens_traded`, `first_seen` and `last_active` are all-time** and repeat in every window: read them from `all` and ignore the copies. There is no per-window token count.
 - A window with no activity is present and zeroed (`24h` often is), not omitted.
 - Refreshed nightly: a wallet active in the last hours may not show yet.

@@ -9,11 +9,12 @@ export function registerWallet(program) {
 
   cmd
     .command('summary <address>')
-    .description('Aggregate metrics: volume / inflow / outflow / net flow / tx count across 24h-all windows, for the one chain (named in `chain`) the wallet was most recently active on')
+    .description('Aggregate metrics: volume / inflow / outflow / net flow / tx count across 24h-all windows, for one chain (named in `chain`): the more recently active of ethereum and bsc unless --chain says otherwise')
+    .option('--chain <name>', 'ethereum | bsc | base | hyperevm (default: ethereum/bsc, whichever was more recently active)')
     .option('--json', 'Emit JSON')
     .action(async (address, opts) => {
       try {
-        const r = await callTool('wallet_summary', { address });
+        const r = await callTool('wallet_summary', { address, ...(opts.chain ? { chain: opts.chain } : {}) });
         emit(r, opts);
       } catch (err) { emitError(err, opts); }
     });

@@ -170,7 +170,7 @@ Run `vike-data schema --pretty` (or call MCP `tools/list`) to see the live arg s
 ### Wallets
 | Tool | Returns | Not |
 |---|---|---|
-| `wallet_summary` | a dict keyed `all, 90d, 30d, 7d, 24h`, each with `total_volume, total_inflow, total_outflow, net_flow, tx_count, tokens_traded, first_seen, last_active`, plus `chain`: the ONE chain it answers for (the most recently active of ethereum, bsc, base, hyperevm; never summed) | no PnL, holdings or labels; not necessarily the main chain (a famous Ethereum wallet answered `base` dust) |
+| `wallet_summary` | a dict keyed `all, 90d, 30d, 7d, 24h`, each with `total_volume, total_inflow, total_outflow, net_flow, tx_count, tokens_traded, first_seen, last_active`, plus `chain`: the ONE chain it answers for (default: the more recently active of ethereum and bsc, and base or hyperevm only for a wallet with no ethereum/bsc activity; `--chain` asks for one; never summed) | no PnL, holdings or labels |
 | `wallet_discover` | `{wallets, total}` ranked by volume / inflow / outflow / net_flow / tx_count / pnl (`size` ≤ 20; ethereum, bsc, base, hyperevm; `base` and `hyperevm` serve `window=all` only) | `realized_pnl` is a ranking key only, not a dollar figure; no labels column |
 | `wallet_transactions` | single transfers, newest first | no aggregates |
 | `wallet_compare` | shared counterparties + shared tokens of exactly two wallets | not 3+ wallets |

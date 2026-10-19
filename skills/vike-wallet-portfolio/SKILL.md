@@ -23,7 +23,7 @@ vike-data wallet counterparties $ADDR --chain <summary.chain> --window 30d --lim
 
 Then label the counterparties with an empty `entity` in one call: `vike-data wallet batch <cp1> <cp2> ... --chain <summary.chain> --json` (2 credits). A top counterparty that is a CEX tells you which exchange the wallet uses; an unlabelled high-volume counterparty is worth a `wallet compare` or `wallet trace`.
 
-**The summary and the balances can sit on different chains.** `wallet summary` covers the ONE chain the wallet was most recently active on (its `chain` field); `wallet balances` lists every chain, each holding with its own `chain`. Report them side by side and say which chain the flows are for.
+**The summary and the balances can sit on different chains.** `wallet summary` covers the ONE chain named in its `chain` field (ethereum or bsc unless you pass `--chain`); `wallet balances` lists every chain, each holding with its own `chain`. Report them side by side and say which chain the flows are for.
 
 ## Report template
 

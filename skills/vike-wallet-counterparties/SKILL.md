@@ -16,7 +16,7 @@ vike-data wallet counterparties <address>
   [--json]
 ```
 
-Chains: `ethereum`, `bsc`, `base`, `hyperevm`. `entity` / `wallet_type` come from THAT chain's label table (empty string when unlabelled). A wallet's `wallet summary` names the chain it was most recently active on; run this per chain for the others.
+Chains: `ethereum`, `bsc`, `base`, `hyperevm`. `entity` / `wallet_type` come from THAT chain's label table (empty string when unlabelled). `wallet summary` names the chain it answered for (ethereum or bsc by default); run this per chain for the others.
 
 ## Example
 
