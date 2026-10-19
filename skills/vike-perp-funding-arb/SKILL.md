@@ -1,7 +1,7 @@
 ---
 name: vike-perp-funding-arb
 description: Find cross-venue funding-rate arbitrage opportunities on perpetual futures. Use when the user asks "any funding arb today" / "where to long-short X for funding" / "highest funding rates".
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-perp-funding-arb

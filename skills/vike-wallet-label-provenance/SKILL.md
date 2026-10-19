@@ -1,7 +1,7 @@
 ---
 name: vike-wallet-label-provenance
 description: Multi-source label cascade for any ETH wallet — shows what every upstream label provider AND our in-house heuristic classifier says about an address, with consensus entity/type and per-source attribution. Use when the user asks "who is this address" / "what do you know about this wallet" / "is this address labeled".
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-wallet-label-provenance

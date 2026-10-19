@@ -1,7 +1,7 @@
 ---
 name: vike-wallet-portfolio
 description: Composite wallet portfolio view — combines ENS + labels + ERC-20 balances + DeFi positions + recent net flow in one report. Use when the user gives a wallet address and asks for a complete picture ("full report on X" / "everything about this wallet" / "wallet snapshot").
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-wallet-portfolio

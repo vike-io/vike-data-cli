@@ -1,7 +1,7 @@
 ---
 name: vike-perp-screener
 description: Snapshot the current state of perpetual-futures markets — funding rates, cross-venue spreads, and HL leaderboard in one read. Use when the user asks "what's happening in perps today" / "perp market overview".
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-perp-screener

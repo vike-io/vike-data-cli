@@ -1,7 +1,7 @@
 ---
 name: vike-wallet-balances
 description: Current ERC-20 token balances for a wallet across major EVM chains (eth, bsc, base, arbitrum, polygon, optimism). Dust filtered. Use when the user asks "what does this wallet hold" / "current portfolio of X" / "show top holdings".
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-wallet-balances

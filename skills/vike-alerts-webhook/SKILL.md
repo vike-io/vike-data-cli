@@ -1,7 +1,7 @@
 ---
 name: vike-alerts-webhook
 description: Register an HTTPS webhook as an alert delivery channel — get HMAC-signed POST notifications when alerts fire. Use when the user has a server / bot / Slack integration and wants programmatic alert delivery instead of email/Discord.
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-alerts-webhook

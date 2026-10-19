@@ -1,7 +1,7 @@
 ---
 name: vike-polymarket-market-detail
 description: Deep-dive on a single Polymarket market — question, outcomes, current quotes, 24h volume, smart-money flows, top wallets active in it, resolution status. Use after vike-polymarket-markets when the user asks about a specific market.
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-polymarket-market-detail

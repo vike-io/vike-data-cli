@@ -1,7 +1,7 @@
 ---
 name: vike-wallet-ens
 description: Reverse ENS lookup — turn a 0x address into a human-readable name like `vitalik.eth`. Cheap, single API call. Use whenever you have an address and want to display a friendlier identifier alongside it.
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-wallet-ens

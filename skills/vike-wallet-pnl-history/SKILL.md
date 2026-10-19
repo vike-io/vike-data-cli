@@ -1,7 +1,7 @@
 ---
 name: vike-wallet-pnl-history
 description: Daily net-flow series for a wallet over the last N days — a directional proxy for daily PnL. Use when the user asks "how has wallet X done over time" / "show me daily flows for Y" / "is this wallet trending up or down".
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-wallet-pnl-history

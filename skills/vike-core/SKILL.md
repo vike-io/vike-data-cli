@@ -5,13 +5,13 @@ metadata:
   openclaw:
     requires:
       env: [VIKE_API_KEY]
-      bins: [vike]
+      bins: [vike-data]
     primaryEnv: VIKE_API_KEY
     install:
       - kind: node
         package: "@vike-io/cli"
-        bins: [vike]
-allowed-tools: Bash(vike:*)
+        bins: [vike-data]
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-core

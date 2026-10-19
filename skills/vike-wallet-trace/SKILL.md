@@ -1,7 +1,7 @@
 ---
 name: vike-wallet-trace
 description: Counterparty graph traversal from a root wallet outward. At each hop, expand to the top N counterparties by USD volume. Use when the user asks "where did funds from X go" / "follow the money 3 hops out" / "trace the network around this wallet" / wallet investigation.
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-wallet-trace

@@ -1,7 +1,7 @@
 ---
 name: vike-cross-venue-perps
 description: Compare a single perp symbol across all venues — funding, price, spreads. Use when the user asks "where to trade X" / "compare BTC perp across exchanges" / "best venue for ETH long".
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-cross-venue-perps

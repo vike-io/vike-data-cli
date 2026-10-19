@@ -1,7 +1,7 @@
 ---
 name: vike-token-holders
 description: Top holders of an ERC-20 token by cumulative net inflow USD, with known labels. Use when the user asks "top holders of X" / "who holds the most of token Y" / "is whale Z holding token A".
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-token-holders

@@ -1,7 +1,7 @@
 ---
 name: vike-wallet-batch
 description: Bulk label + 30d summary lookup for up to 100 addresses in one call. Use when the user pastes a CSV of addresses, asks "enrich this list with labels", or wants to quickly screen many wallets for entity / risk / activity.
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-wallet-batch

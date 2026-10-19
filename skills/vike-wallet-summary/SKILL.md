@@ -1,7 +1,7 @@
 ---
 name: vike-wallet-summary
 description: Aggregate metrics for a single wallet — volume, inflow, outflow, net flow, tx count, tokens traded across 24h / 7d / 30d / 90d / all windows. Use when the user gives an address and asks "what's this wallet doing".
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-wallet-summary

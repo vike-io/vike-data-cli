@@ -1,7 +1,7 @@
 ---
 name: vike-token-search
 description: Resolve a token symbol or name into the canonical contract address + chain + metadata. Use this BEFORE any other token command — most tools need the address, not the symbol.
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-token-search

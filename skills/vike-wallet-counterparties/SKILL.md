@@ -1,7 +1,7 @@
 ---
 name: vike-wallet-counterparties
 description: Find the top trading partners of a wallet — who it sent to and received from, ranked by combined USD volume. Use when the user asks "who does this wallet trade with" / "main counterparties of X" / "find connections between wallets".
-allowed-tools: Bash(vike:*)
+allowed-tools: Bash(vike-data:*)
 ---
 
 # vike-wallet-counterparties
