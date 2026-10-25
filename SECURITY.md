@@ -35,7 +35,7 @@ After a fix lands we will:
 In scope:
 - `@vike-io/cli` itself (this repo)
 - Skill playbooks under `skills/`
-- The CLI's interaction with the MCP endpoint at `https://vike.io/mcp`
+- The CLI's interaction with the MCP endpoint at `https://data.vike.io/mcp`
 
 Out of scope:
 - Bugs in user-installed third-party software the CLI invokes (npm, node)

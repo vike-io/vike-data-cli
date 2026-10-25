@@ -37,7 +37,7 @@ for (const k of Object.keys(fileEnv)) {
   if (process.env[k] !== undefined) delete fileEnv[k];
 }
 
-// End-to-end tests — hit the live MCP at https://vike.io/mcp (or whatever
+// End-to-end tests — hit the live MCP at https://data.vike.io/mcp (or whatever
 // VIKE_MCP_URL points at). Off by default — only runs via `npm run test:e2e`.
 // Long timeout: some tools (token_holders, wallet_trace) routinely take
 // 10–20s.

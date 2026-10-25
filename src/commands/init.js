@@ -31,7 +31,7 @@ export function registerInit(program) {
       const path = saveApiKey(key);
       console.log(`Saved to ${path}`);
 
-      console.log('Verifying connection to vike.io/mcp ...');
+      console.log('Verifying connection to data.vike.io/mcp ...');
       const { status, body } = await ping({ apiKey: key });
       if (status !== 200 || body?.error) {
         console.error(`Endpoint returned HTTP ${status}: ${JSON.stringify(body)}`);

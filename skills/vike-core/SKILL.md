@@ -54,7 +54,7 @@ vike-data --help                        # command list; add --help to any comman
 
 - `No API key` → run `vike-data init` or set `VIKE_API_KEY`.
 - `MCP error -32000: Hourly rate limit exceeded` → you hit the per-key cap of 20,000 requests per rolling hour; the window slides, so capacity returns continuously.
-- `Network error` / timeout → check `vike-data doctor`; the endpoint is `https://vike.io/mcp`.
+- `Network error` / timeout → check `vike-data doctor`; the endpoint is `https://data.vike.io/mcp`.
 - `503` from a tool → upstream data source temporarily down; retry in 30s.
 
 ## Cost awareness

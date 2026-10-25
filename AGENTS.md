@@ -17,7 +17,7 @@ Repo conventions for AI coding agents working on `vike-cli`.
 src/
   index.js              # CLI entry, registers commands
   auth.js               # ~/.vike/config.json + VIKE_API_KEY env
-  mcp-client.js         # JSON-RPC 2.0 client for https://vike.io/mcp
+  mcp-client.js         # JSON-RPC 2.0 client for https://data.vike.io/mcp
   format.js             # table/JSON output
   util.js               # small helpers (version read, type coerce)
   commands/             # one file per command group
@@ -77,7 +77,7 @@ Keep skills self-contained — agents should be able to act from a single SKILL.
 ## Testing
 
 - Unit tests for `util.js`, `format.js`, `auth.js` (no network).
-- Integration tests should mock `fetch` — never hit `https://vike.io/mcp` from CI.
+- Integration tests should mock `fetch` — never hit `https://data.vike.io/mcp` from CI.
 - For end-to-end smoke tests against the real endpoint, use `VIKE_LIVE_TEST=1` to opt-in (off by default).
 
 ## Don't
