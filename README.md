@@ -13,7 +13,7 @@ positions, fills, funding, liquidations, candles, and hourly long/short position
 cohort), **Polymarket** (markets, the trade and event tape, order-book snapshots, candles and
 on-chain settlements, plus a daily Parquet archive of the full L2 order book since 2026-07-25,
 licensed CC BY 4.0), and **labelled EVM wallets** on Ethereum and BNB Chain, with Base for token
-transfers. The same data is served three ways: an **MCP server** at `https://vike.io/mcp` (the one
+transfers. The same data is served three ways: an **MCP server** at `https://data.vike.io/mcp` (the one
 this CLI calls), a **REST API** at `https://data.vike.io/v1/`, and the **Parquet archive** at
 `https://data.vike.io/archive/`. A key allows 20,000 requests an hour, and an account can hold up
 to 5 keys; archive downloads are not counted. The archive manifest and a sample market need no key
@@ -36,7 +36,7 @@ Get a free key at [vike.io/account?tab=api-keys](https://vike.io/account?tab=api
 with `vk_`), then:
 
 ```bash
-vike-data init                                   # paste the key; saves ~/.vike/config.json, checks vike.io/mcp
+vike-data init                                   # paste the key; saves ~/.vike/config.json, checks data.vike.io/mcp
 vike-data doctor                                 # Node version, key, MCP connectivity, tool list
 vike-data token search PEPE                      # first query
 vike-data perp top-traders --window 7d           # Hyperliquid wallets ranked by PnL
@@ -94,12 +94,12 @@ Full catalog: [vike.io/data/datasets](https://vike.io/data/datasets) · field re
 
 ## MCP server
 
-The crypto data MCP server is `https://vike.io/mcp` (Streamable HTTP, JSON-RPC 2.0), keyed with
+The crypto data MCP server is `https://data.vike.io/mcp` (Streamable HTTP, JSON-RPC 2.0), keyed with
 the same `X-API-KEY`. MCP and REST calls share one hourly counter.
 
 ```bash
 # Claude Code
-claude mcp add --transport http vike https://vike.io/mcp \
+claude mcp add --transport http vike https://data.vike.io/mcp \
   --header "X-API-KEY: $VIKE_API_KEY"
 ```
 
@@ -109,7 +109,7 @@ Cursor, in `~/.cursor/mcp.json`:
 {
   "mcpServers": {
     "vike": {
-      "url": "https://vike.io/mcp",
+      "url": "https://data.vike.io/mcp",
       "headers": { "X-API-KEY": "YOUR_KEY" }
     }
   }
@@ -117,12 +117,12 @@ Cursor, in `~/.cursor/mcp.json`:
 ```
 
 **Claude Desktop needs no key:** Settings → Connectors → Add custom connector, URL
-`https://vike.io/mcp`, leave the OAuth fields empty, then log in to Vike and click Allow.
+`https://data.vike.io/mcp`, leave the OAuth fields empty, then log in to Vike and click Allow.
 Setup for Gemini CLI, VS Code and other clients: [vike.io/docs/ai/data/setup](https://vike.io/docs/ai/data/setup).
 
 ```bash
 # Raw JSON-RPC: list the tools your key can call
-curl https://vike.io/mcp -H "X-API-KEY: $VIKE_API_KEY" \
+curl https://data.vike.io/mcp -H "X-API-KEY: $VIKE_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
 ```
@@ -198,7 +198,7 @@ block in files it does not own.
 | Variable | Default | Purpose |
 |---|---|---|
 | `VIKE_API_KEY` | — | API key; wins over the saved config |
-| `VIKE_MCP_URL` | `https://vike.io/mcp` | MCP endpoint override |
+| `VIKE_MCP_URL` | `https://data.vike.io/mcp` | MCP endpoint override |
 | `VIKE_NO_TELEMETRY=1` or `DO_NOT_TRACK=1` | telemetry on | Turns off anonymous usage telemetry |
 | `VIKE_NO_UPDATE_CHECK=1` or `NO_UPDATE_NOTIFIER=1` | check on | Turns off the background npm update check |
 

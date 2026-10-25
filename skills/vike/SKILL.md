@@ -9,7 +9,7 @@ This skill is for anyone who asks an AI agent about crypto data: who is buying a
 
 What the platform has: wallet and token analytics on Ethereum and BSC, with Base for token transfers and labels (each tool's chain list is under "What each tool really returns"), multi-source wallet labels, CEX perpetual funding and cross-venue spreads, Hyperliquid top traders / share-card lookup / candles, Polymarket markets, traders and smart-money signals, and transfer alerts. 31 tools in one MCP server.
 
-**MCP endpoint for all calls:** `https://vike.io/mcp` (JSON-RPC 2.0)
+**MCP endpoint for all calls:** `https://data.vike.io/mcp` (JSON-RPC 2.0)
 **Or use the CLI:** `npm install -g @vike-io/cli` → `vike-data <command>`
 
 ## What it does and who it is for
@@ -132,7 +132,7 @@ vike-data wallet summary 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045 --json
 vike-data perp funding --symbol BTC --json
 ```
 
-**B) Via an MCP connector (recommended when your client has one).** All 31 tools live at `https://vike.io/mcp`. Connect the client to that address with the `X-API-KEY` header above, then call a tool by name with its arguments, for example `wallet_summary` with `address` set to a full 0x address.
+**B) Via an MCP connector (recommended when your client has one).** All 31 tools live at `https://data.vike.io/mcp`. Connect the client to that address with the `X-API-KEY` header above, then call a tool by name with its arguments, for example `wallet_summary` with `address` set to a full 0x address.
 
 Run `vike-data schema --pretty` (or call MCP `tools/list`) to see the live arg shape for every tool. Always read the schema before constructing arguments — defaults and enum values change.
 

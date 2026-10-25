@@ -40,7 +40,7 @@ export function clearApiKey() {
 }
 
 export function getEndpoint() {
-  return process.env.VIKE_MCP_URL || 'https://vike.io/mcp';
+  return process.env.VIKE_MCP_URL || 'https://data.vike.io/mcp';
 }
 
 export function requireApiKey() {
