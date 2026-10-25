@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.14.0
+
+### Minor Changes
+
+- 62464b9: Skills audit (2026-10-19). `vike-data perp find-position` now sends `symbol` to `hl_position_match` (the tool renamed `coin` on 2026-10-19; the `--coin` flag is unchanged). Help text no longer claims six balance chains, "10+" label providers or "spot-perp" spreads. 36 skills become 31: `vike-router` folds into the umbrella `vike`; `vike-perp-funding-arb` + `vike-cross-venue-perps` become `vike-perp-funding`; `vike-perp-screener` + `vike-perp-spread-arb` become `vike-perp-overview`; `vike-polymarket-screener` folds into `vike-polymarket-smart-money`; `vike-hl-trader-profile` folds into `vike-hl-top-traders`. Installed copies of the removed skills need `npx skills add vike-io/vike-data-cli` again. The audit's errors are corrected in the skill text: the umbrella (tool and chain lists, page sizes, ENS direction, command names, alert semantics, credits, rate limit of 20,000 requests per hour), token skills (`bought` is every inbound transfer, read `net_tokens`; real columns; fixed 10 rows; native coin as the zero address; screener `holders` counts active wallets; no ascending sort), wallet trace (edge direction is `out_usd` / `in_usd`), label provenance (6 sources plus heuristic, `found: false`), Hyperliquid top traders (percent units, realized-only ROI, no per-wallet HL tool), wallet summary / balances / discover / batch / transactions output shapes, and the Polymarket output keys.
+
+### Patch Changes
+
+- 7aba637: The default MCP endpoint is now `https://data.vike.io/mcp`, the server's published address (same server, tools, key and hourly budget). `VIKE_MCP_URL` still overrides it; the older `https://vike.io/mcp` keeps answering while it is retired.
+
 ## 0.13.1
 
 ### Patch Changes
