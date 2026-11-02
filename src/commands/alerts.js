@@ -18,14 +18,17 @@ const TARGET_OPTIONS = [
   ['--direction <d>', 'hl_cohort_bias: up | down | both (default both)'],
 ];
 
+// `--pnl-cohorts ''` clears the list: send [] (the server refuses ['']).
+const list = (v) => (Array.isArray(v) && v.every((x) => x === '') ? [] : v);
+
 function targetArgs(opts) {
   return {
     address: opts.address,
     address_role: opts.addressRole,
     wallet: opts.wallet,
-    actions: opts.actions,
-    pnl_cohorts: opts.pnlCohorts,
-    size_cohorts: opts.sizeCohorts,
+    actions: list(opts.actions),
+    pnl_cohorts: list(opts.pnlCohorts),
+    size_cohorts: list(opts.sizeCohorts),
     index: opts.index,
     threshold: opts.threshold,
     band: opts.band,
@@ -132,7 +135,7 @@ export function registerAlerts(program) {
         if (opts.chain !== undefined) payload.chain = opts.chain;
         if (opts.minUsd !== undefined) payload.min_value_usd = opts.minUsd;
         if (opts.maxUsd !== undefined) payload.max_value_usd = opts.maxUsd;
-        if (opts.channel !== undefined) payload.channels = opts.channel;
+        if (opts.channel !== undefined) payload.channels = list(opts.channel);
         if (opts.cooldown !== undefined) payload.cooldown_minutes = opts.cooldown;
         if (opts.active !== undefined) payload.is_active = parseBool(opts.active, true);
         const r = await callTool('alerts_edit', payload);

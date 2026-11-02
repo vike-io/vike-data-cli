@@ -12,9 +12,9 @@ export function registerCall(program) {
     .option('--json', 'Errors as JSON on stdout (the result is JSON either way)')
     .action(async (tool, opts) => {
       try {
-        const text = opts.argsFile !== undefined
+        const text = (opts.argsFile !== undefined
           ? readFileSync(opts.argsFile === '-' ? 0 : opts.argsFile, 'utf8')
-          : (opts.args ?? '{}');
+          : (opts.args ?? '{}')).replace(/^﻿/, '').trim();     // a file saved with a UTF-8 BOM
         let args;
         try { args = JSON.parse(text); } catch (err) {
           throw new Error(`arguments are not valid JSON: ${err.message}`);
@@ -24,7 +24,8 @@ export function registerCall(program) {
         }
         const seconds = Number(opts.timeout);
         if (!(seconds > 0)) throw new Error(`--timeout must be a positive number of seconds, got ${opts.timeout}`);
-        const r = await callTool(tool, args, { raw: true, timeoutMs: seconds * 1000 });
+        // Parsed only to check it; the text itself is sent, so numbers above 2^53 are not rounded.
+        const r = await callTool(tool, args, { raw: true, argsText: text, timeoutMs: seconds * 1000 });
         process.stdout.write((typeof r === 'string' ? r : JSON.stringify(r)) + '\n');
       } catch (err) { emitError(err, opts); }
     });

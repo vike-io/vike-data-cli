@@ -1,6 +1,6 @@
 import WebSocket from 'ws';
 import { requireApiKey } from '../auth.js';
-import { USER_AGENT, callTool } from '../mcp-client.js';
+import { USER_AGENT, callTool, redact } from '../mcp-client.js';
 import { emit, emitError } from '../format.js';
 import { addTool } from './tool-command.js';
 
@@ -15,7 +15,6 @@ const ONE_VALUE_KEYS = new Set(['side', 'direction', 'event', 'axis', 'move', 'r
 // an unknown one with `unknown_channel`.
 const FATAL_ERRORS = new Set(['bad_subscription', 'unknown_channel', 'rate_limited']);
 const FRESH_ERRORS = new Set(['cursor_expired', 'cursor_ahead']);      // resubscribe from now
-const RESUME_ERRORS = new Set(['catchup_unavailable', 'replay_too_large']);   // resubscribe from the frame's cursor
 
 // `--filter k=v` pairs -> the subscribe frame's filter object. A list key takes comma-separated values and
 // repeats add to it; the server validates the keys and values and names a bad one.
@@ -44,30 +43,39 @@ export function parseFilters(pairs = []) {
 // The later of two cursors; they are fixed-width, so text order is time order.
 const later = (a, b) => (b === undefined || (a !== undefined && a >= b) ? a : b);
 
+const backoff = (n) => Math.min(15_000, 1000 * 2 ** (n - 1));     // 1, 2, 4, 8, 15 s
+const MAX_CATCHUP_RETRIES = 5;      // then the subscription continues from now and says what it skipped
+
 // Run the subscriptions until a close the CLI must not retry; resolves to the exit code. Events and gap frames go
-// to `out` as received (one JSON object per line, so 64-bit integers stay exact); status lines go to `log`.
-// Every other end reconnects at once with the last cursor of each subscription.
+// to `out` as received (one JSON object per line, so 64-bit integers stay exact); `out` returning false (stdout
+// full) pauses the socket until `drain` calls back. Status lines go to `log`. Every other end reconnects with the
+// last cursor of each subscription.
 export async function runStream({
   url, apiKey, subs, out, log,
+  drain = (cb) => cb(),
   WebSocketImpl = WebSocket,
   sleep = (ms) => new Promise((r) => setTimeout(r, ms)),
 }) {
   const cursors = new Map(subs.filter((s) => s.cursor).map((s) => [s.id, s.cursor]));
-  const headers = { 'X-API-KEY': apiKey, 'User-Agent': USER_AGENT };
+  const ctx = { url, headers: { 'X-API-KEY': apiKey, 'User-Agent': USER_AGENT }, subs, cursors,
+    catchups: new Map(), out, drain, log, sleep, WS: WebSocketImpl };
   let failures = 0;
   for (;;) {
-    const r = await session(WebSocketImpl, url, headers, subs, cursors, out, log);
+    const r = await session(ctx);
     if (r.exit !== undefined) return r.exit;
     failures = r.opened ? 0 : failures + 1;
-    // The first retry is immediate; a handshake that keeps failing (stream restarting) waits 1, 2, 4 ... 15 s.
-    if (failures > 1) await sleep(Math.min(15_000, 1000 * 2 ** (failures - 2)));
+    // A connection that had opened waits 1 s, so a server that keeps closing at once is not hammered. A handshake
+    // that keeps failing (stream restarting) retries at once, then after 1, 2, 4 ... 15 s.
+    const wait = r.opened ? 1000 : failures > 1 ? backoff(failures - 1) : 0;
+    if (wait) await sleep(wait);
   }
 }
 
-function session(WS, url, headers, subs, cursors, out, log) {
+function session({ url, headers, subs, cursors, catchups, out, drain, log, sleep, WS }) {
   return new Promise((resolve) => {
     let opened = false;
     let done = false;
+    let paused = false;
     let idle;
     const ws = new WS(url, { headers, handshakeTimeout: 30_000 });
     const finish = (r) => {
@@ -79,7 +87,18 @@ function session(WS, url, headers, subs, cursors, out, log) {
     const stop = (exit) => { finish({ exit }); ws.terminate(); };
     const alive = () => {
       clearTimeout(idle);
+      if (paused) return;                 // no frames while we hold the socket: that silence is ours
       idle = setTimeout(() => { log(`no frame for ${IDLE_MS / 1000} s; connecting again`); ws.terminate(); }, IDLE_MS);
+    };
+    // stdout is full (a slow reader): stop reading the socket instead of buffering without bound. Frames the socket
+    // had already read still arrive, and pings among them are answered first. The server closes a reader stalled
+    // for 30 s with 4408, and the reconnect resumes from the cursors.
+    const print = (text) => {
+      if (out(text) !== false || paused) return;
+      paused = true;
+      clearTimeout(idle);
+      ws.pause();
+      drain(() => { paused = false; if (!done) { ws.resume(); alive(); } });
     };
     const subscribe = (s) => {
       const msg = { action: 'subscribe', id: s.id, channel: s.channel };
@@ -105,7 +124,7 @@ function session(WS, url, headers, subs, cursors, out, log) {
         }
       });
     });
-    ws.on('error', (err) => { if (!done) log(`connection error: ${err.message}`); });
+    ws.on('error', (err) => { if (!done) log(`connection error: ${redact(err.message, headers['X-API-KEY'])}`); });
     ws.on('open', () => {
       opened = true;
       alive();
@@ -120,12 +139,15 @@ function session(WS, url, headers, subs, cursors, out, log) {
       if (f.type === 'ping') {
         ws.send('{"action":"pong"}');
       } else if (f.type === 'event') {
-        out(text);
-        for (const id of f.ids ?? []) cursors.set(id, later(cursors.get(id), f.cursor));
+        for (const id of f.ids ?? []) {
+          cursors.set(id, later(cursors.get(id), f.cursor));
+          catchups.delete(id);            // the subscription is delivering: its catch-up retries start over
+        }
+        print(text);
       } else if (f.type === 'gap') {
         // About the channel, not one subscription: every subscription on it moves past the window.
-        out(text);
         for (const s of subs) if (s.channel === f.channel) cursors.set(s.id, later(cursors.get(s.id), f.cursor));
+        print(text);
       } else if (f.type === 'subscribed') {
         if (f.cursor) cursors.set(f.id, later(cursors.get(f.id), f.cursor));
         log(`subscribed ${f.id} to ${f.channel} at ${f.cursor} (replay: ${f.replay?.from ?? 'none'})`);
@@ -137,14 +159,31 @@ function session(WS, url, headers, subs, cursors, out, log) {
         } else if (sub && FRESH_ERRORS.has(f.code)) {
           cursors.delete(sub.id);
           subscribe(sub);
-        } else if (sub && RESUME_ERRORS.has(f.code)) {
-          if (f.code === 'replay_too_large' && (!f.cursor || f.cursor === cursors.get(sub.id))) {
+        } else if (sub && f.code === 'replay_too_large') {
+          if (!f.cursor || f.cursor === cursors.get(sub.id)) {
             log('the replay is too large even from the last cursor: narrow the filter');
             stop(1);
             return;
           }
-          if (f.cursor) cursors.set(sub.id, f.cursor);
+          cursors.set(sub.id, f.cursor);
           subscribe(sub);
+        } else if (sub && f.code === 'catchup_unavailable') {
+          // The server could not read the replay (its store down or the read timing out): retry after 1, 2, 4,
+          // 8, 15 s, then continue from now and say which window was skipped.
+          if (f.cursor) cursors.set(sub.id, f.cursor);
+          const n = (catchups.get(sub.id) ?? 0) + 1;
+          if (n > MAX_CATCHUP_RETRIES) {
+            const from = cursors.get(sub.id);
+            catchups.delete(sub.id);
+            cursors.delete(sub.id);
+            log(`catch-up of ${sub.channel} failed ${MAX_CATCHUP_RETRIES} times: continuing from now. The events `
+              + `after cursor ${from} up to now were SKIPPED; read them with `
+              + `\`vike-data stream events ${sub.channel} --cursor ${from}\` (same --filter).`);
+            subscribe(sub);
+          } else {
+            catchups.set(sub.id, n);
+            sleep(backoff(n)).then(() => { if (!done) subscribe(sub); });
+          }
         }
         // slow_consumer, server_catching_up, replaced, memory_backstop, ping_timeout: the close follows.
       }
@@ -200,12 +239,15 @@ export function registerStream(program) {
           cursor: opts.cursor,
         }));
         const log = (line) => process.stderr.write(`vike-data stream: ${line}\n`);
+        // The reader went away (`| head -5`): that is the end the user asked for, not an error.
+        process.stdout.on('error', (err) => { if (err.code === 'EPIPE') process.exit(0); else throw err; });
         log(`one connection per key on each address: another program streaming ${path} with this key replaces this one`);
         process.exitCode = await runStream({
           url: `wss://stream.vike.io/v1/stream/${path}`,
           apiKey: requireApiKey(),
           subs,
           out: (line) => process.stdout.write(line + '\n'),
+          drain: (cb) => process.stdout.once('drain', cb),
           log,
         });
       } catch (err) { emitError(err, opts); }

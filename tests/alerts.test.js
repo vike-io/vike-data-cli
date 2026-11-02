@@ -85,6 +85,13 @@ describe('alerts edit', () => {
   });
 });
 
+describe('alerts edit clears a list with \'\'', () => {
+  it('sends [] for --pnl-cohorts \'\', --actions \'\' and --channel \'\'', async () => {
+    const p = await run(['edit', '9', '--pnl-cohorts', '', '--actions', '', '--channel', '']);
+    expect(p.arguments).toEqual({ alert_id: '9', pnl_cohorts: [], actions: [], channels: [] });
+  });
+});
+
 describe('the new alert commands', () => {
   it.each([
     [['events', '--limit', '50', '--rule-id', '3'], 'alerts_events', { limit: '50', rule_id: '3' }],

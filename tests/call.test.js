@@ -1,5 +1,8 @@
 // `vike-data call` and the exit code of a tool-level error. fetch is mocked; nothing leaves the machine.
 
+import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { Command } from 'commander';
 import { registerCall } from '../src/commands/call.js';
@@ -49,6 +52,26 @@ describe('vike-data call', () => {
     // printed as the server sent it: an integer above 2^53 is not rounded
     expect(stdout.mock.calls.map((c) => c[0]).join('')).toBe(raw + '\n');
     expect(process.exitCode).toBeUndefined();
+  });
+
+  it('sends the arguments text as given: a 77-digit token_id is not rounded', async () => {
+    const id = '1'.repeat(77);
+    const { fetchMock } = mockTool('{}');
+    await run(registerCall, ['call', 'polymarket_orderbook', '--args', `{"token_id": ${id}, "depth": 5}`]);
+    const body = fetchMock.mock.calls[0][1].body;
+    expect(body).toContain(`"arguments":{"token_id": ${id}, "depth": 5}`);
+    expect(JSON.parse(body).params.name).toBe('polymarket_orderbook');
+  });
+
+  it('reads --args-file and drops a UTF-8 BOM', async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'vike-call-'));
+    const file = join(dir, 'args.json');
+    writeFileSync(file, '﻿{"address":"0xabc"}\n');
+    try {
+      const { fetchMock } = mockTool('{}');
+      await run(registerCall, ['call', 'wallet_ens', '--args-file', file]);
+      expect(JSON.parse(fetchMock.mock.calls[0][1].body).params.arguments).toEqual({ address: '0xabc' });
+    } finally { rmSync(dir, { recursive: true, force: true }); }
   });
 
   it('sends {} when no --args is given', async () => {

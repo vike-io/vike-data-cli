@@ -18,12 +18,18 @@ class FakeSocket extends EventEmitter {
   terminate() { this.emit('close', 1006, ''); }
 
   frame(obj) { this.emit('message', JSON.stringify(obj)); }
+
+  pause() { this.paused = true; }
+
+  resume() { this.paused = false; }
 }
 
-function start(subs) {
+function start(subs, { full = false } = {}) {
   const sockets = [];
   const out = [];
   const log = [];
+  const drains = [];
+  const sleep = vi.fn(async () => {});
   const WebSocketImpl = class extends FakeSocket {
     constructor(url, opts) { super(url, opts, sockets); }
   };
@@ -31,12 +37,13 @@ function start(subs) {
     url: 'wss://stream.invalid/v1/stream/hl',
     apiKey: 'vk_test',
     subs,
-    out: (line) => out.push(line),
+    out: (line) => { out.push(line); return !full; },
+    drain: (cb) => drains.push(cb),
     log: (line) => log.push(line),
     WebSocketImpl,
-    sleep: async () => {},
+    sleep,
   });
-  return { sockets, out, log, done };
+  return { sockets, out, log, drains, sleep, done };
 }
 
 const FILLS = { id: 'hl_fills', channel: 'hl.fills', filter: { coin: ['BTC'] } };
@@ -134,6 +141,50 @@ describe('runStream', () => {
     sockets[0].emit('open');
     expect(sockets[0].sent[0]).toEqual({ action: 'subscribe', id: 'hl_candles', channel: 'hl.candles', filter: { coin: ['BTC'], interval: ['1m'] } });
     sockets[0].frame({ type: 'error', id: 'hl_candles', code: 'unknown_channel', message: "unknown channel 'hl.candles'; available: [...]" });
+    await expect(done).resolves.toBe(1);
+  });
+
+  it('waits 1 s before reconnecting a connection that had opened', async () => {
+    const { sockets, sleep, done } = start([LIQS]);
+    sockets[0].emit('open');
+    sockets[0].emit('close', 4409, 'server_catching_up');
+    await vi.waitFor(() => expect(sockets).toHaveLength(2));
+    expect(sleep).toHaveBeenCalledWith(1000);
+    sockets[1].emit('close', 4410, 'replaced');
+    await expect(done).resolves.toBe(1);
+  });
+
+  it('catchup_unavailable: retries after 1, 2, 4, 8, 15 s, then continues from now and says what it skipped', async () => {
+    const { sockets, sleep, log, done } = start([FILLS]);
+    const [ws] = sockets;
+    ws.emit('open');
+    const fail = (cursor) => ws.frame({ type: 'error', id: 'hl_fills', code: 'catchup_unavailable', message: 'catch-up is unavailable right now', cursor });
+    for (let i = 1; i <= 5; i += 1) {
+      fail(`179317887000${i}-0001`);
+      await vi.waitFor(() => expect(ws.sent).toHaveLength(1 + i));
+      expect(ws.sent.at(-1).cursor).toBe(`179317887000${i}-0001`);
+    }
+    expect(sleep.mock.calls.map((c) => c[0])).toEqual([1000, 2000, 4000, 8000, 15000]);
+    fail('1793178870006-0001');
+    expect(ws.sent).toHaveLength(7);
+    expect(ws.sent.at(-1)).toEqual({ action: 'subscribe', id: 'hl_fills', channel: 'hl.fills', filter: { coin: ['BTC'] } });
+    expect(log.join('\n')).toMatch(/SKIPPED.*vike-data stream events hl\.fills --cursor 1793178870006-0001/);
+    ws.emit('close', 4410, 'replaced');
+    await expect(done).resolves.toBe(1);
+  });
+
+  it('stdout full: pauses the socket, still answers pings, resumes on drain', async () => {
+    const { sockets, drains, done } = start([FILLS], { full: true });
+    const [ws] = sockets;
+    ws.emit('open');
+    ws.frame({ type: 'event', ids: ['hl_fills'], channel: 'hl.fills', cursor: '1793178871012-0004', event: {} });
+    expect(ws.paused).toBe(true);
+    ws.frame({ type: 'ping' });
+    expect(ws.sent.at(-1)).toEqual({ action: 'pong' });
+    expect(drains).toHaveLength(1);
+    drains[0]();
+    expect(ws.paused).toBe(false);
+    ws.emit('close', 4410, 'replaced');
     await expect(done).resolves.toBe(1);
   });
 

@@ -7,31 +7,43 @@ export const USER_AGENT = `vike-cli/${readPackageVersion()}`;
 let _id = 0;
 function nextId() { return ++_id; }
 
+// A fetch error can quote a header value (an invalid one, e.g. a key pasted with a newline): never echo the key.
+export function redact(message, apiKey) {
+  return apiKey ? String(message).split(apiKey).join('vk_***') : String(message);
+}
+
+// fetch, with any error message cleared of the key.
+async function post(endpoint, apiKey, init) {
+  try {
+    return await fetch(endpoint, init);
+  } catch (err) {
+    throw Object.assign(new Error(redact(err.message, apiKey)), { name: err.name });
+  }
+}
+
 export async function callTool(toolName, args = {}, opts = {}) {
   const apiKey = opts.apiKey ?? requireApiKey();
   const endpoint = opts.endpoint ?? getEndpoint();
   const timeoutMs = opts.timeoutMs ?? 60_000;
 
-  const body = {
-    jsonrpc: '2.0',
-    id: nextId(),
-    method: 'tools/call',
-    params: { name: toolName, arguments: args },
-  };
+  // argsText: the caller's own JSON object text, sent byte for byte (a 77-digit number is not rounded).
+  const envelope = JSON.stringify({ jsonrpc: '2.0', id: nextId(), method: 'tools/call' });
+  const body = `${envelope.slice(0, -1)},"params":{"name":${JSON.stringify(toolName)},`
+    + `"arguments":${opts.argsText ?? JSON.stringify(args)}}}`;
 
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), timeoutMs);
 
   let resp;
   try {
-    resp = await fetch(endpoint, {
+    resp = await post(endpoint, apiKey, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'X-API-KEY': apiKey,
         'User-Agent': USER_AGENT,
       },
-      body: JSON.stringify(body),
+      body,
       signal: ctrl.signal,
     });
   } catch (err) {
@@ -76,7 +88,7 @@ export async function listTools(opts = {}) {
     method: 'tools/list',
     params: {},
   };
-  const resp = await fetch(endpoint, {
+  const resp = await post(endpoint, apiKey, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'X-API-KEY': apiKey, 'User-Agent': USER_AGENT },
     body: JSON.stringify(body),
@@ -91,7 +103,7 @@ export async function ping(opts = {}) {
   // JSON-RPC "Invalid or missing API key" error (soon HTTP 401), so fail early.
   const endpoint = opts.endpoint ?? getEndpoint();
   const apiKey = opts.apiKey ?? requireApiKey();
-  const resp = await fetch(endpoint, {
+  const resp = await post(endpoint, apiKey, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'X-API-KEY': apiKey, 'User-Agent': USER_AGENT },
     body: JSON.stringify({
