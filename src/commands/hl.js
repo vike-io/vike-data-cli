@@ -110,8 +110,10 @@ export function registerHl(program) {
     tool: 'hl_market',
     desc: 'Open interest per symbol, one symbol\'s hourly series, size breakdown, positions, indices or large fills',
     options: [
-      view(['open_interest', 'symbol_metrics', 'size_breakdown', 'positions', 'indices', 'large_fills']),
-      ['--symbol <s>', 'One symbol (required by every view but open_interest and positions)'],
+      view(['open_interest', 'symbol_metrics', 'size_breakdown', 'positions', 'indices', 'large_fills', 'hourly']),
+      ['--symbol <s>', 'One symbol (required by every view but open_interest, positions and hourly)'],
+      ['--symbols <list>', 'hourly: comma-separated perps, at most 64 (close, open interest, funding, premium)'],
+      ['--days <n>', 'hourly: days back from --end, 1-400 (default 120)'],
       WALLET, AXIS, COHORT, OPENED, START, END,
       ['--open-only <bool>', 'positions: true (default) = latest open; false needs --start'],
       ['--sort <s>', 'positions: size = biggest positions of one --symbol first'],
@@ -171,6 +173,102 @@ export function registerHl(program) {
       ['--type <t>', 'flows: all | deposit | withdraw | distribution | commission'],
       ['--bucket <b>', 'series: 1h | 1d'],
       START, END, LIMIT, CURSOR,
+    ],
+  });
+
+  // The cross-wallet feeds (twaps, ledger, leverage-changes): `--order asc` follows a feed; resend the same
+  // filters with each nextCursor and stop on an empty page.
+  const FEED_ORDER = ['--order <o>', 'desc (default) | asc (to follow the feed)'];
+  const FEED_WINDOW = ['--start <t>', 'ISO-8601 UTC lower bound (default: 24 hours before --end, unless --wallet)'];
+
+  addTool(hl, 'orders', {
+    tool: 'hl_orders',
+    desc: 'Standing orders: resting at one instant, one wallet\'s orders over a window, or one symbol\'s order clusters',
+    options: [
+      view(['open', 'wallet', 'clusters']),
+      ['--symbol <s>', 'open: symbol and/or --wallet required; clusters: required'],
+      ['--wallet <a>', 'open: one wallet\'s resting orders'],
+      ['--address <a>', 'wallet: the wallet (required)'],
+      ['--at <t>', 'open, clusters: ISO-8601 UTC instant (default the newest snapshot)'],
+      ['--oid <n>', 'open: one order id'],
+      ['--order-type <t>', 'open: Limit | Stop Market | Stop Limit | Take Profit Market | Take Profit Limit | Trailing Stop Market'],
+      ['--created-from <t>', 'open: placed at or after (ISO-8601 UTC)'],
+      ['--created-to <t>', 'open: placed at or before (ISO-8601 UTC)'],
+      ['--from <t>', 'wallet: window start (default 7 days before --to)'],
+      ['--to <t>', 'wallet: window end (default the newest snapshot; at most 30 days)'],
+      ['--status <s>', 'wallet: open | filled | partially_filled | canceled_or_expired'],
+      ['--step-bps <n>', 'clusters: bucket width in basis points (default 10)'],
+      ['--range-pct <n>', 'clusters: half-width around the mid in percent (default 10)'],
+      ['--cohort-axis <a>', 'clusters: size | pnl | pnl_abs'],
+      ['--cohort <c>', 'clusters: one cohort label (current labels; not with --at)'],
+      LIMIT, CURSOR,
+    ],
+  });
+
+  addTool(hl, 'twaps', {
+    tool: 'hl_twaps',
+    desc: 'TWAP status lines across wallets, or one wallet\'s or one TWAP\'s',
+    options: [
+      WALLET,
+      ['--twap-id <n>', 'One TWAP: every status line of it'],
+      SYMBOL,
+      ['--status <s>', 'activated | waitingForTrigger | finished | terminated | stopped | error'],
+      FEED_WINDOW, END, FEED_ORDER, LIMIT, CURSOR,
+    ],
+  });
+
+  addTool(hl, 'ledger', {
+    tool: 'hl_ledger',
+    desc: 'Deposits, withdrawals, transfers and vault events across wallets',
+    options: [
+      WALLET,
+      ['--event-type <t>', 'One event type, e.g. deposit, withdraw, send, vaultDeposit'],
+      ['--min-usd <usd>', 'Smallest absolute amount_usd'],
+      FEED_WINDOW, END, FEED_ORDER, LIMIT, CURSOR,
+    ],
+  });
+
+  addTool(hl, 'leverage-changes', {
+    tool: 'hl_leverage_changes',
+    desc: 'Positions whose leverage or margin mode changed between two snapshots',
+    options: [
+      WALLET, SYMBOL,
+      ['--change <c>', 'up | down | mode'],
+      ['--min-leverage <x>', 'Smallest new leverage'],
+      FEED_WINDOW, END, FEED_ORDER, LIMIT, CURSOR,
+    ],
+  });
+
+  addTool(hl, 'wallet-trades <address>', {
+    tool: 'hl_wallet_trades',
+    args: ['address'],
+    desc: 'One wallet\'s closed round-trip trades, newest close first',
+    options: [SYMBOL, START, END, LIMIT, CURSOR],
+  });
+
+  addTool(hl, 'stats', {
+    tool: 'hl_stats',
+    desc: 'Hourly venue-wide perp equity, open interest and positions, or hourly perp volume',
+    options: [
+      view(['ecosystem', 'volume']),
+      ['--symbol <s>', 'volume: one symbol (omit for the whole venue)'],
+      START, END, LIMIT, CURSOR,
+    ],
+  });
+
+  addTool(hl, 'hype-holders', {
+    tool: 'hl_hype_holders',
+    desc: 'HYPE holders ranked by spot balance plus staked',
+    options: [['--order <o>', 'desc (default) | asc'], LIMIT, CURSOR],
+  });
+
+  addTool(hl, 'archive', {
+    tool: 'hl_archive',
+    desc: 'Index of the Hyperliquid Parquet archive (fills, positions), or a 7-day download link for one file (--view url)',
+    options: [
+      view(['datasets', 'url']),
+      ['--dataset <d>', 'url: fills | positions'],
+      ['--date <d>', 'url: the UTC day, YYYY-MM-DD, or latest (positions only)'],
     ],
   });
 }

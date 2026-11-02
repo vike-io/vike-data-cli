@@ -42,6 +42,20 @@ with the key's name. List keys (`wallet`, `coin`, `token`, `market`, `chain`, co
 values and repeat; `side`, `direction`, `event`, `axis`, `move` take one value; `min_usd`, `min_amount`, `min_move`
 take a number. Channel fields and filter keys: https://vike.io/docs/data/reference/stream-channels
 
+## Without a socket
+
+These are MCP calls: they open no connection, so they never replace one.
+
+```bash
+vike-data stream info --json                                    # every path, channel, filter key, limit and close code
+vike-data stream check hl.fills --filter coin=BTC --filter min_usd=50000   # the server's own validator; exit 1 if refused
+vike-data stream events hl.liquidations --filter coin=BTC --since-ms 1793178870000 --json   # stored events (3 days), paged by --cursor
+vike-data stream connections --hours 24 --json                  # your recent connections: who closed whom (4410), events sent
+```
+
+Run `stream check` before a long-running `stream`: it shows the filter exactly as the server will apply it (with
+the `hl.fills` default `min_usd` of 1000 added) or the server's error naming the bad key.
+
 ## Reading the output
 
 - Keep the **frame's** `cursor` (the top-level one, not `event.cursor`) of the last line you handled. `--cursor <it>`
@@ -50,7 +64,7 @@ take a number. Channel fields and filter keys: https://vike.io/docs/data/referen
   Delivery is at least once: drop a repeated `event.event_id`.
 - A `gap` frame (`reason: channel_idle`) means the channel was not running between `from` and `to` (nobody was
   subscribed). It does not mean nothing happened; read that window from the REST endpoints or the `hl` / `polymarket`
-  commands.
+  commands. For what a socket missed while the channel was running, `vike-data stream events <channel> --cursor <c>`.
 - `hl.fills` without `min_usd` gets a $1,000 floor; `min_usd=0` is every fill (hundreds per second).
   `chain.transfers` unfiltered is a firehose; `min_usd` on it drops unpriced transfers.
 
@@ -59,6 +73,7 @@ take a number. Channel fields and filter keys: https://vike.io/docs/data/referen
 On each path, one API key holds one connection; an account holds at most 3. A second program on the same key and
 path takes over, and the first exits with `replaced (4410)` and does not reconnect (two programs reconnecting would
 take the connection from each other forever). Give each program its own key (`VIKE_API_KEY=... vike-data stream ...`).
+`vike-data stream connections` shows which of your connections closed which.
 Exit 1 also on `HTTP 401` / `4401` (the key) and on a refused subscription (`bad_subscription`, `unknown_channel`).
 
 ## Anti-patterns

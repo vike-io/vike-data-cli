@@ -17,6 +17,7 @@ import { registerLogin, registerLogout, registerWhoami } from './commands/auth.j
 import { registerCall } from './commands/call.js';
 import { registerHl } from './commands/hl.js';
 import { registerStream } from './commands/stream.js';
+import { registerSearch } from './commands/search.js';
 import { readPackageVersion } from './util.js';
 import {
   getUpdateNotification,
@@ -70,6 +71,7 @@ registerLabels(program);
 registerCandles(program);
 registerHl(program);
 registerStream(program);
+registerSearch(program);
 registerCall(program);
 
 const _parseT0 = Date.now();

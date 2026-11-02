@@ -10,7 +10,7 @@ const EXPECTED_TOP_LEVEL = [
   'token', 'wallet', 'perp', 'alerts',
   'polymarket', 'candles', 'labels',
   'init', 'install', 'doctor', 'schema', 'login', 'logout', 'whoami',
-  'hl', 'stream', 'call',
+  'hl', 'stream', 'call', 'search',
 ];
 
 const EXPECTED_SUBCMDS = {
@@ -24,7 +24,9 @@ const EXPECTED_SUBCMDS = {
                'market-stats', 'settlement', 'settlements', 'archive', 'leaderboard'],
   candles: ['hl', 'polymarket'],
   hl: ['cohort-metrics', 'segments', 'wallet', 'wallet-activity', 'leaderboard', 'liquidations',
-       'market', 'builders', 'vaults', 'vault'],
+       'market', 'builders', 'vaults', 'vault', 'orders', 'twaps', 'ledger', 'leverage-changes',
+       'wallet-trades', 'stats', 'hype-holders', 'archive'],
+  stream: ['info', 'check', 'events', 'connections'],
 };
 
 describe('command coverage', () => {
@@ -78,5 +80,6 @@ async function loadAllRegisters() {
     registerHl: (await import('../src/commands/hl.js')).registerHl,
     registerStream: (await import('../src/commands/stream.js')).registerStream,
     registerCall: (await import('../src/commands/call.js')).registerCall,
+    registerSearch: (await import('../src/commands/search.js')).registerSearch,
   };
 }

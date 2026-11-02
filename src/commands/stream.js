@@ -1,7 +1,8 @@
 import WebSocket from 'ws';
 import { requireApiKey } from '../auth.js';
-import { USER_AGENT } from '../mcp-client.js';
-import { emitError } from '../format.js';
+import { USER_AGENT, callTool } from '../mcp-client.js';
+import { emit, emitError } from '../format.js';
+import { addTool } from './tool-command.js';
 
 // The four event streams on stream.vike.io; a channel belongs to one of them. The protocol (frames,
 // close codes, resume) is https://vike.io/docs/data/reference/stream-hl.
@@ -162,12 +163,19 @@ function session(WS, url, headers, subs, cursors, out, log) {
   });
 }
 
+const FILTER_OPTION = ['--filter <key=value...>', 'Filter, repeatable: coin=BTC,ETH  min_usd=50000  wallet=0x...  side=buy'];
+
 export function registerStream(program) {
-  program
+  // `stream check --filter ...`: the subcommand's flags must stay the subcommand's, not go to `stream <path>`,
+  // which has the same names. Commander needs positional options on the parent chain for that; the root has
+  // only --version and --help, which keep working before a command name.
+  program.enablePositionalOptions();
+  const cmd = program
     .command('stream <path>')
+    .enablePositionalOptions()
     .description(`Print live events as NDJSON from wss://stream.vike.io/v1/stream/<path> (${STREAM_PATHS.join(', ')}); reconnects and resumes by itself`)
     .requiredOption('--channel <channel...>', 'Channel(s), one subscription each, e.g. hl.fills hl.liquidations (hl), chain.transfers (onchain), pm.trades (polymarket)')
-    .option('--filter <key=value...>', 'Filter for every subscription, repeatable: coin=BTC,ETH  min_usd=50000  wallet=0x...  side=buy')
+    .option(FILTER_OPTION[0], `${FILTER_OPTION[1]} (applies to every --channel)`)
     .option('--cursor <cursor>', 'Resume from this cursor (from a frame, at most 3 days old) instead of starting now')
     .action(async (path, opts) => {
       try {
@@ -196,4 +204,57 @@ export function registerStream(program) {
         });
       } catch (err) { emitError(err, opts); }
     });
+
+  // The stream's MCP tools: no socket, so no connection of the key is replaced.
+  addTool(cmd, 'info', {
+    tool: 'stream_info',
+    desc: 'Every path, channel and filter key, the limits and close codes, from the server\'s own registry',
+  });
+
+  cmd
+    .command('check <channel>')
+    .description('Check a channel and filter with the stream server\'s own validator, without connecting (exit 1 if refused)')
+    .option(...FILTER_OPTION)
+    .option('--path <path>', `The endpoint the connection would use: ${STREAM_PATHS.join(' | ')} (default the channel's own)`)
+    .option('--json', 'Emit JSON')
+    .action(async (channel, opts) => {
+      try {
+        const filter = parseFilters(opts.filter);
+        const r = await callTool('stream_check_filter', {
+          channel, filter: Object.keys(filter).length ? filter : undefined, path: opts.path,
+        });
+        emit(r, opts);
+        if (r?.valid === false) process.exitCode = 1;
+      } catch (err) { emitError(err, opts); }
+    });
+
+  cmd
+    .command('events <channel>')
+    .description('Stored events of one channel after a cursor, oldest first (the REST catch-up, kept 3 days)')
+    .option(...FILTER_OPTION)
+    .option('--cursor <cursor>', 'next_cursor of the previous page, or a frame\'s cursor (omit for the oldest kept)')
+    .option('--since-ms <ms>', 'Start after this arrival time, epoch ms (instead of --cursor)')
+    .option('--limit <n>', 'Events per page, 1-1000 (default 200)')
+    .option('--json', 'Emit JSON')
+    .action(async (channel, opts) => {
+      try {
+        const filter = parseFilters(opts.filter);
+        emit(await callTool('stream_events', {
+          channel,
+          filter: Object.keys(filter).length ? filter : undefined,
+          cursor: opts.cursor,
+          since_ms: opts.sinceMs,
+          limit: opts.limit,
+        }), opts);
+      } catch (err) { emitError(err, opts); }
+    });
+
+  addTool(cmd, 'connections', {
+    tool: 'stream_connections',
+    desc: 'Your account\'s recent stream connections: path, key, state, close code (4410 = replaced), channels',
+    options: [
+      ['--hours <n>', 'How far back, 1-720 (default 168)'],
+      ['--limit <n>', 'Connections, newest first, 1-1000 (default 50)'],
+    ],
+  });
 }

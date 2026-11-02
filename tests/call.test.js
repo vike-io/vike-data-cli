@@ -4,6 +4,9 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import { Command } from 'commander';
 import { registerCall } from '../src/commands/call.js';
 import { registerPerp } from '../src/commands/perp.js';
+import { registerHl } from '../src/commands/hl.js';
+import { registerStream } from '../src/commands/stream.js';
+import { registerSearch } from '../src/commands/search.js';
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -80,5 +83,36 @@ describe('a tool-level error exits 1 in every output mode', () => {
     mockTool('{"rows": []}');
     await run(registerPerp, ['perp', 'funding', '--json']);
     expect(process.exitCode).toBeUndefined();
+  });
+});
+
+describe('one command per tool: flags become the tool parameters', () => {
+  it.each([
+    [registerHl, ['hl', 'orders', '--view', 'wallet', '--address', '0xabc', '--from', '2026-10-01T00:00:00Z', '--status', 'filled'],
+      'hl_orders', { view: 'wallet', address: '0xabc', from: '2026-10-01T00:00:00Z', status: 'filled' }],
+    [registerHl, ['hl', 'orders', '--view', 'clusters', '--symbol', 'BTC', '--step-bps', '25', '--cohort-axis', 'size'],
+      'hl_orders', { view: 'clusters', symbol: 'BTC', step_bps: '25', cohort_axis: 'size' }],
+    [registerHl, ['hl', 'wallet-trades', '0xabc', '--limit', '5'], 'hl_wallet_trades', { address: '0xabc', limit: '5' }],
+    [registerHl, ['hl', 'market', '--view', 'hourly', '--symbols', 'BTC,ETH', '--days', '7'],
+      'hl_market', { view: 'hourly', symbols: 'BTC,ETH', days: '7' }],
+    [registerSearch, ['search', 'vitalik.eth', '--limit', '3'], 'search', { q: 'vitalik.eth', limit: '3' }],
+    [registerStream, ['stream', 'events', 'hl.fills', '--filter', 'coin=BTC', '--since-ms', '1793178870000'],
+      'stream_events', { channel: 'hl.fills', filter: { coin: ['BTC'] }, since_ms: '1793178870000' }],
+    [registerStream, ['stream', 'connections', '--hours', '24'], 'stream_connections', { hours: '24' }],
+  ])('%#', async (register, args, tool, expected) => {
+    const { fetchMock } = mockTool('{}');
+    await run(register, [...args, '--json']);
+    const { params } = JSON.parse(fetchMock.mock.calls[0][1].body);
+    expect(params.name).toBe(tool);
+    expect(params.arguments).toEqual(expected);
+  });
+
+  it('stream check exits 1 when the server refuses the filter', async () => {
+    const { fetchMock } = mockTool('{"valid": false, "code": "bad_subscription", "message": "filter key \'x\' is not supported on hl.fills"}');
+    await run(registerStream, ['stream', 'check', 'hl.fills', '--filter', 'x=1', '--path', 'hl', '--json']);
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body).params).toEqual({
+      name: 'stream_check_filter', arguments: { channel: 'hl.fills', filter: { x: ['1'] }, path: 'hl' },
+    });
+    expect(process.exitCode).toBe(1);
   });
 });

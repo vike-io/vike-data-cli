@@ -11,15 +11,25 @@ export function registerPolymarket(program) {
 
   cmd
     .command('markets')
-    .description('Trending Polymarket markets ranked by 24h volume')
-    .option('--category <c>', 'Crypto | Sports | Politics | Pop-Culture | Tech | all', 'all')
-    .option('--limit <n>', 'Max markets (max 30)', '10')
+    .description('Trending Polymarket markets ranked by 24h volume (or --view search / market)')
+    .option('--view <v>', 'trending (default) | search (by slug) | market (one by --condition-id)')
+    .option('--category <c>', 'trending: Crypto | Sports | Politics | Pop-Culture | Tech | all (default all)')
+    .option('--query <q>', 'search: part of the market slug')
+    .option('--active <bool>', 'search: true = only active, false = only closed')
+    .option('--offset <n>', 'search: rows to skip')
+    .option('--condition-id <id>', 'market: the condition id')
+    .option('--limit <n>', 'Max markets (trending default 10, max 30; search default 50, max 100)')
     .option('--json', 'Emit JSON')
     .action(async (opts) => {
       try {
         const r = await callTool('polymarket_markets', {
+          view: opts.view,
           category: opts.category,
-          limit: parseInt10(opts.limit, 10),
+          query: opts.query,
+          active: opts.active,
+          offset: opts.offset,
+          condition_id: opts.conditionId,
+          limit: opts.limit,
         });
         emit(r, opts);
       } catch (err) { emitError(err, opts); }
@@ -81,7 +91,7 @@ export function registerPolymarket(program) {
     tool: 'polymarket_market_trades',
     args: ['condition_id'],
     desc: 'One market\'s trades with the wallet behind each, newest first (one row = one order\'s fill)',
-    options: [FROM, TO, CURSOR, ['--limit <n>', 'Rows per page (default 100, max 200)']],
+    options: [FROM, TO, CURSOR, ['--limit <n>', 'Rows per page (default 100)']],
   });
 
   addTool(cmd, 'tape', {
@@ -94,7 +104,7 @@ export function registerPolymarket(program) {
       ['--to-ms <ms>', 'Required. Window end, epoch ms, exclusive, at most 24h after --from-ms'],
       ['--event-type <t>', 'book | price_change | trade | tick_size_change | status (strongly recommended)'],
       CURSOR,
-      ['--limit <n>', 'Events per page (default 100, max 1000)'],
+      ['--limit <n>', 'Events per page (default 100)'],
     ],
   });
 
@@ -127,7 +137,7 @@ export function registerPolymarket(program) {
       FROM, TO,
       ['--slug-prefix <p>', 'Only markets whose slug starts with this, e.g. btc-updown-5m-'],
       CURSOR,
-      ['--limit <n>', 'Rows per page (default 100, max 500)'],
+      ['--limit <n>', 'Rows per page (default 100)'],
     ],
   });
 
@@ -142,7 +152,7 @@ export function registerPolymarket(program) {
       ['--date-to <d>', 'datasets: last UTC day, inclusive'],
       ['--asset <a>', 'Family files only, e.g. btc (with --tenor)'],
       ['--tenor <t>', 'Family files only, e.g. 5m (with --asset)'],
-      ['--limit <n>', 'datasets: files per page (default 50, max 200)'],
+      ['--limit <n>', 'datasets: files per page (default 50)'],
       ['--offset <n>', 'datasets: skip this many files'],
     ],
   });

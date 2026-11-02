@@ -41,6 +41,8 @@ describe('cli --help', () => {
     ['hl'],
     ['hl', 'wallet', '0x0000000000000000000000000000000000000000'],
     ['stream', 'hl'],
+    ['stream', 'check', 'hl.fills'],
+    ['search', 'BTC'],
     ['call', 'wallet_ens'],
     ['alerts', 'create'],
   ])('vike-data %s --help', (...cmdParts) => {
