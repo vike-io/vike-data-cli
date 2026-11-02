@@ -41,7 +41,7 @@ function targetArgs(opts) {
 export function registerAlerts(program) {
   const cmd = program
     .command('alerts')
-    .description('Manage alerts: on-chain transfers, Hyperliquid fills, liquidations, cohort bias and liquidation proximity, and Polymarket trades, price moves and resolutions (at most 50 active per product)');
+    .description('Manage alerts: on-chain transfers, Hyperliquid fills, liquidations, cohort bias and liquidation proximity, and Polymarket trades, price moves and resolutions (at most 200 active per account)');
 
   cmd
     .command('list')
