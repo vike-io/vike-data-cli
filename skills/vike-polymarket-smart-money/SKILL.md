@@ -69,6 +69,14 @@ Trim aggressively if the user asked a narrower question. About 5 credits for the
 - **Short-dated markets dominate.** Five-minute "up or down" markets resolve fast and show huge deltas: pass `--category` (or skip those slugs) when you want slower markets. Very short `--hours` windows (an hour or two) are noisy for the mispricing read.
 - The category also scopes the cohort. An unknown category spelling returns an empty list, not an error.
 
+## Live
+
+```bash
+vike-data stream polymarket --channel pm.positions --filter market=<condition_id> --filter min_usd=1000   # who opens, adds to, reduces or closes in a flagged market
+```
+
+`min_usd` is the size of the trade. Each event names the wallet (`subject.wallet`), `data.action`, `shares` and `avg_price`, and carries that wallet's `labels.pnl_tier` and `volume_tier` (its Polymarket tier, not membership of the cohort above). To follow chosen wallets instead, `--filter wallet=0x...` (see `vike-polymarket-trader`). Unfiltered it is 60,000 to 150,000 events an hour (measured 2026-11-02): always filter by `market` or `wallet`. Fields, timing and the one-connection rule: `vike-stream`.
+
 ## Anti-patterns
 
 - Don't treat "smart-money cohort" as omniscient. They're filtered for past performance — survivorship bias applies, especially in fast-moving political markets.

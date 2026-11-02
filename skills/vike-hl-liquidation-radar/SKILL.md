@@ -1,6 +1,6 @@
 ---
 name: vike-hl-liquidation-radar
-description: Where Hyperliquid liquidations are likely - which liquid symbols have the most open interest near liquidation, where one symbol's liquidation clusters sit around the mark, which liquidations just happened, and a live feed of positions entering the liquidation zone and of liquidations as they print. Use when the user asks "which coins are closest to a liquidation cascade" / "where are ETH liquidations clustered" / "liquidation heatmap" / "who just got liquidated on Hyperliquid" / "alert me to big liquidations".
+description: Where Hyperliquid liquidations are likely - which liquid symbols have the most open interest near liquidation, where one symbol's liquidation clusters sit around the mark, which liquidations just happened, and a live feed of positions entering the liquidation zone, of liquidations as they print and of leveraged position changes. Use when the user asks "which coins are closest to a liquidation cascade" / "where are ETH liquidations clustered" / "liquidation heatmap" / "who just got liquidated on Hyperliquid" / "alert me to big liquidations".
 allowed-tools: Bash(vike-data:*)
 ---
 
@@ -33,6 +33,12 @@ vike-data stream hl --channel hl.liq_risk hl.liquidations --filter coin=BTC,ETH,
 - **`hl.liq_risk`**: a position of $100,000 or more announced once as its `liq_ratio` reaches 0.80 (0 = at entry, 1 = at the liquidation price), not again until it drops below 0.70 or closes. It comes with each position capture, about every 12 minutes. The first capture after the channel starts sends every position already in the zone with `prev: null` (about 300 on 2026-11-02); after that `prev: "out"` = just entered. `data` has `direction`, `liq_ratio`, `mark_price`, `entry_price`, `liquidation_price`, `size_usd`, `leverage`.
 - **`hl.liquidations`**: each liquidation from the account's own fill, typically within a minute or two, `data.direction` the closed side, `size_usd`, `mark_price`; no size floor of its own.
 - `min_usd` is the position size on `hl.liq_risk` and the liquidation size on `hl.liquidations`. A stored rule for one wallet: `vike-data alerts create --type hl_liq_proximity --wallet 0x... ...` (see `vike-alerts-setup`).
+- **`hl.positions`**: the fills that change a big position (a wallet of $250,000 or more, or a position that size before or after the fill), each with `data.leverage` and `data.liquidation_px` of the wallet's position BEFORE the fill (the last capture, up to about 25 minutes old; `null` for an `open`; a `liquidation_px` of 0 means none) and `labels.tags`. `min_leverage=20` keeps the fills of positions at 20x or more (a `null` never matches); `tag` filters the wallet's trader tags; `min_usd` is the FILL's size (a floor of $1,000 you cannot lower). `hl.liq_risk` and `hl.liquidations` refuse `min_leverage` and `tag`, so it cannot share the command above:
+
+```bash
+# instead of the line above (one connection per key and path: a second `stream hl` replaces the first with 4410), or under its own key
+vike-data stream hl --channel hl.positions --filter coin=BTC,ETH,HYPE --filter min_leverage=20
+```
 
 ## Answer template
 

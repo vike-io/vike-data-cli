@@ -45,6 +45,14 @@ There is no `hit_rate_pct`, `volume_<window>_usd` or `trades_<window>` field.
 | Negative PnL with high volume | **Volume trader / MM-style** — pays the spread |
 | One category dominates >80% of `category_breakdown` | **Specialist** — only trust their reads in that category |
 
+## Watch it live
+
+```bash
+vike-data stream polymarket --channel pm.positions --filter wallet=<address> --filter action=open,close
+```
+
+Each trade of the wallet as what it did to its position in that outcome: `data.action` (`open`, `increase`, `reduce`, `close`, `flip`), `shares_before`, `shares`, `avg_price` (its average BUY price in that outcome after the trade), and the market in `subject` (`title`, `outcome`, `condition_id`). Drop `--filter action=...` for every change; `wallet` takes up to 1,000 comma-separated addresses. It runs about four minutes behind the chain and the first events come one to three minutes after you start. `shares` count trades only (shares from a split, merge or transfer are not on the tape, so a wallet that sells them goes negative). One key holds one `stream polymarket` connection: see `vike-stream`.
+
 ## Anti-patterns
 
 - Don't claim "this trader is good at predictions" from <10 resolved markets. Below that, `hit_rate` is noise.

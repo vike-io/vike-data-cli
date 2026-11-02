@@ -1,6 +1,6 @@
 ---
 name: vike-hl-cohort-positioning
-description: Are whales, profitable wallets or losing wallets net long or short a Hyperliquid symbol right now - long/short notional per wallet cohort on the size and pnl ladders, the smart-money and whale indices, and the biggest individual positions, plus a live feed of the cohort lean. Use when the user asks "are whales long or short BTC" / "what are profitable Hyperliquid wallets doing on ETH" / "who is long SOL on Hyperliquid" / "Hyperliquid positioning" / "net long or short by wallet size".
+description: Are whales, profitable wallets or losing wallets net long or short a Hyperliquid symbol right now - long/short notional per wallet cohort on the size and pnl ladders, the smart-money and whale indices, and the biggest individual positions, plus live feeds of the cohort lean, cohort leverage and the top-10 positions per coin. Use when the user asks "are whales long or short BTC" / "what are profitable Hyperliquid wallets doing on ETH" / "who is long SOL on Hyperliquid" / "Hyperliquid positioning" / "net long or short by wallet size".
 allowed-tools: Bash(vike-data:*)
 ---
 
@@ -41,7 +41,18 @@ vike-data stream hl-cohorts --channel hl.cohort_bias --filter coin=BTC --filter 
 vike-data stream hl-cohorts --channel hl.indices --filter coin=BTC,ETH --filter index=smi,wsi   # only when an index crosses -0.10 / +0.10
 ```
 
-`hl.cohort_bias` covers the 50 coins with the most open value; a `cohort` belongs to one axis (`3x smart` with `axis=size` matches nothing). For a stored rule: `vike-data alerts create --type hl_cohort_bias --index smi ...` (see `vike-alerts-setup`).
+`hl.cohort_bias` covers the 50 coins with the most open value; a `cohort` belongs to one axis (`3x smart` with `axis=size` matches nothing).
+
+```bash
+vike-data stream hl-cohorts --channel hl.cohort_leverage --filter axis=size --filter cohort=whale,shark   # leverage per cohort, once an hour
+vike-data stream hl --channel hl.top_positions --filter coin=BTC --filter event=entered                  # who enters the BTC top 10
+```
+
+- **`hl.cohort_leverage`** is the hourly leverage of each cohort on its own money: `perp_bias` = (long - short) / account value, `equity_exposure` = (long + short) / account value (`null` when no wallet of the cohort has a positive account value), with `equity_covered_share` saying how much of the cohort's notional the counted wallets hold. Main-dex positions of native perp accounts, no coin and no wallet; the newest hour arrives at once, then one an hour (hour 08:00 at about 09:03). The same numbers as history: `hl segments --view history --axis size --cohort whale --include leverage`.
+- **`hl.top_positions`**: per coin of the top 50, a position that `entered`, `left` or `moved` within the top 10, at each capture (about 12 minutes), with `rank`, `prev_rank`, `direction`, `size_usd`, `leverage`, `liquidation_price`. The first capture sends the whole top 10 of every coin as `entered` (with a `coin` filter: 10 events). The ranking is that of `hl market --view positions --sort size`, live.
+- The three `stream hl-cohorts` lines above are alternatives: one key holds one connection per path, so a second `stream hl-cohorts` replaces the first (`4410`). Put channels in one command only when each takes every `--filter` key (`hl.cohort_leverage` has no `coin`), or give each its own key.
+
+For a stored rule: `vike-data alerts create --type hl_cohort_bias --index smi ...` (see `vike-alerts-setup`).
 
 ## Answer template
 
