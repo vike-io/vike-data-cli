@@ -60,9 +60,15 @@ describe('parseFilters', () => {
       .toEqual({ coin: ['BTC'], interval: ['1m', '5m'], market: ['perp'], dex: ['HL'], contract: false, role: 'maker' });
   });
 
+  it('hl.positions: min_leverage is a number, tag a list; pm.positions: action a list', () => {
+    expect(parseFilters(['min_leverage=20', 'tag=scalper,high_risk', 'action=open,close']))
+      .toEqual({ min_leverage: 20, tag: ['scalper', 'high_risk'], action: ['open', 'close'] });
+  });
+
   it('refuses a pair with no key or a non-number', () => {
     expect(() => parseFilters(['BTC'])).toThrow(/key=value/);
     expect(() => parseFilters(['min_usd=lots'])).toThrow(/number/);
+    expect(() => parseFilters(['min_leverage=high'])).toThrow(/number/);
   });
 });
 

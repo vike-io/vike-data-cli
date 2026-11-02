@@ -1,6 +1,6 @@
 ---
 name: vike-pm-market-diligence
-description: Full due diligence on one Polymarket market - finding it, spread and depth from the order book, recorded activity, large recent prints, who traded and who holds each side, on-chain resolution status and smart-money context, then a live feed of its trades and price moves. Handles the condition id versus token id split. Use when the user asks "is this Polymarket market liquid" / "who is on each side of this market" / "has this market resolved on-chain" / "check this prediction market before I trade" / "diligence on this Polymarket market".
+description: Full due diligence on one Polymarket market - finding it, spread and depth from the order book, recorded activity, large recent prints, who traded and who holds each side, on-chain resolution status and smart-money context, then a live feed of its trades, position changes and price moves. Handles the condition id versus token id split. Use when the user asks "is this Polymarket market liquid" / "who is on each side of this market" / "has this market resolved on-chain" / "check this prediction market before I trade" / "diligence on this Polymarket market".
 allowed-tools: Bash(vike-data:*)
 ---
 
@@ -40,10 +40,10 @@ vike-data polymarket smart-money --mode flows --hours 24 --json        # 2  is t
 ## Watch it live
 
 ```bash
-vike-data stream polymarket --channel pm.trades pm.price_moves pm.resolutions --filter market=$CID
+vike-data stream polymarket --channel pm.trades pm.positions pm.price_moves pm.resolutions --filter market=$CID
 ```
 
-`--filter` applies to every `--channel` of the command, and `market` is the only key all three take: a `role` filter here is refused (`bad_subscription`, exit 1). To count each match once, keep the taker rows of `pm.trades` with jq: `... | jq -c 'select(.type=="event" and .event.source=="pm.trades" and .event.data.role=="taker")'`. Don't start a second `stream polymarket` for it: one key holds one connection per path, and the second replaces the first (`4410`). `pm.trades` carries the trader's wallet; `pm.price_moves` is a move of 0.05 or more within five minutes; `pm.resolutions` the on-chain resolution.
+`--filter` applies to every `--channel` of the command, and `market` is the only key all four take: a `role` filter here is refused (`bad_subscription`, exit 1). To count each match once, keep the taker rows of `pm.trades` with jq: `... | jq -c 'select(.type=="event" and .event.source=="pm.trades" and .event.data.role=="taker")'`. Don't start a second `stream polymarket` for it: one key holds one connection per path, and the second replaces the first (`4410`). `pm.trades` carries the trader's wallet; `pm.positions` is each of those trades again as what it did to the wallet's position (`data.action` `open`, `increase`, `reduce`, `close` or `flip`, `shares_before`, `shares`, `avg_price`: who is entering or leaving this market), so drop `pm.trades` from the list if you only want position changes; `pm.price_moves` is a move of 0.05 or more within five minutes; `pm.resolutions` the on-chain resolution. `shares` count trades only: shares a wallet got from a split, merge or transfer are not on the tape, so a wallet that sells them shows a negative `shares`.
 
 ## Answer template
 

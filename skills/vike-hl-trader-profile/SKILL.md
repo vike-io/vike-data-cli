@@ -1,6 +1,6 @@
 ---
 name: vike-hl-trader-profile
-description: Full profile of one Hyperliquid wallet - equity, open positions, cohort labels, lifetime PnL against deposits, win rate and risk metrics, per-symbol record, closed trades, funding paid, deposits and withdrawals, orders, TWAPs, leverage changes, liquidations, builder routing, and a live feed of its fills. Use when the user gives a Hyperliquid address and asks "is this trader any good" / "profile this HL wallet" / "what is this wallet's track record" / "show the fills, funding or deposits of 0x..." / "watch this trader".
+description: Full profile of one Hyperliquid wallet - equity, open positions, cohort labels, lifetime PnL against deposits, win rate and risk metrics, per-symbol record, closed trades, funding paid, deposits and withdrawals, orders, TWAPs, leverage changes, liquidations, builder routing, and a live feed of its fills and closed trades. Use when the user gives a Hyperliquid address and asks "is this trader any good" / "profile this HL wallet" / "what is this wallet's track record" / "show the fills, funding or deposits of 0x..." / "watch this trader".
 allowed-tools: Bash(vike-data:*)
 ---
 
@@ -38,10 +38,10 @@ Optional, by question: `hl wallet-activity $W --view fills --symbol BTC` (raw fi
 ## Watch it live
 
 ```bash
-vike-data stream hl --channel hl.fills hl.liquidations hl.ledger --filter wallet=$W --filter min_usd=0
+vike-data stream hl --channel hl.fills hl.liquidations hl.ledger hl.closed_trades --filter wallet=$W --filter min_usd=0
 ```
 
-`hl.fills` alone defaults to fills of $1,000 or more; `min_usd=0` is every fill. A stored rule instead: `vike-data alerts create --type hl_wallet --wallet $W ...` (see `vike-alerts-setup`).
+`hl.fills` alone defaults to fills of $1,000 or more; `min_usd=0` is every fill. `hl.closed_trades` sends each round trip once, when it is written as closed, in batches every 30 minutes (a trade that closed at 08:12 arrives around 08:35); its `data` is the item of `hl wallet-trades` (`realized_pnl`, `entry_price`, `exit_price`, `duration_seconds`, `max_size_usd`) and `min_usd` on it is the trade's largest size. A close shows at once as an `hl.fills` event whose `data.action` is `close`. One key holds one `stream hl` connection: add channels to this command, never start a second one. A stored rule instead: `vike-data alerts create --type hl_wallet --wallet $W ...` (see `vike-alerts-setup`).
 
 ## Verdict rubric (rules of thumb, not tool output)
 

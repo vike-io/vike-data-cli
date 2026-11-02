@@ -123,7 +123,7 @@ Pick by the question, then read the named skill for the recipe and the traps. If
 | Find Polymarket markets by slug, or one by condition_id | `vike-data polymarket markets --view search --query btc-updown` / `--view market --condition-id 0x...` | this skill |
 | Alerts: create / list / edit / delete / events (transfer and Hyperliquid) | `vike-data alerts ...` / `alerts_*` | `vike-alerts-setup` |
 | Alert delivery to an HTTPS webhook | `vike-data alerts register-webhook`, `test-webhook`, `rotate-secret` | `vike-alerts-webhook` |
-| Live events: HL fills, liquidations, positions, candles, TWAPs, ledger, leverage, funding, cohort flow and bias; on-chain transfers; Polymarket trades and new markets | `vike-data stream <hl\|hl-cohorts\|onchain\|polymarket> --channel ...`; `stream info`, `check`, `events`, `connections` | `vike-stream` |
+| Live events: HL fills, liquidations, positions, top-10 positions, closed trades, candles, TWAPs, ledger, leverage, funding, cohort flow, bias and leverage; on-chain transfers; Polymarket trades, position changes and new markets | `vike-data stream <hl\|hl-cohorts\|onchain\|polymarket> --channel ...`; `stream info`, `check`, `events`, `connections` | `vike-stream` |
 | A tool with no command of its own | `vike-data call <tool> --args '{...}'` | this skill |
 | Install, auth, errors, conventions | — | `vike-core` |
 
