@@ -12,8 +12,8 @@
 positions, fills, funding, liquidations, candles, and hourly long/short positioning by wallet
 cohort), **Polymarket** (markets, the trade and event tape, order-book snapshots, candles and
 on-chain settlements, plus a daily Parquet archive of the full L2 order book since 2026-07-25,
-licensed CC BY 4.0), and **labelled EVM wallets** on Ethereum and BNB Chain, with Base for token
-transfers. The same data is served three ways: an **MCP server** at `https://data.vike.io/mcp` (the one
+licensed CC BY 4.0), and **labelled EVM wallets** on Ethereum and BNB Chain, with Base and HyperEVM
+for the wallet and token tools. The same data is served three ways: an **MCP server** at `https://data.vike.io/mcp` (the one
 this CLI calls), a **REST API** at `https://data.vike.io/v1/`, and the **Parquet archive** at
 `https://data.vike.io/archive/`. A key allows 20,000 requests an hour, and an account can hold up
 to 5 keys; archive downloads are not counted. The archive manifest and a sample market need no key
@@ -138,7 +138,7 @@ Every data command is one `tools/call` to the MCP server. `vike-data <group> --h
 
 | Command | Subcommands | MCP tool |
 |---|---|---|
-| `vike-data token` | `search`, `transfers`, `screener`, `holders` (`--chain ethereum\|bsc\|base`) | `token_search`, `token_transfers`, `token_screener`, `token_holders` |
+| `vike-data token` | `search`, `transfers`, `screener`, `holders` (`--chain ethereum\|bsc\|base\|hyperevm`) | `token_search`, `token_transfers`, `token_screener`, `token_holders` |
 | `vike-data wallet` | `summary`, `transactions` (`txs`), `compare`, `trace`, `batch`, `counterparties`, `pnl-history`, `balances`, `ens`, `discover`, `first-funder`, `exchange-usage` | `wallet_summary`, `wallet_transactions`, `wallet_compare`, `wallet_trace`, `wallet_batch_labels`, `wallet_counterparties`, `wallet_pnl_history`, `wallet_token_balances`, `wallet_ens`, `wallet_discover`, `wallet_first_funder`, `wallet_exchange_usage` |
 | `vike-data labels <address>` | multi-source label provenance for one wallet | `wallet_label_provenance` |
 | `vike-data perp` | `top-traders`, `find-position` (Hyperliquid); `funding`, `spreads` (cross-venue funding rates and perp-vs-perp price gaps) | `hl_perp_top_traders`, `hl_position_match`, `perp_funding`, `perp_spreads` |
@@ -187,10 +187,14 @@ Downloads go to `./vike-archive/`.
 
 ## For AI agents
 
-This package ships **32 skill playbooks** under [`skills/`](skills/): markdown files an AI coding
+This package ships **47 skill playbooks** under [`skills/`](skills/): markdown files an AI coding
 agent loads so it knows when and how to call each command. [`skills.sh.json`](skills.sh.json) groups
-them by domain (Tokens, Wallets, CEX perps, Hyperliquid perps, Candles, Polymarket, Alerts, Live streams). The
-entry point is the umbrella skill `vike`, which routes a question to the specialised skill.
+them by domain (Quick start, Tokens, Wallets, CEX perps, Hyperliquid perps, Candles, Polymarket, Alerts, Live streams). The
+entry point is the umbrella skill `vike`, which routes a question to the specialised skill. Per-tool
+skills read one command; the workflow playbooks chain several: who a wallet is, where its money went,
+whether two wallets are related, token holder diligence and the smart-money trend, Hyperliquid cohort
+positioning and how to backtest it, one trader's profile, a symbol briefing, liquidation risk, builder
+codes, perp crowding, a Polymarket market's due diligence, the free L2 archive, a cross-market daily brief.
 
 ```bash
 npx skills add vike-io/vike-data-cli --list    # see them first

@@ -1,6 +1,6 @@
 ---
 name: vike-wallet-trace
-description: Counterparty graph traversal from a root wallet outward. At each hop, expand to the top N counterparties by USD volume; edges carry the direction of the flow. Use when the user asks "where did funds from X go" / "follow the money 3 hops out" / "trace the network around this wallet" / wallet investigation.
+description: Counterparty graph traversal from a root wallet outward. At each hop, expand to the top N counterparties by USD volume; edges carry the direction of the flow. Use when the user asks for "the counterparty graph of X" / "trace 3 hops around this wallet" / "show the network around X" / "who is connected to this wallet within N hops".
 allowed-tools: Bash(vike-data:*)
 ---
 
@@ -10,7 +10,7 @@ allowed-tools: Bash(vike-data:*)
 
 ```bash
 vike-data wallet trace <address>
-  [--chain ethereum|bsc|base]
+  [--chain ethereum|bsc|base|hyperevm]
   [--depth N]    (1-5, default 2)
   [--width N]    (1-10, default 5)
   [--window 24h|7d|30d|90d|all]
@@ -18,7 +18,7 @@ vike-data wallet trace <address>
   [--json]
 ```
 
-`--chain base` is accepted, but per-wallet transfer data is documented for Ethereum and BSC: treat an empty Base result as "not covered", not "no activity".
+Chains: `ethereum`, `bsc`, `base`, `hyperevm`; node labels come from that chain's own label table. The command expands each hop by combined volume in both directions; the tool also takes `direction` `out` (where funds went) or `in` (where they came from), reached with `vike-data call wallet_trace --args '{"address":"0x...","direction":"out","depth":2}'`.
 
 ## Output
 
@@ -87,3 +87,4 @@ Tell them to click the **Graph** tab. It renders the same trace data as a force-
 - `vike-data labels <addr>` / `vike-data wallet batch <addr...>` — identify the nodes
 - `vike-data wallet compare <addr_a> <addr_b>` — confirm relatedness once trace surfaces candidates
 - `vike-data wallet transactions <addr>` — drill into specific transfers between two nodes
+- `vike-follow-the-money` — the incident playbook (order of calls, stop rules, a live watch); `vike-wallets-related` — evidence of a shared owner

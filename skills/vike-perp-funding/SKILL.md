@@ -75,8 +75,11 @@ A funding arb at 0.4–1% daily is real. Anything much higher on a liquid pair i
 - Don't blindly pick the lowest-funding venue without checking `vol_24h_usd` — Hyperliquid funding looks great on small alts but the book can be thin.
 - Don't read `funding_rate` of an 8h venue against a 1h venue without normalising.
 - Don't promise a price comparison from this tool: for price gaps across venues use `vike-perp-overview` (`perp spreads`).
+- The arb list often leads with thin tokens: run mode B and read `vol_24h_usd` on both legs before calling a row a trade.
+- Funding is the cost of carrying a position, not how crowded it is: for open interest and long/short per venue see `vike-perp-overview`, and `vike-perp-crowding` for the combined read.
 
 ## Pairs well with
 
-- `vike-perp-overview` for cross-venue price gaps and the market snapshot
+- `vike-perp-overview` for cross-venue price gaps, open interest, long/short and the market snapshot
+- `vike-perp-crowding` to put a funding number next to open interest and positioning; `vike-hl-asset-briefing` for one Hyperliquid symbol
 - `vike-hl-top-traders` to see how Hyperliquid's best traders are doing

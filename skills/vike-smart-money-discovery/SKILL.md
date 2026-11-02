@@ -6,7 +6,7 @@ allowed-tools: Bash(vike-data:*)
 
 # vike-smart-money-discovery
 
-Composite playbook built on `token screener --smart-money-only`. Smart money here means the cohort behind the screener's `smart_inflow` and `--smart-money-only`, which exist for **Ethereum only** (a 400 on bsc and base).
+Composite playbook built on `token screener --smart-money-only`. Smart money here means the cohort behind the screener's `smart_inflow` and `--smart-money-only`, which exist for **Ethereum only** (a 400 on bsc, base and hyperevm).
 
 **What this can and cannot say.** It can say which tokens the cohort is flowing into and how much, and who the biggest net buyers of a token are. It cannot list which of those buyers belong to the cohort: no tool returns cohort membership. State that limit in the answer.
 
@@ -25,10 +25,10 @@ vike-data token screener --chain ethereum --window 7d --sort smart_inflow --smar
 ### B. Who is accumulating it?
 
 ```bash
-vike-data token transfers <addr> --tab bought --period 7d --json
+vike-data token transfers <addr> --tab bought --period 7d --hide-contracts --json
 ```
 
-The list is the **top 10 by volume**, not the cohort. **Rank on `net_tokens`**, not `bought`: `bought` counts every inbound transfer, flash-loan and router round trips included. Keep rows with a clearly positive `net_tokens`; drop rows where `net_tokens` is near zero.
+The list is the **top 10 net buyers by net USD**, not the cohort (a buyer's `net_usd` is negative; `net_tokens` is the net in whole tokens). `--hide-contracts` leaves out the pools and routers we know of; a row can still be an exchange or an unmarked contract.
 
 ### C. Strip the intermediaries
 
@@ -63,6 +63,7 @@ Screener (3 credits) + `token transfers` (2) + `wallet batch` (2) + up to 5 × `
 
 ## Pairs well with
 
+- `vike-token-smart-money-trend` for whether the cohort is entering, holding or exiting ONE token over 24h / 7d / 30d / 90d
 - `vike-token-screener` for the filters and the column meanings
 - `vike-token-research` for the price/flow context
 - `vike-perp-funding` if the token has a perp listing (positioning bias)

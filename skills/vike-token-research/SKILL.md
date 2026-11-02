@@ -18,13 +18,12 @@ Multi-call token research workflow. It characterises WHO is moving the token (th
 
 2. **Recent buyers + sellers** (parallel calls)
    ```bash
-   vike-data token transfers <addr> --tab bought --period 24h --chain <chain> --json
-   vike-data token transfers <addr> --tab sold   --period 24h --chain <chain> --json
+   vike-data token transfers <addr> --tab bought --period 24h --chain <chain> --hide-contracts --json
+   vike-data token transfers <addr> --tab sold   --period 24h --chain <chain> --hide-contracts --json
    ```
-   Each call returns the top 10 wallets for one side.
+   Each call returns the top 10 net buyers or net sellers, ranked by net USD; `--hide-contracts` leaves out the pools and routers we know of.
 
-3. **Read `net_tokens`, not `bought`.** `bought` counts every inbound transfer (flash-loan and router round trips included). Merge the two lists by `address`, then:
-   - drop rows where `|net_tokens|` is below 1% of `max(bought, sold)`: they are round trips, not a position;
+3. **Read `net_tokens` and `net_usd`** (a net buyer's `net_usd` is negative). Merge the two lists by `address`, then:
    - label the rest with `vike-data wallet batch <addrs...> --chain <chain>` and drop CEX / router / contract rows if the user wants "real" flow;
    - split what is left into net accumulators (`net_tokens > 0`) and net distributors (`net_tokens < 0`) and add up each side's `|net_usd|`.
 
@@ -54,5 +53,6 @@ Step 1: free. Step 2: 2 calls × 2 credits. Step 3 labels: 2 credits. Total ≈ 
 
 ## Pairs well with
 
-- `vike-smart-money-discovery` to see whether the smart-money cohort is flowing into the token
+- `vike-smart-money-discovery` to see whether the smart-money cohort is flowing into the token; `vike-token-smart-money-trend` for its direction over time
+- `vike-token-holder-diligence` for who sits at the top (exchanges, contracts, fresh wallets, risk flags)
 - `vike-perp-funding` if the token has a perp listing (BTC/ETH/SOL/major alts)

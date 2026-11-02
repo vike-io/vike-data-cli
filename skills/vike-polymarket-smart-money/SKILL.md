@@ -80,4 +80,5 @@ Trim aggressively if the user asked a narrower question. About 5 credits for the
 
 - `vike-polymarket-markets` — the trending list without the cohort view
 - `vike-polymarket-market-detail` — drill into a flagged market
+- `vike-pm-market-diligence` — spread, depth, holders and resolution of a flagged market
 - `vike-polymarket-trader` — profile the top wallets active in flagged markets

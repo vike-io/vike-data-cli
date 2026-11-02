@@ -39,8 +39,8 @@ vike-data stream hl --channel hl.candles --filter coin=BTC,ETH --filter interval
 # Every liquidation and every fill of one wallet, on one connection
 vike-data stream hl --channel hl.liquidations hl.fills --filter wallet=0x1111111111111111111111111111111111111111
 
-# USDC transfers on base worth $1M+
-vike-data stream onchain --channel chain.transfers --filter chain=base --filter token=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913 --filter min_usd=1000000
+# USDC transfers on base of 1M USDC or more (min_amount is in tokens; min_usd would drop the unpriced events)
+vike-data stream onchain --channel chain.transfers --filter chain=base --filter token=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913 --filter min_amount=1000000
 
 # Keep only the events, with jq
 vike-data stream polymarket --channel pm.trades --filter min_usd=10000 | jq -c 'select(.type == "event") | .event'
@@ -75,7 +75,7 @@ the `hl.fills` default `min_usd` of 1000 added) or the server's error naming the
   subscribed). It does not mean nothing happened; read that window from the REST endpoints or the `hl` / `polymarket`
   commands. For what a socket missed while the channel was running, `vike-data stream events <channel> --cursor <c>`.
 - `hl.fills` without `min_usd` gets a $1,000 floor; `min_usd=0` is every fill (hundreds per second).
-  `chain.transfers` unfiltered is a firehose; `min_usd` on it drops unpriced transfers.
+  `chain.transfers` unfiltered is a firehose; transfers are priced after they are streamed, so `min_usd` on it drops almost every event: filter by `wallet`, `token` (with `min_amount`), `entity`, `wallet_type` or `contract=false`.
 
 ## One connection per key
 
@@ -96,3 +96,4 @@ Exit 1 also on `HTTP 401` / `4401` (the key) and on a refused subscription (`bad
 
 - `vike-alerts-setup`: a stored rule that notifies by webhook without a running process.
 - `vike-hl-top-traders`: pick the wallets to put in a `wallet` filter.
+- Playbooks with a live section: `vike-hl-liquidation-radar` (`hl.liq_risk`, `hl.liquidations`), `vike-follow-the-money` (`chain.transfers`), `vike-hl-cohort-positioning` (`hl.cohort_bias`, `hl.indices`), `vike-hl-trader-profile`, `vike-pm-market-diligence`.
