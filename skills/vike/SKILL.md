@@ -7,7 +7,7 @@ description: "Use this skill whenever the user asks any question about on-chain 
 
 This skill is for anyone who asks an AI agent about crypto data: who is buying a token, what a wallet holds, what Hyperliquid or Polymarket traders are doing right now. It tells the agent which vike tool answers which question and how to read the result, so it does not guess or invent numbers. It reads its data from vike.io and needs a free vike API key.
 
-What the platform has: wallet and token analytics on Ethereum, BSC, Base and HyperEVM (each tool's chain list is under "What each tool really returns"), multi-source wallet labels, CEX perpetual funding and cross-venue spreads, Hyperliquid wallets, cohorts, leaderboards, liquidations, markets, builders, vaults and candles, Polymarket markets, traders, tape, order books, settlements and the Parquet archive, transfer and Hyperliquid alerts, and live event streams over WebSocket. 70 tools in one MCP server.
+What the platform has: wallet and token analytics on Ethereum, BSC, Base and HyperEVM (each tool's chain list is under "What each tool really returns"), multi-source wallet labels, CEX perpetual funding and cross-venue spreads, Hyperliquid wallets, cohorts, leaderboards, liquidations, markets, builders, vaults and candles, Polymarket markets, traders, tape, order books, settlements and the Parquet archive, transfer, Hyperliquid and Polymarket alerts, and live event streams over WebSocket. 70 tools in one MCP server.
 
 **MCP endpoint for all calls:** `https://data.vike.io/mcp` (JSON-RPC 2.0)
 **Or use the CLI:** `npm install -g @vike-io/cli` → `vike-data <command>`
@@ -235,16 +235,16 @@ Every `hl` command takes `--view` (the first view is the default) and only the f
 | `polymarket_smart_money` | MARKETS where the profitable-wallet cohort is flowing (`flows`) or bought below the mid (`mispricings`); not a list of top traders |
 
 ### Alerts
-Create + manage on-chain transfer alerts and Hyperliquid alerts, delivered by email or an HTTPS webhook.
+Create + manage on-chain transfer alerts, Hyperliquid alerts and Polymarket alerts, delivered by email or an HTTPS webhook.
 
 | Tool | Does |
 |---|---|
 | `alerts_list`, `alerts_list_channels` | list rules / enabled channels |
-| `alerts_create`, `alerts_edit`, `alerts_delete` | manage a rule: transfer (token and/or one `address`, chain `eth`/`bsc`/`base`/`hyperevm`, USD thresholds) or Hyperliquid (`--type hl_wallet`, `hl_cohort_fill`, `hl_liquidation`, `hl_cohort_bias`, `hl_liq_proximity`) |
+| `alerts_create`, `alerts_edit`, `alerts_delete` | manage a rule: transfer (token and/or one `address`, chain `eth`/`bsc`/`base`/`hyperevm`, USD thresholds) or Hyperliquid (`--type hl_wallet`, `hl_cohort_fill`, `hl_liquidation`, `hl_cohort_bias`, `hl_liq_proximity`) or Polymarket (`--type pm_wallet_trade`, `pm_market_trade`, `pm_price_move`, `pm_resolution`) |
 | `alerts_events`, `alerts_resend_delivery` | what fired and each delivery's status (15 days); send one again |
 | `alerts_register_webhook`, `alerts_test_webhook`, `alerts_rotate_webhook_secret` | an HTTPS webhook (HMAC-signed deliveries): register, test, rotate its secret |
 
-A token-wide transfer alert fires on ANY transfer of the token above the USD threshold on that chain; an address alert on every transfer of that wallet. Every match is recorded in `alerts events` (15 days) whatever the channels; a transfer alert left with no enabled channel e-mails the account address. Hyperliquid alerts go to a webhook or are read with `alerts events`; only `hl_wallet` may also use email. There is no price or funding alert, no Discord (off) and no Telegram delivery. For a live feed without a rule, use `vike-data stream`.
+A token-wide transfer alert fires on ANY transfer of the token above the USD threshold on that chain; an address alert on every transfer of that wallet. Every match is recorded in `alerts events` (15 days) whatever the channels; a transfer alert left with no enabled channel e-mails the account address. Hyperliquid and Polymarket alerts go to email (one mail per pass, at most 10 a day except `hl_wallet`), a webhook, or are read with `alerts events`. An account has at most 200 active alerts in all (any mix of on-chain, Hyperliquid, Polymarket); pausing frees a slot. There is no token price or funding alert (a Polymarket market's price moves: `pm_price_move`), no Discord (off) and no Telegram delivery. For a live feed without a rule, use `vike-data stream`.
 
 ---
 

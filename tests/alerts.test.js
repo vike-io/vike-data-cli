@@ -1,5 +1,5 @@
 // `alerts create` / `alerts edit` send what the server's alerts_create / alerts_edit schema takes:
-// the five Hyperliquid types, a transfer alert's address, and no default chain (a Hyperliquid
+// the five Hyperliquid types, the four Polymarket ones, a transfer alert's address, and no default chain (a Hyperliquid
 // alert refuses one). fetch is mocked; nothing leaves the machine.
 
 import { describe, it, expect, vi, afterEach } from 'vitest';
@@ -62,6 +62,22 @@ describe('alerts create', () => {
   it('a wallet alert: wallet and actions', async () => {
     const p = await run(['create', '--label', 'w', '--type', 'hl_wallet', '--wallet', WALLET, '--actions', 'open', 'flip']);
     expect(p.arguments).toMatchObject({ alert_type: 'hl_wallet', wallet: WALLET, actions: ['open', 'flip'] });
+  });
+
+  it('a Polymarket market alert: its market and floor, and no chain', async () => {
+    const cid = '0x' + 'ab'.repeat(32);
+    const p = await run(['create', '--label', 'big bets', '--type', 'pm_market_trade', '--condition-id', cid,
+      '--min-usd', '5000', '--channel', 'email']);
+    expect(p.arguments).toMatchObject({
+      alert_type: 'pm_market_trade', condition_id: cid, min_value_usd: '5000', channels: ['email'],
+    });
+    expect(p.arguments).not.toHaveProperty('chain');
+  });
+
+  it('a Polymarket price-move alert takes a direction', async () => {
+    const cid = '0x' + 'cd'.repeat(32);
+    const p = await run(['create', '--label', 'moves', '--type', 'pm_price_move', '--condition-id', cid, '--direction', 'up']);
+    expect(p.arguments).toMatchObject({ alert_type: 'pm_price_move', condition_id: cid, direction: 'up' });
   });
 
   it('a transfer alert on one address, on base', async () => {
