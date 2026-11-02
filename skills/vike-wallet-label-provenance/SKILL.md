@@ -1,6 +1,6 @@
 ---
 name: vike-wallet-label-provenance
-description: Multi-source label cascade for an Ethereum wallet — shows what each upstream label source AND our in-house heuristic classifier says about an address, with consensus entity/type and per-source attribution. Use when the user asks "who is this address" / "what do you know about this wallet" / "is this address labeled" / "why is this wallet labeled X".
+description: Multi-source label cascade for an Ethereum wallet — shows what each upstream label source AND our in-house heuristic classifier says about an address, with consensus entity/type and per-source attribution. Use when the user asks "what do the label sources say about 0x..." / "is this address labeled" / "why is this wallet labeled X" / "do the sources agree on this label".
 allowed-tools: Bash(vike-data:*)
 ---
 
@@ -14,7 +14,7 @@ The headline differentiator: we don't just show a label, we show **which sources
 vike-data labels <address> [--json]
 ```
 
-Ethereum wallets only. For another chain, or many addresses, use `vike-data wallet batch --chain ethereum|bsc|base`, which reads each chain's own label table.
+Ethereum wallets only. For another chain, or many addresses, use `vike-data wallet batch --chain ethereum|bsc|base|hyperevm`, which reads each chain's own label table. For "who is this wallet" as a whole (labels, ENS, chain, exchanges, counterparties) use `vike-wallet-who-is`.
 
 ## Example
 
@@ -64,7 +64,8 @@ Early answers (before 2026-10-19) carried only the Arkham-derived source and the
 
 - Don't quote any single provider's category field as "the category" — provider taxonomies vary; the `consensus.wallet_type` is the unified field.
 - A `risk_flag` of `scam` / `sanctioned` / `phishing` is high-stakes — always mention it explicitly, never bury it.
-- Don't use this for a BSC or Base address: it reads Ethereum tables only.
+- Don't use this for a BSC, Base or HyperEVM address: the consensus reads Ethereum tables only (only source `provider_e`, Polymarket wallets and their funders, answers on any EVM chain).
+- `consensus.wallet_type` can be wrong when sources disagree (the entity "vitalik buterin" read `dex` because one source says sushiswap): read the `sources` before trusting the type.
 
 ## Pairs well with
 

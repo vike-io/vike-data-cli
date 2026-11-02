@@ -54,5 +54,6 @@ There is no `hit_rate_pct`, `volume_<window>_usd` or `trades_<window>` field.
 
 ## Pairs well with
 
-- `vike-polymarket-market-detail` — see which markets they're currently in
+- `vike-polymarket-market-detail` — see which markets they're currently in (its holder lists give the `proxy_wallet` addresses to profile here)
+- `vike-pm-market-diligence` — the market-level playbook that ends with this wallet check
 - `vike-polymarket-smart-money` — whether the profitable-wallet cohort is moving in the same markets

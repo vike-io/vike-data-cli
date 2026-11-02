@@ -64,5 +64,6 @@ Polymarket: `ts`, `open`, `high`, `low`, `close`, `volume`, `trades`, oldest fir
 
 ## Pairs well with
 
-- `vike-data polymarket market <condition_id>` — to find the token ids
-- `vike-data perp top-traders` — who is trading the asset behind the candles
+- `vike-data polymarket market <condition_id>` — to find the token ids; `vike-pm-market-diligence` for the order book and tape of the same token
+- `vike-data perp top-traders` — who is trading the asset behind the candles; `vike-hl-cohort-positioning` for how cohorts are positioned in it
+- `vike-hl-cohort-backtest` — cohort positioning against these candles, without look-ahead

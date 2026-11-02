@@ -13,10 +13,12 @@ vike-data wallet discover
   [--window 24h|7d|30d|90d|all]
   [--sort volume|inflow|outflow|net_flow|tx_count|pnl]
   [--order asc|desc]
-  [--chain ethereum|bsc]
+  [--chain ethereum|bsc|base|hyperevm]
   [--size N]      # default 10, max 20
   [--json]
 ```
+
+**On `base` and `hyperevm` pass `--window all`**: the command sends `30d` by default, and the shorter windows there answer only while they were rebuilt in the last 2 days (otherwise a 400). `ethereum` and `bsc` take every window.
 
 ## When to use
 

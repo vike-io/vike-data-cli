@@ -9,7 +9,7 @@ allowed-tools: Bash(vike-data:*)
 ## Command
 
 ```bash
-vike-data token holders <token_address> [--chain ethereum|bsc|base] [--limit N] [--json]
+vike-data token holders <token_address> [--chain ethereum|bsc|base|hyperevm] [--limit N] [--json]
 ```
 
 ## Examples
@@ -34,10 +34,12 @@ vike-data token holders 0x6982508145454ce325ddbe47a25d4ec3d2311933 --limit 20
 
 ## Anti-patterns
 
-- "Top holders" here means cumulative net inflow over our recorded transfer history — NOT current on-chain balance. A wallet that bought $10M and sold $9M shows `net_flow_usd = $1M`, even if current balance is zero. The top rows are very often intermediaries (exchange wallets, lending protocols, MEV bots) with huge `volume_usd` against a small net: read this as "who moves the most of this token". **Always call this out** when reporting top holders. For what one specific wallet holds right now use `vike-data wallet balances <addr>` (Ethereum and BSC).
-- There is no concentration metric (top-N share of supply) in the output; don't compute one from `net_flow_usd`.
+- "Top holders" here means cumulative net inflow over our recorded transfer history — NOT current on-chain balance. A wallet that bought $10M and sold $9M shows `net_flow_usd = $1M`, even if current balance is zero. The top rows are very often intermediaries (exchange wallets, lending protocols, MEV bots) with huge `volume_usd` against a small net: read this as "who moves the most of this token". **Always call this out** when reporting top holders. For the largest current BALANCES use `vike-data call token_holders --args '{"token_address":"0x...","chain":"ethereum","limit":50,"sort":"balance"}'` (adds `balance`, `value_usd`, `supply_pct`; not on every chain), and for what one wallet holds `vike-data wallet balances <addr> --chains <chain>`.
+- Don't compute a share of supply from `net_flow_usd`; the balance ranking above has `supply_pct`.
 - Don't list `tx_count = 1` whales as "smart money" without context — could be an airdrop receiver who never sold.
-- For BSC tokens, pass `--chain bsc` explicitly; default is ethereum.
+- Pass `--chain` explicitly for anything but Ethereum (`bsc`, `base`, `hyperevm`); the default is ethereum.
+- **It is slow on busy tokens**: the tool scans the whole chain for the token (tens of seconds). Run it once and don't retry in a loop.
+- To classify the top holders (exchange, contract, fresh, risk-flagged) use `vike-token-holder-diligence`.
 
 ## Pairs well with
 
