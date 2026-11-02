@@ -1,4 +1,8 @@
 import { requireApiKey, getEndpoint } from './auth.js';
+import { readPackageVersion } from './util.js';
+
+// The installed package's own version: npm_package_version is set only under `npm run`.
+export const USER_AGENT = `vike-cli/${readPackageVersion()}`;
 
 let _id = 0;
 function nextId() { return ++_id; }
@@ -25,7 +29,7 @@ export async function callTool(toolName, args = {}, opts = {}) {
       headers: {
         'Content-Type': 'application/json',
         'X-API-KEY': apiKey,
-        'User-Agent': `vike-cli/${process.env.npm_package_version ?? 'dev'}`,
+        'User-Agent': USER_AGENT,
       },
       body: JSON.stringify(body),
       signal: ctrl.signal,
@@ -52,10 +56,15 @@ export async function callTool(toolName, args = {}, opts = {}) {
 
   // tools/call returns { content: [{type:'text', text: JSON}], isError }
   const content = json.result?.content?.[0]?.text;
-  if (!content) return json.result;
-  try { return JSON.parse(content); } catch {
-    return content;
+  let parsed = content;
+  try { parsed = JSON.parse(content); } catch { /* plain text */ }
+  if (json.result?.isError) {
+    // An in-band failure ({"error": ...}) is an error in every output mode, so the exit code is 1.
+    throw new Error(String(parsed?.error ?? parsed?.[0]?.error ?? content ?? 'tool error'));
   }
+  if (!content) return json.result;
+  // raw: the tool's text as sent, so integers above 2^53 survive.
+  return opts.raw ? content : parsed;
 }
 
 export async function listTools(opts = {}) {
@@ -69,7 +78,7 @@ export async function listTools(opts = {}) {
   };
   const resp = await fetch(endpoint, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-API-KEY': apiKey },
+    headers: { 'Content-Type': 'application/json', 'X-API-KEY': apiKey, 'User-Agent': USER_AGENT },
     body: JSON.stringify(body),
   });
   const json = await resp.json();
@@ -84,7 +93,7 @@ export async function ping(opts = {}) {
   const apiKey = opts.apiKey ?? requireApiKey();
   const resp = await fetch(endpoint, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-API-KEY': apiKey },
+    headers: { 'Content-Type': 'application/json', 'X-API-KEY': apiKey, 'User-Agent': USER_AGENT },
     body: JSON.stringify({
       jsonrpc: '2.0', id: nextId(), method: 'initialize', params: {},
     }),

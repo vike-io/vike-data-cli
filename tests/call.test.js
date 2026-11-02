@@ -1,0 +1,84 @@
+// `vike-data call` and the exit code of a tool-level error. fetch is mocked; nothing leaves the machine.
+
+import { describe, it, expect, vi, afterEach } from 'vitest';
+import { Command } from 'commander';
+import { registerCall } from '../src/commands/call.js';
+import { registerPerp } from '../src/commands/perp.js';
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+  vi.unstubAllEnvs();
+  vi.restoreAllMocks();
+  process.exitCode = undefined;
+});
+
+function mockTool(text, isError = false) {
+  vi.stubEnv('VIKE_API_KEY', 'vk_test');
+  vi.stubEnv('VIKE_MCP_URL', 'https://mcp.invalid/mcp');
+  const fetchMock = vi.fn(async () => ({
+    status: 200,
+    text: async () => JSON.stringify({
+      jsonrpc: '2.0', id: 1,
+      result: { content: [{ type: 'text', text }], isError },
+    }),
+  }));
+  vi.stubGlobal('fetch', fetchMock);
+  const stdout = vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
+  vi.spyOn(console, 'error').mockImplementation(() => {});
+  return { fetchMock, stdout };
+}
+
+async function run(register, args) {
+  const program = new Command();
+  register(program);
+  await program.parseAsync(['node', 'vike-data', ...args]);
+}
+
+describe('vike-data call', () => {
+  it('sends any tool with the --args object and prints the raw result', async () => {
+    const raw = '{"trade_id": 12345678901234567890, "ok": true}';
+    const { fetchMock, stdout } = mockTool(raw);
+    await run(registerCall, ['call', 'hl_wallet', '--args', '{"address":"0xabc","view":"summary"}', '--timeout', '120']);
+    const body = JSON.parse(fetchMock.mock.calls[0][1].body);
+    expect(body.method).toBe('tools/call');
+    expect(body.params).toEqual({ name: 'hl_wallet', arguments: { address: '0xabc', view: 'summary' } });
+    // printed as the server sent it: an integer above 2^53 is not rounded
+    expect(stdout.mock.calls.map((c) => c[0]).join('')).toBe(raw + '\n');
+    expect(process.exitCode).toBeUndefined();
+  });
+
+  it('sends {} when no --args is given', async () => {
+    const { fetchMock } = mockTool('{}');
+    await run(registerCall, ['call', 'alerts_list']);
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body).params.arguments).toEqual({});
+  });
+
+  it('refuses --args that is not a JSON object, without calling the server', async () => {
+    const { fetchMock } = mockTool('{}');
+    await run(registerCall, ['call', 'wallet_ens', '--args', '[1,2]', '--json']);
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(process.exitCode).toBe(1);
+  });
+});
+
+describe('a tool-level error exits 1 in every output mode', () => {
+  it('call --json', async () => {
+    const { stdout } = mockTool('{"error": "address must be 0x + 40 hex"}', true);
+    await run(registerCall, ['call', 'wallet_ens', '--args', '{"address":"x"}', '--json']);
+    expect(process.exitCode).toBe(1);
+    expect(JSON.parse(stdout.mock.calls[0][0])).toEqual({ error: 'address must be 0x + 40 hex' });
+  });
+
+  it('a data command with --json', async () => {
+    const { stdout } = mockTool('{"error": "unknown symbol"}', true);
+    await run(registerPerp, ['perp', 'funding', '--symbol', 'NOPE', '--json']);
+    expect(process.exitCode).toBe(1);
+    expect(JSON.parse(stdout.mock.calls[0][0])).toEqual({ error: 'unknown symbol' });
+  });
+
+  it('a success still exits 0', async () => {
+    mockTool('{"rows": []}');
+    await run(registerPerp, ['perp', 'funding', '--json']);
+    expect(process.exitCode).toBeUndefined();
+  });
+});
