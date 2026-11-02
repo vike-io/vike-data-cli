@@ -1,6 +1,6 @@
 ---
 name: vike-stream
-description: Live events over WebSocket with `vike-data stream` - Hyperliquid fills, liquidations, positions, liquidation risk and order walls; HL cohort flow and indices; on-chain transfers on eth, bsc, base and hyperevm; Polymarket trades, resolutions and price moves - printed as NDJSON, resumed by cursor after any drop. Use when the user wants to "watch", "tail", "follow live", "stream" or "be notified as it happens" rather than query history.
+description: Live events over WebSocket with `vike-data stream` - Hyperliquid fills, liquidations, positions, liquidation risk, order walls, closed candles, TWAPs, ledger, leverage changes and funding; HL cohort flow, indices and cohort bias; on-chain transfers on eth, bsc, base and hyperevm; Polymarket trades, resolutions, price moves and new markets - printed as NDJSON, resumed by cursor after any drop. Use when the user wants to "watch", "tail", "follow live", "stream" or "be notified as it happens" rather than query history.
 allowed-tools: Bash(vike-data:*)
 ---
 
@@ -16,16 +16,25 @@ server sent them. Status lines (subscribed, reconnecting, errors) go to stderr. 
 
 | Path | Channels |
 |---|---|
-| `hl` | `hl.fills`, `hl.liquidations`, `hl.positions`, `hl.liq_risk`, `hl.order_walls` |
-| `hl-cohorts` | `hl.cohort_flow`, `hl.indices` |
+| `hl` | `hl.fills`, `hl.liquidations`, `hl.positions`, `hl.liq_risk`, `hl.order_walls`, `hl.candles`, `hl.twaps`, `hl.ledger`, `hl.leverage`, `hl.funding` |
+| `hl-cohorts` | `hl.cohort_flow`, `hl.indices`, `hl.cohort_bias` |
 | `onchain` | `chain.transfers` |
-| `polymarket` | `pm.trades`, `pm.resolutions`, `pm.price_moves` |
+| `polymarket` | `pm.trades`, `pm.resolutions`, `pm.price_moves`, `pm.new_markets` |
+
+The server decides what each path serves: `vike-data stream info` prints the current channels and filter keys, and a
+channel the path does not serve is refused with `unknown_channel` and the list. The CLI has no channel list of its own.
+
+`hl.candles` is the Hyperliquid candle stream: closed bars, filtered by `coin`, `interval` (`1m 5m 15m 30m 1h 4h 1d`),
+`market` (`perp` or `spot`) and `dex` (`HL` or a HIP-3 dex). The old `wss://data.vike.io/v1/stream` is closed (410).
 
 ## Examples
 
 ```bash
 # Hyperliquid BTC and ETH fills of $100k or more, by smart wallets
 vike-data stream hl --channel hl.fills --filter coin=BTC,ETH --filter min_usd=100000 --filter "pnl_cohort=3x smart,2x smart"
+
+# Live 1-minute and 1-hour BTC and ETH perp candles (closed bars)
+vike-data stream hl --channel hl.candles --filter coin=BTC,ETH --filter interval=1m,1h --filter market=perp
 
 # Every liquidation and every fill of one wallet, on one connection
 vike-data stream hl --channel hl.liquidations hl.fills --filter wallet=0x1111111111111111111111111111111111111111
@@ -39,7 +48,7 @@ vike-data stream polymarket --channel pm.trades --filter min_usd=10000 | jq -c '
 
 `--filter` applies to every `--channel` of the command; a key the channel does not take is refused by the server
 with the key's name. List keys (`wallet`, `coin`, `token`, `market`, `chain`, cohorts, ...) take comma-separated
-values and repeat; `side`, `direction`, `event`, `axis`, `move` take one value; `min_usd`, `min_amount`, `min_move`
+values and repeat; `side`, `direction`, `event`, `axis`, `move`, `role` take one value; `true` / `false` is sent as a yes/no (`contract=false`); `min_usd`, `min_amount`, `min_move`
 take a number. Channel fields and filter keys: https://vike.io/docs/data/reference/stream-channels
 
 ## Without a socket

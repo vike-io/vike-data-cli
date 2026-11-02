@@ -7,6 +7,7 @@ import { registerPerp } from '../src/commands/perp.js';
 import { registerHl } from '../src/commands/hl.js';
 import { registerStream } from '../src/commands/stream.js';
 import { registerSearch } from '../src/commands/search.js';
+import { registerCandles } from '../src/commands/candles.js';
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -99,6 +100,12 @@ describe('one command per tool: flags become the tool parameters', () => {
     [registerStream, ['stream', 'events', 'hl.fills', '--filter', 'coin=BTC', '--since-ms', '1793178870000'],
       'stream_events', { channel: 'hl.fills', filter: { coin: ['BTC'] }, since_ms: '1793178870000' }],
     [registerStream, ['stream', 'connections', '--hours', '24'], 'stream_connections', { hours: '24' }],
+    // `latest` takes only market, dex and interval: no symbol, window or limit is sent with it
+    [registerCandles, ['candles', 'hl', 'BTC', '--view', 'latest', '--market', 'spot', '--limit', '9'],
+      'hl_ohlcv', { view: 'latest', market: 'spot' }],
+    [registerCandles, ['candles', 'hl', 'BTC', '--interval', '5m'], 'hl_ohlcv', { symbol: 'BTC', interval: '5m' }],
+    [registerPerp, ['perp', 'top-traders'], 'hl_perp_top_traders',
+      { window: '30d', sort: 'pnl', order: 'desc', min_trades: 3, min_win_rate: '0', min_volume: '0', size: 20 }],
   ])('%#', async (register, args, tool, expected) => {
     const { fetchMock } = mockTool('{}');
     await run(register, [...args, '--json']);

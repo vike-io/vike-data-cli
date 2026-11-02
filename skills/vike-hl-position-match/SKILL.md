@@ -17,7 +17,7 @@ vike-data perp find-position
   --leverage <X>       # e.g. 25
   --entry <PRICE>      # entry price from the card
   [--mark <PRICE>]     # current mark price — sharpens tie-break when multiple wallets share entry
-  [--limit N]          # max matches, default 10, max 50
+  [--limit N]          # max matches, default 50, max 500
   [--json]
 ```
 

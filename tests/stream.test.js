@@ -48,6 +48,11 @@ describe('parseFilters', () => {
       .toEqual({ coin: ['BTC', 'ETH', 'SOL'], min_usd: 50000, side: 'buy', pnl_cohort: ['3x smart'] });
   });
 
+  it('hl.candles lists, a yes/no key, a one-value role', () => {
+    expect(parseFilters(['coin=BTC', 'interval=1m,5m', 'market=perp', 'dex=HL', 'contract=false', 'role=maker']))
+      .toEqual({ coin: ['BTC'], interval: ['1m', '5m'], market: ['perp'], dex: ['HL'], contract: false, role: 'maker' });
+  });
+
   it('refuses a pair with no key or a non-number', () => {
     expect(() => parseFilters(['BTC'])).toThrow(/key=value/);
     expect(() => parseFilters(['min_usd=lots'])).toThrow(/number/);
@@ -122,6 +127,14 @@ describe('runStream', () => {
     await expect(a.done).resolves.toBe(1);
     expect(a.sockets).toHaveLength(2);
     expect(a.log.join('\n')).toMatch(/HTTP 401 no valid credential/);
+  });
+
+  it('sends any channel name as given: the server decides what a path serves', async () => {
+    const { sockets, done } = start([{ id: 'hl_candles', channel: 'hl.candles', filter: { coin: ['BTC'], interval: ['1m'] } }]);
+    sockets[0].emit('open');
+    expect(sockets[0].sent[0]).toEqual({ action: 'subscribe', id: 'hl_candles', channel: 'hl.candles', filter: { coin: ['BTC'], interval: ['1m'] } });
+    sockets[0].frame({ type: 'error', id: 'hl_candles', code: 'unknown_channel', message: "unknown channel 'hl.candles'; available: [...]" });
+    await expect(done).resolves.toBe(1);
   });
 
   it('4401 as a close stops too', async () => {

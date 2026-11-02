@@ -16,7 +16,7 @@ vike-data perp top-traders
   [--min-trades N]       # default 3; 0-2 are treated as 3
   [--min-win-rate P]     # percent, 0-100
   [--min-volume USD]
-  [--size N]             # default 10, max 20
+  [--size N]             # default 20, max 100
   [--json]
 ```
 

@@ -100,7 +100,7 @@ Pick by the question, then read the named skill for the recipe and the traps. If
 | HL leaderboard with the full risk set, liquidations, open interest, builders, vaults | `vike-data hl leaderboard`, `hl liquidations`, `hl market`, `hl builders`, `hl vaults`, `hl vault` | this skill |
 | HL orders and order clusters, TWAPs, the ledger, leverage changes, closed trades, venue stats, HYPE holders, the Parquet archive | `vike-data hl orders`, `hl twaps`, `hl ledger`, `hl leverage-changes`, `hl wallet-trades`, `hl stats`, `hl hype-holders`, `hl archive` | this skill |
 | A name, symbol, address, ENS name or polymarket.com link → what it is | `vike-data search <q>` / `search` | this skill |
-| Candles: Hyperliquid perp/spot, Polymarket outcome token | `vike-data candles hl` / `candles polymarket` | `vike-candles` |
+| Candles: Hyperliquid perp/spot (history, or the newest bar of every symbol), Polymarket outcome token; live HL bars | `vike-data candles hl` (`--view latest`), `candles polymarket`; `stream hl --channel hl.candles` | `vike-candles` |
 | Trending Polymarket markets (by 24h volume) | `vike-data polymarket markets` / `polymarket_markets` | `vike-polymarket-markets` |
 | One Polymarket market | `vike-data polymarket market <condition_id>` / `polymarket_market_detail` | `vike-polymarket-market-detail` |
 | One Polymarket trader | `vike-data polymarket wallet` / `polymarket_wallet` | `vike-polymarket-trader` |
@@ -112,7 +112,7 @@ Pick by the question, then read the named skill for the recipe and the traps. If
 | Find Polymarket markets by slug, or one by condition_id | `vike-data polymarket markets --view search --query btc-updown` / `--view market --condition-id 0x...` | this skill |
 | Alerts: create / list / edit / delete / events (transfer and Hyperliquid) | `vike-data alerts ...` / `alerts_*` | `vike-alerts-setup` |
 | Alert delivery to an HTTPS webhook | `vike-data alerts register-webhook`, `test-webhook`, `rotate-secret` | `vike-alerts-webhook` |
-| Live events: HL fills, liquidations, positions, cohort flow; on-chain transfers; Polymarket trades | `vike-data stream <hl\|hl-cohorts\|onchain\|polymarket> --channel ...`; `stream info`, `check`, `events`, `connections` | `vike-stream` |
+| Live events: HL fills, liquidations, positions, candles, TWAPs, ledger, leverage, funding, cohort flow and bias; on-chain transfers; Polymarket trades and new markets | `vike-data stream <hl\|hl-cohorts\|onchain\|polymarket> --channel ...`; `stream info`, `check`, `events`, `connections` | `vike-stream` |
 | A tool with no command of its own | `vike-data call <tool> --args '{...}'` | this skill |
 | Install, auth, errors, conventions | — | `vike-core` |
 
@@ -210,7 +210,7 @@ Neither returns mark prices or bid/ask per venue. "Spread" here is perp vs perp 
 Every `hl` command takes `--view` (the first view is the default) and only the flags that view uses: a flag the view does not take is refused by name, not ignored.
 
 ### Candles
-`hl_ohlcv` (Hyperliquid perp or spot, 1m–1d, built from HL's own fills, also HIP-3 builder DEXs) and `polymarket_ohlcv` (ONE outcome token, price = probability 0–1, needs a `token_id`, not a condition_id). There is no candle source for CEX tickers or an arbitrary ERC-20.
+`hl_ohlcv` (Hyperliquid perp or spot, 1m–1d, built from HL's own fills, also HIP-3 builder DEXs) and `polymarket_ohlcv` (ONE outcome token, price = probability 0–1, needs a `token_id`, not a condition_id). `candles hl --view latest` is the newest 1-minute bar of every symbol; live closed bars come from `vike-data stream hl --channel hl.candles --filter coin=BTC --filter interval=1m`. There is no candle source for CEX tickers or an arbitrary ERC-20.
 
 ### Polymarket
 | Tool | Returns |

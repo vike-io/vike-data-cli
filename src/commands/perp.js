@@ -39,7 +39,7 @@ export function registerPerp(program) {
     .requiredOption('--leverage <x>', 'Leverage from the share card (e.g. 25)')
     .requiredOption('--entry <p>', 'Entry price from the share card')
     .option('--mark <p>', 'Optional current mark price (sharpens tie-break)')
-    .option('--limit <n>', 'Max matches (max 500)', '10')
+    .option('--limit <n>', 'Max matches (default 50, max 500)', '50')
     .option('--json', 'Emit JSON')
     .action(async (opts) => {
       try {
@@ -50,7 +50,7 @@ export function registerPerp(program) {
           leverage: Number(opts.leverage),
           entry_price: Number(opts.entry),
           mark_price: opts.mark != null ? Number(opts.mark) : undefined,
-          limit: parseInt10(opts.limit, 10),
+          limit: parseInt10(opts.limit, 50),
         });
         emit(r, opts);
       } catch (err) { emitError(err, opts); }
@@ -65,7 +65,7 @@ export function registerPerp(program) {
     .option('--min-trades <n>', 'Minimum trade count', '3')
     .option('--min-win-rate <p>', 'Minimum win rate percent (0-100)', '0')
     .option('--min-volume <usd>', 'Minimum volume USD', '0')
-    .option('--size <n>', 'Page size (max 100)', '10')
+    .option('--size <n>', 'Page size (default 20, max 100)', '20')
     .option('--json', 'Emit JSON')
     .action(async (opts) => {
       try {
@@ -76,7 +76,7 @@ export function registerPerp(program) {
           min_trades: parseInt10(opts.minTrades, 3),
           min_win_rate: opts.minWinRate,
           min_volume: opts.minVolume,
-          size: parseInt10(opts.size, 10),
+          size: parseInt10(opts.size, 20),
         });
         emit(r, opts);
       } catch (err) { emitError(err, opts); }
