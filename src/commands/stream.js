@@ -174,7 +174,8 @@ export function registerStream(program) {
     .command('stream <path>')
     .enablePositionalOptions()
     .description(`Print live events as NDJSON from wss://stream.vike.io/v1/stream/<path> (${STREAM_PATHS.join(', ')}); reconnects and resumes by itself`)
-    .requiredOption('--channel <channel...>', 'Channel(s), one subscription each, e.g. hl.fills hl.liquidations (hl), chain.transfers (onchain), pm.trades (polymarket)')
+    // Checked in the action, not requiredOption: commander checks a parent's required options for its subcommands too.
+    .option('--channel <channel...>', 'Required. Channel(s), one subscription each, e.g. hl.fills hl.liquidations (hl), chain.transfers (onchain), pm.trades (polymarket)')
     .option(FILTER_OPTION[0], `${FILTER_OPTION[1]} (applies to every --channel)`)
     .option('--cursor <cursor>', 'Resume from this cursor (from a frame, at most 3 days old) instead of starting now')
     .action(async (path, opts) => {
@@ -182,6 +183,7 @@ export function registerStream(program) {
         if (!STREAM_PATHS.includes(path)) {
           throw new Error(`unknown stream ${JSON.stringify(path)}: use one of ${STREAM_PATHS.join(', ')}`);
         }
+        if (!opts.channel) throw new Error('--channel is required, e.g. --channel hl.fills (`vike-data stream info` lists the channels)');
         const channels = [...new Set(opts.channel)];
         if (channels.length > MAX_SUBSCRIPTIONS) {
           throw new Error(`at most ${MAX_SUBSCRIPTIONS} subscriptions per connection, got ${channels.length}`);
