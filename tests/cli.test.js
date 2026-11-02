@@ -37,6 +37,14 @@ describe('cli --help', () => {
     ['labels', '0x0000000000000000000000000000000000000000'],
     ['login'],
     ['logout'],
+    ['whoami'],
+    ['hl'],
+    ['hl', 'wallet', '0x0000000000000000000000000000000000000000'],
+    ['stream', 'hl'],
+    ['stream', 'check', 'hl.fills'],
+    ['search', 'BTC'],
+    ['call', 'wallet_ens'],
+    ['alerts', 'create'],
   ])('vike-data %s --help', (...cmdParts) => {
     const out = run([...cmdParts, '--help']);
     expect(out).toMatch(/Usage:|Options:/);

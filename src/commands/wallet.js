@@ -1,6 +1,7 @@
 import { callTool } from '../mcp-client.js';
 import { emit, emitError } from '../format.js';
 import { parseInt10 } from '../util.js';
+import { addTool } from './tool-command.js';
 
 export function registerWallet(program) {
   const cmd = program
@@ -184,4 +185,24 @@ export function registerWallet(program) {
         emit(r, opts);
       } catch (err) { emitError(err, opts); }
     });
+
+  const CHAIN = ['--chain <c>', 'ethereum | bsc | base | hyperevm (default ethereum)'];
+
+  addTool(cmd, 'first-funder <address>', {
+    tool: 'wallet_first_funder',
+    args: ['address'],
+    desc: 'The earliest inbound native coin and token transfers of a wallet, with the senders\' labels',
+    options: [
+      CHAIN,
+      ['--min-native <n>', 'Dust floor in WHOLE coins (default 0.0001; 0 = none)'],
+      ['--min-usd <n>', 'Floor for the token side in USD (default 1; 0 = unpriced included)'],
+    ],
+  });
+
+  addTool(cmd, 'exchange-usage <address>', {
+    tool: 'wallet_exchange_usage',
+    args: ['address'],
+    desc: 'Which centralised exchanges a wallet sent to and received from, with USD and shares',
+    options: [CHAIN, ['--window <w>', '30d | 90d | 180d | 365d | all (default 365d)']],
+  });
 }

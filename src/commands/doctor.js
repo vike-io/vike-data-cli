@@ -8,13 +8,13 @@ export function registerDoctor(program) {
     .action(async () => {
       const checks = [];
 
-      // 1. Node version
+      // 1. Node version: package.json engines is >=22.12.0
       const nodeVer = process.version;
-      const major = parseInt(nodeVer.slice(1).split('.')[0], 10);
+      const [major, minor] = process.versions.node.split('.').map(Number);
       checks.push({
         name: 'Node runtime',
-        ok: major >= 20,
-        detail: `${nodeVer} (need >= 20.0.0)`,
+        ok: major > 22 || (major === 22 && minor >= 12),
+        detail: `${nodeVer} (need >= 22.12.0)`,
       });
 
       // 2. API key

@@ -30,6 +30,7 @@ export function registerToken(program) {
     .option('--period <p>', '1h | 24h | 7d | 30d', '24h')
     .option('--tab <t>', 'bought | sold', 'sold')
     .option('--chain <chain>', 'ethereum | bsc | base | all', 'ethereum')
+    .option('--hide-contracts', 'Leave out pools, routers and other contracts (the website\'s "Hide pools & routers")')
     .option('--json', 'Emit JSON')
     .action(async (tokenAddress, opts) => {
       try {
@@ -38,6 +39,7 @@ export function registerToken(program) {
           period: opts.period,
           tab: opts.tab,
           chain: opts.chain,
+          hide_contracts: opts.hideContracts,
         });
         emit(r, opts);
       } catch (err) { emitError(err, opts); }

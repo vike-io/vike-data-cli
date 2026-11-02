@@ -6,7 +6,7 @@ allowed-tools: Bash(vike-data:*)
 
 # vike-perp-overview
 
-One-shot market overview for perpetuals, plus the cross-venue price-gap tool. The overview is exactly what these three tools return: funding arbs, price gaps and the HL leaderboard. There is **no open-interest, market-wide volume or per-venue mark-price tool** in the CLI; say so if asked.
+One-shot market overview for perpetuals, plus the cross-venue price-gap tool. The overview is exactly what these three tools return: funding arbs, price gaps and the HL leaderboard. There is **no CEX open-interest, market-wide volume or per-venue mark-price command** in the CLI; say so if asked (Hyperliquid open interest is `vike-data hl market --json`).
 
 ## Price spreads
 

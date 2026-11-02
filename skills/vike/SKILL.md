@@ -7,7 +7,7 @@ description: "Use this skill whenever the user asks any question about on-chain 
 
 This skill is for anyone who asks an AI agent about crypto data: who is buying a token, what a wallet holds, what Hyperliquid or Polymarket traders are doing right now. It tells the agent which vike tool answers which question and how to read the result, so it does not guess or invent numbers. It reads its data from vike.io and needs a free vike API key.
 
-What the platform has: wallet and token analytics on Ethereum and BSC, with Base for token transfers and labels (each tool's chain list is under "What each tool really returns"), multi-source wallet labels, CEX perpetual funding and cross-venue spreads, Hyperliquid top traders / share-card lookup / candles, Polymarket markets, traders and smart-money signals, and transfer alerts. 31 tools in one MCP server.
+What the platform has: wallet and token analytics on Ethereum and BSC, with Base for token transfers and labels (each tool's chain list is under "What each tool really returns"), multi-source wallet labels, CEX perpetual funding and cross-venue spreads, Hyperliquid wallets, cohorts, leaderboards, liquidations, markets, builders, vaults and candles, Polymarket markets, traders, tape, order books, settlements and the Parquet archive, transfer and Hyperliquid alerts, and live event streams over WebSocket. 70 tools in one MCP server.
 
 **MCP endpoint for all calls:** `https://data.vike.io/mcp` (JSON-RPC 2.0)
 **Or use the CLI:** `npm install -g @vike-io/cli` → `vike-data <command>`
@@ -25,8 +25,8 @@ Hard rules — agents that violate these produce wrong answers. Read once, apply
 1. **Addresses are always full 0x-hex (42 chars).** Never truncate when querying. Never display truncated when the user asks for the address — they'll copy-paste it.
 2. **Perp and Hyperliquid symbols are upper-cased by the server.** Echo back what the user wrote.
 3. **Windows are counted in UTC calendar days, not a rolling 24 hours.** On the token screener `24h` spans yesterday and today; on Hyperliquid `30d` is today plus the previous 30 days.
-4. **Page sizes are small and differ per tool; there is no paging.** Max 20: `wallet_discover` (`size`), `hl_perp_top_traders` (`size`), `polymarket_smart_money`. Max 30: `polymarket_markets`. Max 50: `token_holders`, `wallet_counterparties`, `wallet_compare`, `hl_position_match`. Max 100: `token_screener`, and 100 addresses for `wallet_batch_labels`. Max 500: `wallet_transactions`. `token_transfers` has no limit: it always returns 10 rows. To go deeper, narrow the filter or the window instead of asking for more rows.
-5. **Refresh differs per tool; never promise "minutes".** `wallet_discover` and `wallet_summary` are rebuilt nightly, so a wallet active an hour ago may not show. Transfers are synced block by block. `hl_position_match` only matches positions seen within 15 minutes of the newest snapshot batch. Alerts are checked on a cron, not streamed.
+4. **Page sizes are small and differ per tool; these have no paging.** Max 20: `wallet_discover` (`size`), `polymarket_smart_money`. Max 30: `polymarket_markets`. Max 50: `token_holders`, `wallet_counterparties`, `wallet_compare`. Max 100: `token_screener`, `hl_perp_top_traders` (`size`), and 100 addresses for `wallet_batch_labels`. Max 500: `wallet_transactions`, `hl_position_match`. `token_transfers` has no limit: it always returns 10 rows. To go deeper, narrow the filter or the window instead of asking for more rows. The `hl` commands, `polymarket market-trades`, `tape`, `settlements` and `alerts events` DO page: pass the answer's next cursor back with `--cursor`.
+5. **Refresh differs per tool; never promise "minutes".** `wallet_discover` and `wallet_summary` are rebuilt nightly, so a wallet active an hour ago may not show. Transfers are synced block by block. `hl_position_match` only matches positions seen within 15 minutes of the newest snapshot batch. For events as they happen use `vike-data stream` (`vike-stream`).
 6. **USD amounts are floats in dollars.** `--min-usd 10000` = ten thousand dollars, not micro-USD.
 7. **`--json` is always available** on CLI commands and gives stable machine-readable output. The default (human) format may change; `--json` will not.
 8. **Resolve a token before asking transfer/holder questions.** `token_search` → take the canonical address → pass it to `token_transfers` / `token_holders`. Symbol-only queries lose precision on tickers that collide across chains (e.g. FUN, BEAM, USDC).
@@ -95,13 +95,25 @@ Pick by the question, then read the named skill for the recipe and the traps. If
 | Cross-venue price spread, "perp market overview" | `vike-data perp spreads` + `perp funding` + `perp top-traders` | `vike-perp-overview` |
 | Top Hyperliquid traders; "is this HL address any good" | `vike-data perp top-traders` / `hl_perp_top_traders` | `vike-hl-top-traders` |
 | HL share card → which wallet holds it | `vike-data perp find-position` / `hl_position_match` | `vike-hl-position-match` |
-| Candles: Hyperliquid perp/spot, Polymarket outcome token | `vike-data candles hl` / `candles polymarket` | `vike-candles` |
+| One HL wallet: equity, positions, cohorts, risk; its fills / funding / ledger | `vike-data hl wallet`, `hl wallet-activity` / `hl_wallet`, `hl_wallet_activity` | this skill |
+| Are whales / smart money long or short X (HL cohorts) | `vike-data hl cohort-metrics <symbol>`, `hl segments`, `hl market --view indices` | this skill |
+| HL leaderboard with the full risk set, liquidations, open interest, builders, vaults | `vike-data hl leaderboard`, `hl liquidations`, `hl market`, `hl builders`, `hl vaults`, `hl vault` | this skill |
+| HL orders and order clusters, TWAPs, the ledger, leverage changes, closed trades, venue stats, HYPE holders, the Parquet archive | `vike-data hl orders`, `hl twaps`, `hl ledger`, `hl leverage-changes`, `hl wallet-trades`, `hl stats`, `hl hype-holders`, `hl archive` | this skill |
+| A name, symbol, address, ENS name or polymarket.com link → what it is | `vike-data search <q>` / `search` | this skill |
+| Candles: Hyperliquid perp/spot (history, or the newest bar of every symbol), Polymarket outcome token; live HL bars | `vike-data candles hl` (`--view latest`), `candles polymarket`; `stream hl --channel hl.candles` | `vike-candles` |
 | Trending Polymarket markets (by 24h volume) | `vike-data polymarket markets` / `polymarket_markets` | `vike-polymarket-markets` |
 | One Polymarket market | `vike-data polymarket market <condition_id>` / `polymarket_market_detail` | `vike-polymarket-market-detail` |
 | One Polymarket trader | `vike-data polymarket wallet` / `polymarket_wallet` | `vike-polymarket-trader` |
 | Polymarket smart-money flows / mispricings / overview | `vike-data polymarket smart-money` / `polymarket_smart_money` | `vike-polymarket-smart-money` |
-| Alerts: create / list / edit / delete | `vike-data alerts ...` / `alerts_*` | `vike-alerts-setup` |
-| Alert delivery to an HTTPS webhook | `vike-data alerts register-webhook` | `vike-alerts-webhook` |
+| Polymarket wallet leaderboard | `vike-data polymarket leaderboard` / `polymarket_leaderboard` | this skill |
+| One market's trades with wallets; raw tape; order book; tape stats | `vike-data polymarket market-trades`, `tape`, `orderbook`, `market-stats` | this skill |
+| Polymarket resolutions; the Parquet archive | `vike-data polymarket settlement`, `settlements`, `archive` | this skill |
+| Who funded a wallet; which exchanges it uses | `vike-data wallet first-funder`, `wallet exchange-usage` | this skill |
+| Find Polymarket markets by slug, or one by condition_id | `vike-data polymarket markets --view search --query btc-updown` / `--view market --condition-id 0x...` | this skill |
+| Alerts: create / list / edit / delete / events (transfer and Hyperliquid) | `vike-data alerts ...` / `alerts_*` | `vike-alerts-setup` |
+| Alert delivery to an HTTPS webhook | `vike-data alerts register-webhook`, `test-webhook`, `rotate-secret` | `vike-alerts-webhook` |
+| Live events: HL fills, liquidations, positions, candles, TWAPs, ledger, leverage, funding, cohort flow and bias; on-chain transfers; Polymarket trades and new markets | `vike-data stream <hl\|hl-cohorts\|onchain\|polymarket> --channel ...`; `stream info`, `check`, `events`, `connections` | `vike-stream` |
+| A tool with no command of its own | `vike-data call <tool> --args '{...}'` | this skill |
 | Install, auth, errors, conventions | — | `vike-core` |
 
 **When in doubt, start with `vike-data token search` or `vike-data wallet summary`.** Both are cheap and disambiguate what the user actually meant.
@@ -132,7 +144,12 @@ vike-data wallet summary 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045 --json
 vike-data perp funding --symbol BTC --json
 ```
 
-**B) Via an MCP connector (recommended when your client has one).** All 31 tools live at `https://data.vike.io/mcp`. Connect the client to that address with the `X-API-KEY` header above, then call a tool by name with its arguments, for example `wallet_summary` with `address` set to a full 0x address.
+Any MCP tool, including one with no command of its own, is one `call` away; it prints the tool's raw JSON and exits 1 when the tool refuses the input:
+```bash
+vike-data call hl_wallet --args '{"address":"0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045","view":"summary"}'
+```
+
+**B) Via an MCP connector (recommended when your client has one).** All 70 tools live at `https://data.vike.io/mcp`. Connect the client to that address with the `X-API-KEY` header above, then call a tool by name with its arguments, for example `wallet_summary` with `address` set to a full 0x address.
 
 Run `vike-data schema --pretty` (or call MCP `tools/list`) to see the live arg shape for every tool. Always read the schema before constructing arguments — defaults and enum values change.
 
@@ -181,11 +198,19 @@ Neither returns mark prices or bid/ask per venue. "Spread" here is perp vs perp 
 | `hl_perp_top_traders` | up to 20 wallets: `total_realized_pnl`, `roi_pct`, `win_rate_pct`, `max_drawdown_pct` (all percents; 12.5 = 12.5%), `trade_count`, `total_volume`. ROI = window realized PnL / CURRENT account value; drawdown is account-level and all-time |
 | `hl_position_match` | wallets whose open position matches a share card (`symbol`, side, leverage, entry) |
 | `hl_ohlcv` | perp or spot candles |
+| `hl_wallet` (`vike-data hl wallet`) | one wallet: equity, open positions, cohort labels, risk metrics, lifetime flow; `--view trades_summary` for closed-trade stats |
+| `hl_wallet_activity` (`hl wallet-activity`) | one wallet's fills, funding, ledger or builder routing, newest first, paged with `--cursor` |
+| `hl_cohort_metrics` (`hl cohort-metrics <symbol>`) | hourly long/short notional per cohort of one symbol; `bias` is a fraction -1..+1. For a backtest pass `--label-basis point_in_time` |
+| `hl_segments` (`hl segments`) | the cohort labels (`--view cohorts`), one cohort now (`summary`), the symbol x cohort board (`heatmap`), one cohort hour by hour (`history`) |
+| `hl_leaderboard` (`hl leaderboard`) | traders on 20 metrics; `--min-win-rate` is a FRACTION here (0.6), a percent in `perp top-traders` |
+| `hl_liquidations`, `hl_market`, `hl_builders`, `hl_vaults`, `hl_vault` | liquidations / risk / heatmap; open interest, symbol series, positions, indices, large fills, an hourly panel of up to 64 symbols; builder codes; vaults |
+| `hl_orders`, `hl_twaps`, `hl_ledger`, `hl_leverage_changes` | resting orders at one instant, one wallet's orders, order clusters; the cross-wallet feeds (follow one with `--order asc` and each `nextCursor`, stop on an empty page) |
+| `hl_wallet_trades`, `hl_stats`, `hl_hype_holders`, `hl_archive` | one wallet's closed trades; hourly venue equity / open interest / volume; HYPE holders; the daily fills and positions Parquet files (`--view url` = a 7-day link) |
 
-There is no per-wallet Hyperliquid profile, no open-interest and no cohort tool in the CLI yet. Say so instead of improvising from the leaderboard.
+Every `hl` command takes `--view` (the first view is the default) and only the flags that view uses: a flag the view does not take is refused by name, not ignored.
 
 ### Candles
-`hl_ohlcv` (Hyperliquid perp or spot, 1m–1d, built from HL's own fills, also HIP-3 builder DEXs) and `polymarket_ohlcv` (ONE outcome token, price = probability 0–1, needs a `token_id`, not a condition_id). There is no candle source for CEX tickers or an arbitrary ERC-20.
+`hl_ohlcv` (Hyperliquid perp or spot, 1m–1d, built from HL's own fills, also HIP-3 builder DEXs) and `polymarket_ohlcv` (ONE outcome token, price = probability 0–1, needs a `token_id`, not a condition_id). `candles hl --view latest` is the newest 1-minute bar of every symbol; live closed bars come from `vike-data stream hl --channel hl.candles --filter coin=BTC --filter interval=1m`. There is no candle source for CEX tickers or an arbitrary ERC-20.
 
 ### Polymarket
 | Tool | Returns |
@@ -196,15 +221,16 @@ There is no per-wallet Hyperliquid profile, no open-interest and no cohort tool 
 | `polymarket_smart_money` | MARKETS where the profitable-wallet cohort is flowing (`flows`) or bought below the mid (`mispricings`); not a list of top traders |
 
 ### Alerts
-Create + manage on-chain transfer alerts delivered to email, Discord or an HTTPS webhook.
+Create + manage on-chain transfer alerts and Hyperliquid alerts, delivered by email or an HTTPS webhook.
 
 | Tool | Does |
 |---|---|
 | `alerts_list`, `alerts_list_channels` | list rules / enabled channels |
-| `alerts_create`, `alerts_edit`, `alerts_delete` | manage a rule (token symbol + chain `eth`/`bsc` + USD thresholds) |
-| `alerts_register_webhook` | register an HTTPS webhook (HMAC-signed deliveries) |
+| `alerts_create`, `alerts_edit`, `alerts_delete` | manage a rule: transfer (token and/or one `address`, chain `eth`/`bsc`/`base`/`hyperevm`, USD thresholds) or Hyperliquid (`--type hl_wallet`, `hl_cohort_fill`, `hl_liquidation`, `hl_cohort_bias`, `hl_liq_proximity`) |
+| `alerts_events`, `alerts_resend_delivery` | what fired and each delivery's status (15 days); send one again |
+| `alerts_register_webhook`, `alerts_test_webhook`, `alerts_rotate_webhook_secret` | an HTTPS webhook (HMAC-signed deliveries): register, test, rotate its secret |
 
-An alert fires on ANY transfer of the token above the USD threshold on that chain. It cannot watch one address, and there is no price or funding alert. There is no Telegram delivery. Alerts are checked on a cron, not streamed; do not suggest WebSockets.
+A token-wide transfer alert fires on ANY transfer of the token above the USD threshold on that chain; an address alert on every transfer of that wallet. Hyperliquid alerts go to a webhook or are read with `alerts events` (no email). There is no price or funding alert, no Discord (off) and no Telegram delivery. For a live feed without a rule, use `vike-data stream`.
 
 ---
 
@@ -222,9 +248,7 @@ Credits are an accounting figure only; they never block a call. The one limit is
 
 - **No NFT data** — out of scope by design.
 - **No on-chain trading / signing** — read-only platform, no execution.
-- **No WebSocket / push streaming alerts.**
-- **No ENS name → address**, no per-address alerts, no candles for CEX tickers or arbitrary ERC-20 contracts.
-- **No Hyperliquid per-wallet profile, open interest or cohort positioning** through the CLI yet.
+- **No ENS name → address**, no candles for CEX tickers or arbitrary ERC-20 contracts.
 - **No non-EVM chains** (Bitcoin, Solana, Tron, Monero, Zcash, Dash) and no Arbitrum.
 
 If the user asks for any of the above, say so directly rather than proposing a workaround.

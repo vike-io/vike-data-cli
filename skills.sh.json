@@ -50,7 +50,7 @@
     },
     {
       "title": "Hyperliquid perps",
-      "description": "Top traders (and checking one address against the leaderboard) and share-card reverse-lookup.",
+      "description": "Top traders, one wallet's profile and activity, and share-card reverse-lookup; the `vike-data hl` commands are routed by the umbrella skill.",
       "skills": [
         "vike-hl-top-traders",
         "vike-hl-position-match"
@@ -75,10 +75,17 @@
     },
     {
       "title": "Alerts",
-      "description": "Create, list, edit, delete on-chain transfer alerts (USD thresholds per token); register HTTPS webhooks with HMAC delivery.",
+      "description": "Create, list, edit, delete transfer alerts (a token or one wallet, USD thresholds) and Hyperliquid alerts; read what fired; HTTPS webhooks with HMAC delivery.",
       "skills": [
         "vike-alerts-setup",
         "vike-alerts-webhook"
+      ]
+    },
+    {
+      "title": "Live streams",
+      "description": "Hyperliquid, HL cohort, on-chain and Polymarket events as they happen over WebSocket, as NDJSON, resumed by cursor.",
+      "skills": [
+        "vike-stream"
       ]
     }
   ]

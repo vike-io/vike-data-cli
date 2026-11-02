@@ -1,33 +1,49 @@
 import { requireApiKey, getEndpoint } from './auth.js';
+import { readPackageVersion } from './util.js';
+
+// The installed package's own version: npm_package_version is set only under `npm run`.
+export const USER_AGENT = `vike-cli/${readPackageVersion()}`;
 
 let _id = 0;
 function nextId() { return ++_id; }
+
+// A fetch error can quote a header value (an invalid one, e.g. a key pasted with a newline): never echo the key.
+export function redact(message, apiKey) {
+  return apiKey ? String(message).split(apiKey).join('vk_***') : String(message);
+}
+
+// fetch, with any error message cleared of the key.
+async function post(endpoint, apiKey, init) {
+  try {
+    return await fetch(endpoint, init);
+  } catch (err) {
+    throw Object.assign(new Error(redact(err.message, apiKey)), { name: err.name });
+  }
+}
 
 export async function callTool(toolName, args = {}, opts = {}) {
   const apiKey = opts.apiKey ?? requireApiKey();
   const endpoint = opts.endpoint ?? getEndpoint();
   const timeoutMs = opts.timeoutMs ?? 60_000;
 
-  const body = {
-    jsonrpc: '2.0',
-    id: nextId(),
-    method: 'tools/call',
-    params: { name: toolName, arguments: args },
-  };
+  // argsText: the caller's own JSON object text, sent byte for byte (a 77-digit number is not rounded).
+  const envelope = JSON.stringify({ jsonrpc: '2.0', id: nextId(), method: 'tools/call' });
+  const body = `${envelope.slice(0, -1)},"params":{"name":${JSON.stringify(toolName)},`
+    + `"arguments":${opts.argsText ?? JSON.stringify(args)}}}`;
 
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), timeoutMs);
 
   let resp;
   try {
-    resp = await fetch(endpoint, {
+    resp = await post(endpoint, apiKey, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'X-API-KEY': apiKey,
-        'User-Agent': `vike-cli/${process.env.npm_package_version ?? 'dev'}`,
+        'User-Agent': USER_AGENT,
       },
-      body: JSON.stringify(body),
+      body,
       signal: ctrl.signal,
     });
   } catch (err) {
@@ -52,10 +68,15 @@ export async function callTool(toolName, args = {}, opts = {}) {
 
   // tools/call returns { content: [{type:'text', text: JSON}], isError }
   const content = json.result?.content?.[0]?.text;
-  if (!content) return json.result;
-  try { return JSON.parse(content); } catch {
-    return content;
+  let parsed = content;
+  try { parsed = JSON.parse(content); } catch { /* plain text */ }
+  if (json.result?.isError) {
+    // An in-band failure ({"error": ...}) is an error in every output mode, so the exit code is 1.
+    throw new Error(String(parsed?.error ?? parsed?.[0]?.error ?? content ?? 'tool error'));
   }
+  if (!content) return json.result;
+  // raw: the tool's text as sent, so integers above 2^53 survive.
+  return opts.raw ? content : parsed;
 }
 
 export async function listTools(opts = {}) {
@@ -67,9 +88,9 @@ export async function listTools(opts = {}) {
     method: 'tools/list',
     params: {},
   };
-  const resp = await fetch(endpoint, {
+  const resp = await post(endpoint, apiKey, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-API-KEY': apiKey },
+    headers: { 'Content-Type': 'application/json', 'X-API-KEY': apiKey, 'User-Agent': USER_AGENT },
     body: JSON.stringify(body),
   });
   const json = await resp.json();
@@ -82,9 +103,9 @@ export async function ping(opts = {}) {
   // JSON-RPC "Invalid or missing API key" error (soon HTTP 401), so fail early.
   const endpoint = opts.endpoint ?? getEndpoint();
   const apiKey = opts.apiKey ?? requireApiKey();
-  const resp = await fetch(endpoint, {
+  const resp = await post(endpoint, apiKey, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-API-KEY': apiKey },
+    headers: { 'Content-Type': 'application/json', 'X-API-KEY': apiKey, 'User-Agent': USER_AGENT },
     body: JSON.stringify({
       jsonrpc: '2.0', id: nextId(), method: 'initialize', params: {},
     }),
