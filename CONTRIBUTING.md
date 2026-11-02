@@ -30,13 +30,13 @@ npm test
 2. Make the change. Add tests if it's logic.
 3. `npm run lint` and `npm test` — both should pass.
 4. Add a Changeset: `npx changeset` (pick patch/minor and describe what changed).
-5. Open a PR against `main`. CI runs lint + test on Node 20 and 22.
+5. Open a PR against `main`. CI runs lint + test on Node 22.
 
 ## Code style
 
 See [AGENTS.md](AGENTS.md) for the full conventions. Short version:
 
-- ESM only, Node 20+
+- ESM only, Node 22.12+
 - Single quotes, semicolons, 2-space indent
 - Native fetch / fs / path — don't add deps unless load-bearing
 - Don't break existing flag names

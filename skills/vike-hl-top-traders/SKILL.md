@@ -50,7 +50,7 @@ All `*_pct` fields are percents: `12.5` means 12.5%. (Before 2026-10-19 `roi_pct
 
 ## Is this specific address any good?
 
-There is **no per-wallet Hyperliquid command or tool** yet, and `top-traders` cannot filter by address. The only check is to scan the leaderboard and look for the address:
+Ask the wallet directly: `vike-data hl wallet <address> --json` (equity, open positions, cohort labels, risk metrics, lifetime flow) and `vike-data hl wallet <address> --view trades_summary --window 30d --json` (closed-trade statistics). `top-traders` cannot filter by address; to see where it ranks, scan the leaderboard for it:
 
 ```bash
 vike-data perp top-traders --window 30d --sort pnl --size 20 --json

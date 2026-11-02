@@ -47,7 +47,7 @@ vike-data --help                        # command list; add --help to any comman
 - All commands accept `--json` for pipe-friendly output. Without it, you get a human-readable table.
 - Addresses: pass full 0x-prefixed hex (42 chars). Never truncate when reporting back to the user.
 - USD amounts: integers/decimals (e.g. `--min-usd 10000`).
-- Chain identifiers: `ethereum`, `bsc`, `base` on the token and wallet commands (`wallet discover` and `wallet balances` serve ethereum and bsc only; `alerts` takes `eth` or `bsc`). Base coverage is narrower than the flag suggests: documented for token transfers and `wallet batch`, not for the per-wallet transfer commands, so an empty Base result means "not covered". Non-EVM chains and Arbitrum are not served. Check `vike-data <cmd> --help` for the exact list.
+- Chain identifiers: `ethereum`, `bsc`, `base` on the token and wallet commands (`wallet discover` and `wallet balances` serve ethereum and bsc only; `wallet first-funder` and `exchange-usage` also take `hyperevm`; `alerts` takes `eth`, `bsc`, `base` or `hyperevm`). Base coverage is narrower than the flag suggests: documented for token transfers and `wallet batch`, not for the per-wallet transfer commands, so an empty Base result means "not covered". Non-EVM chains and Arbitrum are not served. Check `vike-data <cmd> --help` for the exact list.
 - Time windows: `24h`, `7d`, `30d`, `90d`, `all` (per command; check `vike-data <cmd> --help`). Windows are counted in UTC calendar days.
 
 ## Errors
@@ -56,6 +56,9 @@ vike-data --help                        # command list; add --help to any comman
 - `MCP error -32000: Hourly rate limit exceeded` → you hit the per-key cap of 20,000 requests per rolling hour; the window slides, so capacity returns continuously.
 - `Network error` / timeout → check `vike-data doctor`; the endpoint is `https://data.vike.io/mcp`.
 - `503` from a tool → upstream data source temporarily down; retry in 30s.
+- A tool that refuses its input (`{"error": ...}`) exits 1 in every mode, `--json` included: read the message, it names the fix.
+- A tool with no command of its own: `vike-data call <tool> --args '{"key":"value"}'` prints its raw result.
+- `vike-data stream` exits 1 on `replaced (4410)`: another program took this key's connection on that address; give each program its own key. On `HTTP 401` or `4401` fix the key. Every other drop reconnects by itself.
 
 ## Cost awareness
 

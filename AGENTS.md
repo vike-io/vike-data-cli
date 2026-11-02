@@ -4,7 +4,7 @@ Repo conventions for AI coding agents working on `vike-cli`.
 
 ## Stack
 
-- **Runtime:** Node.js 20+ (ESM only — `"type": "module"` in package.json)
+- **Runtime:** Node.js 22.12+ (ESM only — `"type": "module"` in package.json)
 - **CLI parser:** [commander](https://github.com/tj/commander.js) v12+
 - **HTTP:** native `fetch` (Node 18+)
 - **Testing:** [vitest](https://vitest.dev)
@@ -21,12 +21,16 @@ src/
   format.js             # table/JSON output
   util.js               # small helpers (version read, type coerce)
   commands/             # one file per command group
-    auth.js             # login/logout (registerWhoami exists but is not registered in index.js)
+    auth.js             # login/logout/whoami
+    tool-command.js     # addTool(): one subcommand = one MCP tool, flags = its parameters
+    call.js             # call <tool> --args '{json}': any MCP tool, raw result
+    stream.js           # stream <path>: the WebSocket event streams (ws), resume by cursor
     token.js            # token search|transfers|screener|holders
-    wallet.js           # wallet summary|discover
-    perp.js             # perp funding|spreads|top-traders
+    wallet.js           # wallet summary|discover|... (one per wallet_* tool)
+    perp.js             # perp funding|spreads|top-traders|find-position
+    hl.js               # hl <tool> --view: the Hyperliquid view tools
     candles.js          # candles hl|polymarket (Hyperliquid + Polymarket OHLCV)
-    alerts.js           # alerts CRUD + channels
+    alerts.js           # alerts CRUD + channels + events + webhook tools
     init.js             # interactive setup
     doctor.js           # diagnostics
     schema.js           # MCP tools/list dump
@@ -39,7 +43,7 @@ skills/
 ## When adding a new command
 
 1. Pick or create the right file under `src/commands/`. Group by domain.
-2. Use `callTool('<mcp_tool_name>', { ... })` from `mcp-client.js`. Don't write a fresh HTTP client.
+2. Use `callTool('<mcp_tool_name>', { ... })` from `mcp-client.js`, or `addTool()` from `commands/tool-command.js` when the flags map 1:1 to the tool's parameters. Don't write a fresh HTTP client.
 3. Wrap user-input arrays/strings — the MCP server already does defensive coercion, but the CLI should be readable.
 4. Add `--json` flag (use `emit(result, opts)` from `format.js`). Pipe detection is automatic.
 5. Add a `SKILL.md` under `skills/vike-<command>/` describing when to use it. Follow the existing structure: frontmatter → command → examples → reading tips → anti-patterns → pairs-well-with.
@@ -48,7 +52,7 @@ skills/
 ## Coding rules
 
 - **ESM only.** `import` / `export`. No `require`.
-- **No transpiler.** Source ships as-is to npm — that's why we target Node 20+.
+- **No transpiler.** Source ships as-is to npm — that's why we target Node 22.12+ (package.json engines).
 - **Minimum deps.** Default to native fetch / fs / path / os. Only add a dep if it's load-bearing.
 - **Errors:** throw from command handlers; `src/index.js` catches and exits 1.
 - **Don't log to stdout from libraries** (only command handlers + `format.js` should write).

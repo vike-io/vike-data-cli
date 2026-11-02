@@ -1,6 +1,6 @@
 ---
 name: vike-alerts-webhook
-description: Register an HTTPS webhook as an alert delivery channel — get HMAC-signed POST notifications when alerts fire. Use when the user has a server / bot / Slack integration and wants programmatic alert delivery instead of email/Discord.
+description: Register an HTTPS webhook as an alert delivery channel — get HMAC-signed POST notifications when alerts fire (the only channel for Hyperliquid alerts); test it, rotate its secret, resend a delivery. Use when the user has a server / bot / Slack integration and wants programmatic alert delivery instead of email.
 allowed-tools: Bash(vike-data:*)
 ---
 
@@ -29,7 +29,14 @@ vike-data alerts register-webhook https://api.mycoolbot.com/vike-alert \
 # → { "ok": true, "channel_id": 42, "url_preview": "https://api.myc...", "signed": true }
 ```
 
-Then create an alert and reference the channel — webhooks fire alongside email/discord. (Currently the `alerts create` flow doesn't accept channel IDs directly; webhooks fire if they're the user's enabled channels.)
+Then create an alert with `--channel webhook` (alongside `email` if wanted; a Hyperliquid alert takes the webhook only). Registration sends one signed `test` event at once; the channel id is in `vike-data alerts channels`.
+
+```bash
+vike-data alerts test-webhook <channel_id>     # send the signed test event again
+vike-data alerts rotate-secret <channel_id>    # new secret; the old one keeps signing for 24 hours
+vike-data alerts events --json                 # what fired, with each delivery's status
+vike-data alerts resend <delivery_id>          # send one delivery again (up to 15 days)
+```
 
 ## What we POST to your URL
 
@@ -49,10 +56,10 @@ X-Vike-Signature: t=1716658923,sig=a3f8b2c...
 import hmac, hashlib, time
 
 def verify(secret, headers, body):
-    sig_header = headers.get("X-Vike-Signature", "")
-    parts = dict(p.split("=", 1) for p in sig_header.split(","))
-    ts, sig = parts.get("t"), parts.get("sig")
-    if not ts or not sig:
+    ts = headers.get("X-Vike-Timestamp", "")
+    # During a secret rotation the header carries TWO sig= values: accept if ANY matches.
+    sigs = [p.split("=", 1)[1] for p in headers.get("X-Vike-Signature", "").split(",") if p.startswith("sig=")]
+    if not ts or not sigs:
         return False
     # Reject replays older than 5 min
     if abs(time.time() - int(ts)) > 300:
@@ -60,7 +67,7 @@ def verify(secret, headers, body):
     expected = hmac.new(
         secret.encode(), f"{ts}.{body.decode()}".encode(), hashlib.sha256
     ).hexdigest()
-    return hmac.compare_digest(expected, sig)
+    return any(hmac.compare_digest(expected, s) for s in sigs)
 ```
 
 ## Anti-patterns
@@ -76,7 +83,7 @@ def verify(secret, headers, body):
 2. Reject if `X-Vike-Timestamp` is more than ~5 min old (replay protection)
 3. Return `200` quickly; queue work async
 4. Log full body for unsigned-but-suspicious requests
-5. Rotate the secret if you suspect compromise — re-register a new channel
+5. Rotate the secret if you suspect compromise — `vike-data alerts rotate-secret <channel_id>`
 
 ## Pairs well with
 
