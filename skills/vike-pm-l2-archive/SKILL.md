@@ -22,7 +22,7 @@ Streams: `book_events` (full L2: snapshots, `price_change` deltas, trades, tick-
 ## Pick the right file
 
 - `--asset` and `--tenor` go together or not at all, and either one hides every flat file. Without them `datasets` mixes both layouts: filter on `layout`, or the same day appears twice.
-- **Check `bytes` first.** One day of `trades` has been about 12 MB; a BTC 5m family `trades` day 3-5 MB; one day of `book_events` **8.5 GB (532 million rows)**. Tell the user before any `book_events` download, and prefer the family file for one asset.
+- **Check `bytes` first.** Measured 2026-10-19: one day of `trades` about 12 MB; a BTC 5m family `trades` day 3-5 MB; one day of `book_events` **8.5 GB (532 million rows)**. Tell the user before any `book_events` download, and prefer the family file for one asset.
 - A few hours or one token: use the API, not a bulk file: `vike-data polymarket tape --token-id <id> --from-ms ... --to-ms ... --event-type trade` (at most 24 h a call, no wallets), `vike-data polymarket market-trades <condition_id>` (with wallets) or `vike-data candles polymarket <token_id>`.
 
 ## Fetch (outside this skill's tool grant; hand the user the command)

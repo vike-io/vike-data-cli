@@ -56,7 +56,7 @@ Sources are anonymised on the wire (`provider_a`, `provider_b`, ...). There are 
 - **Only 1 source (± heuristic)** → moderate; mention "labeled by one source"
 - **Only the heuristic** → low; mention "predicted by heuristic"
 - **`found: true` with no sources** → the wallet is in our label table but no raw source labels it
-- **`found: false`** → the wallet is missing from our labelled-wallet table, and no source is consulted at all. It does NOT prove that no provider labels it. Say "not in our label table", not "unlabeled" or "clean".
+- **`found: false`** → every source was read and none knows the address, and it is not in our label table (`found` is true when ANY source knows it). It does NOT prove the wallet is clean or new: our sources do not cover every wallet. Say "no label source knows it", not "clean".
 
 Early answers (before 2026-10-19) carried only the Arkham-derived source and the heuristic, so older transcripts undercount sources.
 

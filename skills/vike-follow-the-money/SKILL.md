@@ -42,7 +42,7 @@ vike-data stream onchain --channel chain.transfers --filter chain=eth --filter w
 - The stream spells the chain `eth`, not `ethereum`. Events arrive in bursts about 3 minutes after the block.
 - **Never put `min_usd` on `chain.transfers`**: transfers are priced after they are streamed, so it drops almost every event. For one token use `--filter token=0x... --filter min_amount=<whole tokens>`.
 - `contract=false` drops a transfer when either side is a known contract; no mark does not mean "not a contract".
-- For a stored rule instead of a running process: `vike-data alerts create --label "Exploiter out" --chain eth --address $ADDR --address-role from --channel email` (see `vike-alerts-setup`).
+- For a stored rule instead of a running process: `vike-data alerts create --label "Exploiter out" --chain eth --address $ADDR --address-role from --min-usd 10000 --channel email` (see `vike-alerts-setup`). Keep a `--min-usd`: an address alert notifies on EVERY matching transfer (no cooldown, no daily cap), and without a floor that includes dust and unpriced spam tokens. With it, only transfers that already carry a USD value match, so an unpriced token never fires.
 
 ## Answer template
 

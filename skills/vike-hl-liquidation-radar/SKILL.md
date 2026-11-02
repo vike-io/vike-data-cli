@@ -30,7 +30,7 @@ vike-data candles hl ETH --interval 1h --limit 48 --json                    # di
 vike-data stream hl --channel hl.liq_risk hl.liquidations --filter coin=BTC,ETH,HYPE --filter min_usd=1000000
 ```
 
-- **`hl.liq_risk`**: a position of $100,000 or more announced once as its `liq_ratio` reaches 0.80 (0 = at entry, 1 = at the liquidation price), not again until it drops below 0.70 or closes. It comes with each position capture, about every 12 minutes. The first capture after the channel starts sends every position already in the zone with `prev: null` (about 300); after that `prev: "out"` = just entered. `data` has `direction`, `liq_ratio`, `mark_price`, `entry_price`, `liquidation_price`, `size_usd`, `leverage`.
+- **`hl.liq_risk`**: a position of $100,000 or more announced once as its `liq_ratio` reaches 0.80 (0 = at entry, 1 = at the liquidation price), not again until it drops below 0.70 or closes. It comes with each position capture, about every 12 minutes. The first capture after the channel starts sends every position already in the zone with `prev: null` (about 300 on 2026-11-02); after that `prev: "out"` = just entered. `data` has `direction`, `liq_ratio`, `mark_price`, `entry_price`, `liquidation_price`, `size_usd`, `leverage`.
 - **`hl.liquidations`**: each liquidation from the account's own fill, typically within a minute or two, `data.direction` the closed side, `size_usd`, `mark_price`; no size floor of its own.
 - `min_usd` is the position size on `hl.liq_risk` and the liquidation size on `hl.liquidations`. A stored rule for one wallet: `vike-data alerts create --type hl_liq_proximity --wallet 0x... ...` (see `vike-alerts-setup`).
 

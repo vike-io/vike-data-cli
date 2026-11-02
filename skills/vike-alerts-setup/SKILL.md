@@ -12,7 +12,7 @@ allowed-tools: Bash(vike-data:*)
 vike-data alerts channels --json
 ```
 
-Returns enabled email + webhook channels. **If a user creates an alert with a channel they haven't verified, the alert is saved but won't fire notifications.** Always check first. A Hyperliquid alert is delivered only by a webhook (`vike-alerts-webhook`), or read with `vike-data alerts events`.
+Returns enabled email + webhook channels. **A channel kind the user has no enabled channel of is dropped from a transfer alert, and a transfer alert left with no channel e-mails the account address.** Whatever the channels, every match is recorded and read with `vike-data alerts events` (kept 15 days). A Hyperliquid alert is delivered by a registered webhook (`vike-alerts-webhook`; asking for one the user has not registered is an error) or only read with `alerts events`; `hl_wallet` alone may also use `--channel email`.
 
 ## CRUD
 
@@ -43,7 +43,7 @@ vike-data alerts create --label "Treasury in" --chain base \
   --address 0x1111111111111111111111111111111111111111 --address-role to --channel email
 ```
 
-Hyperliquid alerts (`--type`; leave out `--chain`, `--address`, `--max-usd`; delivered by `--channel webhook`, or with no channel read them with `vike-data alerts events`):
+Hyperliquid alerts (`--type`; leave out `--chain`, `--address`, `--max-usd`; delivered by `--channel webhook` (`hl_wallet` also `email`, at most one mail per pass), or with no channel read them with `vike-data alerts events`):
 
 | `--type` | Fires on | Flags |
 |---|---|---|
@@ -75,12 +75,14 @@ vike-data alerts events --rule-id 42 --json
 vike-data alerts resend <delivery_id>               # send one delivery again
 ```
 
-### Delete
+### Delete (only when the user explicitly asks)
 
 ```bash
 vike-data alerts delete 42                          # soft-delete (pauses, keeps history)
-vike-data alerts delete 42 --hard                   # permanently remove
+vike-data alerts delete 42 --hard                   # permanently remove: only on an explicit "delete it for good"
 ```
+
+Never delete or hard-delete an alert on your own initiative, to "clean up" or to replace it: pause it with `edit --active false` if the user only wants it quiet.
 
 ## Notes + gotchas
 
@@ -89,7 +91,7 @@ vike-data alerts delete 42 --hard                   # permanently remove
 - Thresholds are in **USD value** of the transfer at fire time, not token quantity.
 - `--cooldown` is the minimum gap between notifications of a token-wide transfer alert (default 60 min). Address alerts and Hyperliquid alerts notify on every event and ignore it.
 - Tokens are matched by symbol (UPPERCASE). For cross-chain symbols like `USDC` that exist on multiple chains, be explicit with `--chain`.
-- Alerts created without a verified channel will be **silently inactive at fire time** — there is no automatic warning. Use `vike-data alerts channels` first.
+- A transfer alert whose channels are not set up is not silent: it falls back to e-mailing the account address, and every match is in `alerts events`. Run `vike-data alerts channels` first so the user gets the delivery they expect.
 
 ## Confirmation flow with the user
 

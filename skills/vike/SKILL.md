@@ -194,7 +194,7 @@ Run `vike-data schema --pretty` (or call MCP `tools/list`) to see the live arg s
 Chains: every token and wallet tool takes `chain` = `ethereum` | `bsc` | `base` | `hyperevm` (default ethereum; `token_transfers` also `all`), and `wallet_token_balances` scans all four by default. Exceptions: `token_screener` smart-money mode and `smart_inflow` sort are `ethereum` only (a 400 elsewhere); `wallet_label_provenance` reads the Ethereum label table; labels are sparse on hyperevm; alerts and the stream spell Ethereum `eth`. Arbitrum, Bitcoin, Solana, Tron and other non-EVM chains are not served: say so.
 
 ### Labels
-`wallet_label_provenance` returns the raw source labels (at most 6 sources plus our heuristic classifier) and a consensus entity/type. When an answer hinges on "is this really a CEX hot wallet?", call it rather than trusting one source. `found: false` means the wallet is missing from our labelled-wallet table and no source is consulted at all, so it is not proof that nobody labels it, and it is not proof the wallet is clean.
+`wallet_label_provenance` returns the raw source labels (at most 6 sources plus our heuristic classifier) and a consensus entity/type. When an answer hinges on "is this really a CEX hot wallet?", call it rather than trusting one source. Every source is read on every call, and `found` is true when ANY source knows the address; `found: false` means none does and the wallet is not in our label table. It is not proof the wallet is clean.
 
 ### CEX perps
 | Tool | Returns |
@@ -244,7 +244,7 @@ Create + manage on-chain transfer alerts and Hyperliquid alerts, delivered by em
 | `alerts_events`, `alerts_resend_delivery` | what fired and each delivery's status (15 days); send one again |
 | `alerts_register_webhook`, `alerts_test_webhook`, `alerts_rotate_webhook_secret` | an HTTPS webhook (HMAC-signed deliveries): register, test, rotate its secret |
 
-A token-wide transfer alert fires on ANY transfer of the token above the USD threshold on that chain; an address alert on every transfer of that wallet. Hyperliquid alerts go to a webhook or are read with `alerts events` (no email). There is no price or funding alert, no Discord (off) and no Telegram delivery. For a live feed without a rule, use `vike-data stream`.
+A token-wide transfer alert fires on ANY transfer of the token above the USD threshold on that chain; an address alert on every transfer of that wallet. Every match is recorded in `alerts events` (15 days) whatever the channels; a transfer alert left with no enabled channel e-mails the account address. Hyperliquid alerts go to a webhook or are read with `alerts events`; only `hl_wallet` may also use email. There is no price or funding alert, no Discord (off) and no Telegram delivery. For a live feed without a rule, use `vike-data stream`.
 
 ---
 

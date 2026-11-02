@@ -14,7 +14,7 @@ A current read of how each wallet cohort is positioned in ONE symbol. 1 credit p
 vike-data hl segments --view cohorts --json                       # the exact cohort labels per ladder
 vike-data hl cohort-metrics BTC --axis size --hours 1 --json      # whales: one row per size rung
 vike-data hl cohort-metrics BTC --axis pnl  --hours 1 --json      # profitable vs losing wallets (today's grading)
-vike-data hl market --view indices --symbol BTC --hours 24 --json # smi, wsi, smart_bias, whale_bias, smi_wsi_gap: newest and hourly
+vike-data hl market --view indices --symbol BTC --hours 24 --json # series: smi, wsi per hour; latest: also smart_bias, whale_bias
 vike-data hl segments --view summary --axis pnl --cohort smart --json     # that cohort across ALL symbols
 vike-data hl market --view positions --symbol BTC --sort size --limit 20 --json   # the biggest open positions, largest first
 ```
@@ -26,7 +26,7 @@ vike-data hl market --view positions --symbol BTC --sort size --limit 20 --json 
 - `bias` = (long - short) / (long + short) of NOTIONAL, a **fraction** from -1 (all short) to +1 (all long). Long share = (1 + bias) / 2. `total_position_value` and `total_position_value_long` are USD; `position_count` counts positions.
 - **Several rungs as one group: sum the notional, never average the biases.** `bias_group = (2 * sum(total_position_value_long) - sum(total_position_value)) / sum(total_position_value)`.
 - `size` ladder = account value: `shrimp` from $0, `fish` $10k, `dolphin` $50k, `shark` $250k, `whale` $1M, `2x whale` $2.5M, `3x whale` $5M, `4x whale` $10M and up. `pnl` ladder = percentile of cumulative realized PnL with at least 10 closed trades, from `3x smart` (top) through `winner` / `loser` to `3x rekt`; `unknown` = too few trades. `hl segments --view segments` gives each rung's bounds.
-- The indices are ratios: `smi` = long share of the smart cohorts minus that of the rekt cohorts, `wsi` = long share of whales minus shrimp, `smart_bias` / `whale_bias` = (long - short) / (long + short) of those groups; -1..+1 (the gap -2..+2).
+- The indices are ratios from -1 to +1: `smi` = long share of the smart cohorts minus that of the rekt cohorts, `wsi` = long share of whales minus shrimp, `smart_bias` / `whale_bias` = (long - short) / (long + short) of those groups. `hl market --view indices` returns `series` (settled hours, `smi` and `wsi` only, pnl rungs graded as of their hour) and `latest` (the newest snapshot, today's grading, with `smart_bias` and `whale_bias` too). `smi_wsi_gap` exists only on the `hl.indices` stream and in `hl_cohort_bias` alerts.
 
 ## Reading
 

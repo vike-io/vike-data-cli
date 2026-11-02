@@ -24,22 +24,22 @@ vike-data wallet batch <those addresses> --chain ethereum --json        # 2  dro
 
 In smart-money mode a row is the COHORT's flow in that token: `net_flow_usd` = `in_usd` - `out_usd`, `unique_holders` = cohort wallets active, `tx_count`. Rows are sorted by `net_flow_usd`. The token absent from the top 100 means its cohort net flow is below the 100th row's, not that the cohort has no flow. Skip `0x000...0` (the native coin).
 
-**The windows overlap, so difference them** into disjoint slices before reading a trend:
+**The windows overlap, so difference them** into disjoint slices before reading a trend. A window of N days is every UTC calendar day from `today - N` to today (today still in progress), so `24h` is yesterday plus today, not a rolling 24 hours:
 
-| Slice | = |
-|---|---|
-| last day | 24h |
-| days 2-7 | 7d - 24h |
-| days 8-30 | 30d - 7d |
-| days 31-90 | 90d - 30d |
+| Slice | = | Calendar days |
+|---|---|---|
+| newest | 24h | today and yesterday |
+| rest of the week | 7d - 24h | the 6 days before |
+| rest of the month | 30d - 7d | the 23 days before that |
+| rest of the quarter | 90d - 30d | the 60 days before that |
 
-Example, ENA on 2026-10-19: 24h +$14.9M, 7d +$38.3M, 30d +$27.9M, 90d +$54.0M, so last day +$14.9M, days 2-7 +$23.4M, days 8-30 -$10.4M, days 31-90 +$26.1M: the cohort sold for three weeks, then came back in the last week. Windows count UTC calendar days, so "24h" is yesterday plus today, not a rolling 24 hours.
+**Compare signs, not magnitudes**: the slices differ in length and today is partial. Example, ENA on 2026-10-19: 24h +$14.9M, 7d +$38.3M, 30d +$27.9M, 90d +$54.0M, so newest +$14.9M, rest of the week +$23.4M, rest of the month -$10.4M, rest of the quarter +$26.1M: the cohort sold for three weeks, then came back in the last week.
 
-| Last day | Days 2-7 | Days 8-30 | Read |
+| Newest | Rest of week | Rest of month | Read |
 |---|---|---|---|
 | + | + | + | sustained accumulation |
 | + | + | - | re-accumulation: turned from seller to buyer |
-| + | - | any | a one-day buy after a quiet or selling week: weak until days 2-7 confirm |
+| + | - | any | a short buy after a quiet or selling week: weak until the week confirms |
 | - | + | any | reducing after a build |
 | - | - | - | distribution |
 

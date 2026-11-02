@@ -6,7 +6,7 @@ allowed-tools: Bash(vike-data:*)
 
 # vike-pm-market-diligence
 
-About 12 credits. Run only the sections the question needs.
+About 18 credits for every step with two outcomes and three holders. Run only the sections the question needs.
 
 **Two ids, never interchangeable.** A market has one `condition_id` (`0x` + 64 hex) and one OUTCOME TOKEN id per outcome (a long decimal number). `polymarket market`, `market-trades` and `settlement` take the condition id; `orderbook`, `market-stats`, `tape` and `candles polymarket` take a token id and answer nothing useful for a condition id. Token ids come from `clob_token_ids` in `polymarket market` (same order as its `outcomes`) or `outcomes[].token_id` in `polymarket markets`. **Map outcomes to ids by their label** everywhere else: `polymarket markets` has listed `No` before `Yes` and `Down` before `Up`.
 
@@ -43,7 +43,7 @@ vike-data polymarket smart-money --mode flows --hours 24 --json        # 2  is t
 vike-data stream polymarket --channel pm.trades pm.price_moves pm.resolutions --filter market=$CID
 ```
 
-`pm.trades` carries the trader's wallet and `role`; add `--filter role=taker` to count each match once. `pm.price_moves` is a move of 0.05 or more within five minutes; `pm.resolutions` the on-chain resolution.
+`--filter` applies to every `--channel` of the command, and `market` is the only key all three take: a `role` filter here is refused (`bad_subscription`, exit 1). To count each match once, keep the taker rows of `pm.trades` with jq: `... | jq -c 'select(.type=="event" and .event.source=="pm.trades" and .event.data.role=="taker")'`. Don't start a second `stream polymarket` for it: one key holds one connection per path, and the second replaces the first (`4410`). `pm.trades` carries the trader's wallet; `pm.price_moves` is a move of 0.05 or more within five minutes; `pm.resolutions` the on-chain resolution.
 
 ## Answer template
 

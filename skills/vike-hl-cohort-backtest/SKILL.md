@@ -54,7 +54,7 @@ Whole-venue alternative (all symbols summed): `vike-data hl segments --view hist
 
 - Don't use the default `pnl` labels or `pnl_abs` for anything backtest-like.
 - Don't quote a hit rate without the sample size and the placebo; don't call a lag "alpha".
-- Don't extrapolate: the point-in-time history is about seven months, one regime.
+- Don't extrapolate: the point-in-time history starts 2026-04-07, one regime.
 
 ## Pairs well with
 

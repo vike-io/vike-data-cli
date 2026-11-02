@@ -24,15 +24,15 @@ Optional, by question: `hl wallet-activity $W --view fills --symbol BTC` (raw fi
 
 ## Reading
 
-- **A wallet Hyperliquid has never seen is not an error**: it comes back all zero, with `lifetime.cum_fills: 0`, `last_fill_ts: "1970-01-01..."`, `equity.account_value: null`. Say "no Hyperliquid history for this address", not "a flat trader". `has_metrics: false` on an active wallet means no trades in the window, which is not zero skill.
+- **A wallet we hold nothing for is an error**, not zeros: `hl wallet` exits 1 with "no Hyperliquid data for wallet 0x...". Say "no Hyperliquid history for this address", not "a flat trader" or "the tool failed". `last_fill_ts` is `null` for a wallet with no fill; `has_metrics: false` on an active wallet means no trades in the window, which is not zero skill.
 - `equity.account_value` is the live account; `cash_balance_usd` can be hugely negative on a cross-margin account next to a healthy account value: don't quote it as cash.
 - **Units**: `*_usd` and `account_value` are USD. `win_rate`, `long_win_rate` are FRACTIONS (0.49 = 49%); `pnl_pct`, `roi`, `*_drawdown_pct` are percents. `perp top-traders` returns `win_rate_pct` as a percent: never mix the two in one table.
-- **`max_drawdown_pct` has read 100 or more** for most top wallets (2026-10-19), and `calmar_ratio` / `recovery_factor` derive from it. Don't quote them without saying so; use `current_drawdown_pct` and the trade medians instead.
+- **`max_drawdown_pct`** is a percent from 0 to 100 of the wallet's own equity (deposits and withdrawals taken out) over the window; `null` means too little equity history to say, not 0. `calmar_ratio` and `recovery_factor` derive from it and are `null` with it.
 - **Lifetime vs ledger**: compare `lifetime.cum_realized_pnl` with `net_deposit_usd` before praising PnL. The ledger records `send` one-sided and signed, so net-flow sums from it lean negative; trust `deposit` and `withdraw`, treat `send` as movement to or from other accounts.
 - **Mean vs median** (`trades_summary`): a few large trades drive the mean (a live 30-day record: `avg_gain` $73.6k against `median_gain` $4.5k). Report medians beside means, with `payoff_ratio`, `profit_factor`, `expectancy`.
 - `trade_count` here counts open and closed trades; the leaderboard counts only completed trades, so the two never match.
 - **Funding**: `payment_usd` is signed from the wallet's side, negative = the wallet PAID. **Fees**: a negative `fee` on a fill is a maker rebate.
-- Cohorts (`size`, `pnl`, style tags) are today's labels. `avg_leverage` reads 0 (not populated); ignore it.
+- Cohorts (`size`, `pnl`, style tags) are today's labels. `avg_leverage` is the notional-weighted leverage of the open positions (real since 2026-10-25); 0 = no open position, not unlevered.
 - Identity: a Hyperliquid address is an EVM address; `vike-data labels <addr>` may name it. Sub-accounts and vaults are separate addresses with no merge.
 
 ## Watch it live
@@ -57,7 +57,7 @@ vike-data stream hl --channel hl.fills hl.liquidations hl.ledger --filter wallet
 
 - Don't call a wallet "the best trader" from a 1d or 7d window, or from one number.
 - Don't give copy-trade advice. The record is past, one venue, labels as of today.
-- Don't print a drawdown of 100% or more as fact.
+- Don't read a `null` drawdown as 0.
 
 ## Pairs well with
 

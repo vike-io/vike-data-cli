@@ -21,7 +21,7 @@ A JSON object with a `chain` field and one block per window: `all`, `90d`, `30d`
 `total_volume`, `total_inflow`, `total_outflow`, `net_flow` (USD), `tx_count`, `tokens_traded`, `first_seen`, `last_active`.
 
 - **One chain only, named in `chain`.** Without a chain the figures are for the more recently active of Ethereum and BSC, never summed; Base or HyperEVM answer only for a wallet with no priced Ethereum or BSC volume. Always say which chain the numbers are for; `wallet balances` shows which chain holds the value.
-- **`tokens_traded`, `first_seen` and `last_active` are all-time** and repeat in every window: read them from `all` and ignore the copies. There is no per-window token count.
+- **`tokens_traded` is per window** (distinct tokens moved in it). **`first_seen` and `last_active` are all-time** and repeat in every window: read them from `all`.
 - A window with no activity is present and zeroed (`24h` often is), not omitted.
 - Refreshed nightly: a wallet active in the last hours may not show yet.
 - It carries no PnL, no holdings, no labels and no Hyperliquid data. For those: `wallet balances`, `labels` / `wallet batch`, and `hl wallet`.

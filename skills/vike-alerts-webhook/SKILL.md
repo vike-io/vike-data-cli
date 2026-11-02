@@ -14,7 +14,7 @@ vike-data alerts register-webhook <https://your-server.com/vike-hook>
   [--json]
 ```
 
-The secret is **optional but strongly recommended** — without it we still POST, but the recipient has no way to verify it came from us.
+**Every POST is signed** (HMAC-SHA256). `--secret` is optional: without it the server generates one and returns it as `secret` in the answer. Show it to the user right away (it is also under Account → Alerts → channels, Show secret) so the receiver can verify deliveries.
 
 ## Example
 
@@ -33,7 +33,7 @@ Then create an alert with `--channel webhook` (alongside `email` if wanted; a Hy
 
 ```bash
 vike-data alerts test-webhook <channel_id>     # send the signed test event again
-vike-data alerts rotate-secret <channel_id>    # new secret; the old one keeps signing for 24 hours
+vike-data alerts rotate-secret <channel_id>    # only when the user explicitly asks: new secret, the old one keeps signing for 24 hours
 vike-data alerts events --json                 # what fired, with each delivery's status
 vike-data alerts resend <delivery_id>          # send one delivery again (up to 15 days)
 ```
@@ -72,7 +72,8 @@ def verify(secret, headers, body):
 
 ## Anti-patterns
 
-- **Don't** skip the secret. Anyone who knows your webhook URL can spoof alerts without it.
+- **Don't** lose the secret or skip verifying: every delivery is signed with it (yours, or the one the server generated), and without the check anyone who knows the URL can spoof alerts.
+- **Don't** rotate the secret unless the user asks: the receiver must install the new one within 24 hours.
 - **Don't** trust the body without verifying the signature. The URL doesn't authenticate the sender; the HMAC does.
 - **Don't** use HTTP (only HTTPS) in production — the body is sensitive.
 - **Don't** respond slowly — we time out after 10s. If your handler does heavy work, queue it (push to a job queue, return 200 immediately).

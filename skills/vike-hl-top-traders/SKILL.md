@@ -36,14 +36,14 @@ An object `{ "traders": [...], "total": N }`; each trader:
 
 `address`, `total_realized_pnl` (USD), `roi_pct`, `win_rate_pct`, `long_win_rate_pct`, `short_win_rate_pct`, `win_count`, `loss_count`, `trade_count`, `total_volume` (USD), `long_pnl`, `short_pnl`, `max_drawdown_pct`, `account_value` (USD), `avg_leverage`.
 
-All `*_pct` fields are percents: `12.5` means 12.5%. (Before 2026-10-19 `roi_pct` and `max_drawdown_pct` came back 100× too large; a transcript showing a 1,750% ROI is from that period.) `avg_leverage` is not populated (reads 0): ignore it. There is no `pnl_usd` and no `max_drawdown_usd`.
+All `*_pct` fields are percents: `12.5` means 12.5%. (Before 2026-10-19 `roi_pct` and `max_drawdown_pct` came back 100× too large; a transcript showing a 1,750% ROI is from that period.) `avg_leverage` is the notional-weighted leverage of the open positions (real since 2026-10-25); 0 = no open position. There is no `pnl_usd` and no `max_drawdown_usd`.
 
 ## Reading
 
 - **`roi_pct` is realized only.** It is the window's realized PnL divided by the wallet's CURRENT account value. Open positions are not counted, and a wallet that has since withdrawn most of its equity looks better than it was (and a recent deposit makes it look worse).
-- **`max_drawdown_pct` is account-level and all-time**, built from the account's hourly equity history. It does not change with `--window`.
+- **`max_drawdown_pct` is account-level and all-time** here, a percent from 0 to 100 built from the account's equity history; `null` = too little equity history to say. It does not change with `--window`.
 - **Windows are UTC days:** `1d`, `7d`, `30d` mean today plus the previous 1, 7 or 30 days; `all` is the last 365 days.
-- **`trade_count` counts completed trades only**, filed under the UTC day the position opened. A trade still open, or opened before the window and closed inside it, is not counted, so a wallet's count here differs from a per-wallet trade summary (which counts both).
+- **`trade_count` counts the trades CLOSED in the window** (filed under the UTC day they closed, whenever they opened). A trade still open is not counted, so a wallet's count here differs from a per-wallet trade summary (which counts open trades too).
 - A wallet with 90% win rate on 4 trades is statistical noise. Min trades 10–20 for any "skill" claim.
 - Top by PnL ≠ top by ROI. Whales win big in $ but small in % terms; ROI sort surfaces smaller-account discretionary skill.
 - The leaderboard rewards survivors: wallets that blew up don't appear, so the PnL distribution is right-skewed.
@@ -60,7 +60,7 @@ vike-data hl leaderboard
   [--json]
 ```
 
-Rows are keyed `wallet` (not `address`) with `account_value`, `total_realized_pnl`, `pnl_pct`, `roi`, `win_rate` (a fraction), `profit_factor`, `expectancy`, `max_drawdown_pct`, `current_drawdown_pct`, `calmar_ratio`, streaks, `size_cohort`, `pnl_cohort`. Prefer `pnl_pct` to `roi` (`roi` is unguarded on a near-empty account). `max_drawdown_pct` has read 100 or more for most top wallets (2026-10-19) and `calmar_ratio` derives from it: don't quote them without saying so. `--view flow_adjusted` ranks fills-derived trading PnL, which excludes deposits, and takes only `--window`, `--min-trades`, `--limit`, `--cursor`; when its `flow_unbalanced` is true the flow figures are unreliable.
+Rows are keyed `wallet` (not `address`) with `account_value`, `total_realized_pnl`, `pnl_pct`, `roi`, `win_rate` (a fraction), `profit_factor`, `expectancy`, `max_drawdown_pct`, `current_drawdown_pct`, `calmar_ratio`, streaks, `size_cohort`, `pnl_cohort`. Prefer `pnl_pct` to `roi` (`roi` is unguarded on a near-empty account). Here the drawdown fields are computed over the window's equity (0-100; `null` = too little equity history), unlike `perp top-traders`. `--view flow_adjusted` ranks fills-derived trading PnL, which excludes deposits, and takes only `--window`, `--min-trades`, `--limit`, `--cursor`; when its `flow_unbalanced` is true the flow figures are unreliable.
 
 ## Is this specific address any good?
 
