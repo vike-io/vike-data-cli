@@ -108,15 +108,16 @@ export function registerHl(program) {
 
   addTool(hl, 'market', {
     tool: 'hl_market',
-    desc: 'Open interest per symbol, one symbol\'s hourly series, size breakdown, positions, indices or large fills',
+    desc: 'Open interest per symbol, one symbol\'s hourly series, size breakdown, positions, indices, large fills or funding rates',
     options: [
-      view(['open_interest', 'symbol_metrics', 'size_breakdown', 'positions', 'indices', 'large_fills', 'hourly']),
-      ['--symbol <s>', 'One symbol (required by every view but open_interest, positions and hourly)'],
+      view(['open_interest', 'symbol_metrics', 'size_breakdown', 'positions', 'indices', 'large_fills', 'hourly', 'funding_rates']),
+      ['--symbol <s>', 'One symbol (required by every view but open_interest, positions, hourly and funding_rates; on funding_rates it switches the board of every perp to that perp\'s hourly history)'],
       ['--symbols <list>', 'hourly: comma-separated perps, at most 64 (close, open interest, funding, premium)'],
       ['--days <n>', 'hourly: days back from --end, 1-400 (default 120)'],
       WALLET, AXIS, COHORT, OPENED, START, END,
       ['--open-only <bool>', 'positions: true (default) = latest open; false needs --start'],
-      ['--sort <s>', 'positions: size = biggest positions of one --symbol first'],
+      ['--sort <s>', 'positions: size = biggest positions of one --symbol first; funding_rates (the board): oi (default) | rate | abs_rate'],
+      ['--order <o>', 'funding_rates: desc (default: the board largest first, a history newest hour first) | asc'],
       ['--resolution <r>', 'positions history: 5m | 1h'],
       ['--label-basis <b>', 'symbol_metrics: current'],
       ['--hours <n>', 'indices: window in hours; large_fills: look-back, max 24'],
