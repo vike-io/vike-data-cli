@@ -4,7 +4,7 @@
     "access": "public"
   },
   "version": "0.17.2",
-  "description": "CLI, agent skills and MCP client for the free Vike Data API: a Polymarket full-L2 order-book archive in Parquet (CC BY-NC 4.0), Hyperliquid positions, fills and cohorts, and labelled Ethereum/BNB wallets",
+  "description": "CLI, agent skills and MCP client for the free Vike Data API: a Polymarket full-L2 order-book archive in Parquet, Hyperliquid positions, fills and cohorts, and labelled Ethereum/BNB wallets",
   "type": "module",
   "main": "src/index.js",
   "bin": {

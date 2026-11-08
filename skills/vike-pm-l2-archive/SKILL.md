@@ -6,7 +6,7 @@ allowed-tools: Bash(vike-data:*)
 
 # vike-pm-l2-archive
 
-The archive is one Parquet file per UTC day and stream, recorded since 2026-07-25, free for non-commercial use under CC BY-NC 4.0 (credit "Polymarket L2 archive (c) Vike (vike.io/data), CC BY-NC 4.0"; commercial use needs a licence from info@vike.io). `vike-data` lists files and resolves links; **it never downloads.** 1 credit per call.
+The archive is one Parquet file per UTC day and stream, recorded since 2026-07-25, for personal use under the Vike Terms of Service (credit "Polymarket L2 archive (c) Vike (vike.io/data)"; commercial use needs a written agreement: info@vike.io). `vike-data` lists files and resolves links; **it never downloads.** 1 credit per call.
 
 ## Chain
 
@@ -42,7 +42,7 @@ The link needs no API key and is valid for 7 days (`expires_at`): treat it as a 
 ## Anti-patterns
 
 - Don't promise a download from the CLI, and don't fetch `book_events` days to answer a question the API tape can.
-- Don't redistribute without the attribution above, and don't use the files commercially without a licence.
+- Don't pass the files on, and don't use them commercially without a written agreement.
 
 ## Pairs well with
 
