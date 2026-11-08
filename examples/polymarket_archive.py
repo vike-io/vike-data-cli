@@ -2,7 +2,7 @@
 # requires-python = ">=3.10"
 # dependencies = ["polars>=1.0", "requests>=2.31"]
 # ///
-"""Polymarket full-L2 order-book archive (CC BY 4.0) from Vike Data.
+"""Polymarket full-L2 order-book archive (CC BY-NC 4.0) from Vike Data.
 
 Steps 1-2 need no API key. Step 3 runs only when VIKE_API_KEY is set.
 

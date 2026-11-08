@@ -12,7 +12,7 @@
 positions, fills, funding, liquidations, candles, and hourly long/short positioning by wallet
 cohort), **Polymarket** (markets, the trade and event tape, order-book snapshots, candles and
 on-chain settlements, plus a daily Parquet archive of the full L2 order book since 2026-07-25,
-licensed CC BY 4.0), and **labelled EVM wallets** on Ethereum and BNB Chain, with Base and HyperEVM
+licensed CC BY-NC 4.0), and **labelled EVM wallets** on Ethereum and BNB Chain, with Base and HyperEVM
 for the wallet and token tools. The same data is served three ways: an **MCP server** at `https://data.vike.io/mcp` (the one
 this CLI calls), a **REST API** at `https://data.vike.io/v1/`, and the **Parquet archive** at
 `https://data.vike.io/archive/`. A key allows 20,000 requests an hour, and an account can hold up
@@ -51,7 +51,7 @@ The key is read from `VIKE_API_KEY` first, then from `~/.vike/config.json`
 
 | Dataset | What is in it | Access | Page |
 |---|---|---|---|
-| **Polymarket historical order book** (archive) | `book_events` (full L2: snapshots, `price_change` deltas, trades, tick-size and status markers), `trades` (taker tape), `l1_quotes` (derived top of book). One Parquet file per stream per UTC day since 2026-07-25, every recorded market (crypto up/down, sports, politics). CC BY 4.0. | Manifest + sample: no key. Full days: free key. | [polymarket-historical-data](https://vike.io/data/polymarket-historical-data) |
+| **Polymarket historical order book** (archive) | `book_events` (full L2: snapshots, `price_change` deltas, trades, tick-size and status markers), `trades` (taker tape), `l1_quotes` (derived top of book). One Parquet file per stream per UTC day since 2026-07-25, every recorded market (crypto up/down, sports, politics). CC BY-NC 4.0. | Manifest + sample: no key. Full days: free key. | [polymarket-historical-data](https://vike.io/data/polymarket-historical-data) |
 | **Polymarket up/down families** (archive) | The same archive cut per market family, `asset=btc/tenor=5m` and so on, with an `asset=other/tenor=other` catch-all | free key | [polymarket-updown-markets](https://vike.io/data/polymarket-updown-markets) |
 | **Polymarket API** `/v1/polymarket` | Markets, the raw event and trade tape (about 30 days back), order-book snapshots, candles, on-chain settlements | free key | [polymarket](https://vike.io/data/polymarket) |
 | **Hyperliquid cohorts** `/v1/hyperliquid/coins/{coin}/cohort-metrics` | Long vs short per cohort, hourly, up to 8,760 hours in one request. Axes: `size` (account value, shrimp to 4x whale), `tier` (position notional), `pnl` (realized-PnL percentile), `pnl_abs` (PnL in dollars). `labelBasis=point_in_time` grades each hour with the label it had then (from 2026-04-07). | free key | [hl-cohorts](https://vike.io/data/hl-cohorts) |
@@ -228,9 +228,17 @@ and a random device id. It never sends what you queried, and it is off when `CI`
 
 ## License
 
-The CLI is MIT, see [LICENSE](LICENSE). Archive data files are CC BY 4.0: use them for anything
-and credit Vike ("Polymarket L2 archive (c) Vike (vike.io/data), CC BY 4.0"). Details:
-[vike.io/data/licensing](https://vike.io/data/licensing).
+The CLI is MIT, see [LICENSE](LICENSE). Archive data files are CC BY-NC 4.0: use them for
+non-commercial purposes (research, personal projects, education, trading your own capital) and credit
+Vike ("Polymarket L2 archive (c) Vike (vike.io/data), CC BY-NC 4.0"). Commercial use needs a separate
+licence: info@vike.io. Files downloaded before 2026-11-05 stay under CC BY 4.0, the licence they came with.
+
+API and MCP responses are covered by the [Terms of Service](https://vike.io/terms) (section 7), not by the
+archive licence: personal, non-commercial use; commercial use, on any plan, needs a written agreement
+(info@vike.io). You may publish charts, tables, screenshots, backtest and research results, and other aggregated results from on-chain, Hyperliquid and
+Polymarket data, and short excerpts of rows (up to 100 per publication), credited "© Vike (vike.io)";
+bulk data and full datasets stay out.
+Details: [vike.io/data/licensing](https://vike.io/data/licensing).
 
 ## Links
 
