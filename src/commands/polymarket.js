@@ -150,7 +150,7 @@ export function registerPolymarket(program) {
       ['--series <s>', 'price (default; what the markets resolve on) | twap60 (60-second TWAP)'],
       ['--interval <i>', '1s (default) | 1m | 5m | 15m | 1h | 4h | 1d; above 1s one row per bucket: the first tick at or after its start'],
       FROM, TO, CURSOR,
-      ['--limit <n>', 'Rows per page (default 1000)'],
+      ['--limit <n>', 'Rows per page (default 100); a shorter page can still have has_more true: keep paging'],
     ],
   });
 
