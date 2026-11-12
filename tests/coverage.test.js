@@ -21,7 +21,7 @@ const EXPECTED_SUBCMDS = {
   alerts: ['list', 'channels', 'create', 'edit', 'delete', 'register-webhook',
            'events', 'resend', 'rotate-secret', 'test-webhook'],
   polymarket: ['markets', 'market', 'wallet', 'smart-money', 'market-trades', 'tape', 'orderbook',
-               'market-stats', 'settlement', 'settlements', 'archive', 'leaderboard'],
+               'market-stats', 'settlement', 'settlements', 'chainlink-prices', 'archive', 'leaderboard'],
   candles: ['hl', 'polymarket'],
   hl: ['cohort-metrics', 'segments', 'wallet', 'wallet-activity', 'leaderboard', 'liquidations',
        'market', 'builders', 'vaults', 'vault', 'orders', 'twaps', 'ledger', 'leverage-changes',
