@@ -7,7 +7,7 @@ description: "Use this skill whenever the user asks any question about on-chain 
 
 This skill is for anyone who asks an AI agent about crypto data: who is buying a token, what a wallet holds, what Hyperliquid or Polymarket traders are doing right now. It tells the agent which vike tool answers which question and how to read the result, so it does not guess or invent numbers. It reads its data from vike.io and needs a free vike API key.
 
-What the platform has: wallet and token analytics on Ethereum, BSC, Base and HyperEVM (each tool's chain list is under "What each tool really returns"), multi-source wallet labels, CEX perpetual funding and cross-venue spreads, Hyperliquid wallets, cohorts, leaderboards, liquidations, markets, builders, vaults and candles, Polymarket markets, traders, tape, order books, settlements and the Parquet archive, Predict.fun (BNB Chain) markets, order books, on-chain fills, wallet positions and P&L and its leaderboard, transfer, Hyperliquid and Polymarket alerts, and live event streams over WebSocket. 82 tools in one MCP server.
+What the platform has: wallet and token analytics on Ethereum, BSC, Base and HyperEVM (each tool's chain list is under "What each tool really returns"), multi-source wallet labels, CEX perpetual funding and cross-venue spreads, Hyperliquid wallets, cohorts, leaderboards, liquidations, markets, builders, vaults and candles, Polymarket markets, traders, tape, order books, settlements and the Parquet archive, Predict.fun (BNB Chain) markets, order books, on-chain fills, wallet positions and P&L, USDT deposits and withdrawals and its leaderboard, transfer, Hyperliquid and Polymarket alerts, and live event streams over WebSocket. 83 tools in one MCP server.
 
 **MCP endpoint for all calls:** `https://data.vike.io/mcp` (JSON-RPC 2.0)
 **Or use the CLI:** `npm install -g @vike-io/cli` → `vike-data <command>`
@@ -120,7 +120,7 @@ Pick by the question, then read the named skill for the recipe and the traps. If
 | Many resolutions; the Parquet L2 archive | `vike-data polymarket settlements`, `archive` | `vike-pm-l2-archive` |
 | Predict.fun at a glance; its markets by 24h volume or newest, by status or a title substring | `vike-data predictfun overview`, `predictfun markets` / `predictfun_overview`, `predictfun_markets` | `vike-predictfun-markets` |
 | One Predict.fun market: outcomes, stats, order book, fills with wallets | `vike-data predictfun market <market_id>`, `orderbook`, `market-trades` / `predictfun_market_detail`, `predictfun_market_book`, `predictfun_market_trades` | `vike-predictfun-market-detail` |
-| One Predict.fun wallet: positions, P&L, fills | `vike-data predictfun wallet <address>`, `wallet-trades` / `predictfun_wallet_positions`, `predictfun_wallet_trades` | `vike-predictfun-trader` |
+| One Predict.fun wallet: positions, P&L, fills, deposits and withdrawals | `vike-data predictfun wallet <address>`, `wallet-trades`, `wallet-flows` / `predictfun_wallet_positions`, `predictfun_wallet_trades`, `predictfun_wallet_flows` | `vike-predictfun-trader` |
 | Predict.fun wallet leaderboard (realized / unrealized P&L, volume, fills) | `vike-data predictfun leaderboard` / `predictfun_leaderboard` | `vike-predictfun-leaderboard` |
 | The Chainlink price a crypto up/down market resolves on, at its window start and end (btc, eth, sol, xrp, doge, bnb, hype, zec; since 2026-11-06 09:24 UTC) | `vike-data polymarket chainlink-prices btc --interval <the market's tenor: 5m\|15m\|1h> --from-ms <window start> --to-ms <window end + 1>` / `polymarket_chainlink_prices`: two rows, the price at the start and at the end (`--to-ms` is exclusive). 4h and daily windows follow US Eastern time while buckets are UTC-aligned: ask `--interval 1m --from-ms <start> --to-ms <start + 60000>`, then again with `<end>` and `<end + 60000>` | this skill |
 | Who funded a wallet; which exchanges it uses | `vike-data wallet first-funder`, `wallet exchange-usage` | `vike-wallet-who-is` |
@@ -165,7 +165,7 @@ Any MCP tool, including one with no command of its own, is one `call` away; it p
 vike-data call hl_wallet --args '{"address":"0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045","view":"summary"}'
 ```
 
-**B) Via an MCP connector (recommended when your client has one).** All 82 tools live at `https://data.vike.io/mcp`. Connect the client to that address with the `X-API-KEY` header above, then call a tool by name with its arguments, for example `wallet_summary` with `address` set to a full 0x address.
+**B) Via an MCP connector (recommended when your client has one).** All 83 tools live at `https://data.vike.io/mcp`. Connect the client to that address with the `X-API-KEY` header above, then call a tool by name with its arguments, for example `wallet_summary` with `address` set to a full 0x address.
 
 Run `vike-data schema --pretty` (or call MCP `tools/list`) to see the live arg shape for every tool. Always read the schema before constructing arguments — defaults and enum values change.
 
@@ -249,6 +249,7 @@ Prediction markets on BNB Chain; USD is BSC USDT, prices are probabilities 0 to 
 | `predictfun_market_detail` | one market with Predict.fun's own `details`, `outcomes` (`token_id`, WON/LOST, `last_price`) and `stats` (24h and total volume); an unknown id is an error |
 | `predictfun_market_book` | the newest recorded book, priced on the first outcome (Yes): `bids`, `asks` as `[price, quantity]`, `pending_*`, `last_settled`; only the ~1,000 most active open markets, none in 30 days is an error |
 | `predictfun_market_trades`, `predictfun_wallet_trades` | `{trades, next_cursor}`, newest first, with `wallet`, `counterparty`, `role`, `side`, `size`, `price`, `usd`, `fee`. One row is one ORDER's fill: add `usd` over one `role`, never both. No time filter |
+| `predictfun_wallet_flows` | `{flows, totals, next_cursor, as_of_ts}`: USDT in/out with anyone outside Predict.fun's contracts, newest first; `totals` (deposited, withdrawn, net, `first_funder`) cover the whole history. The wallet's WHOLE USDT traffic, so a market maker's totals include its exchange and lending activity. |
 | `predictfun_wallet_positions` | per outcome token: `net`, `cost`, `proceeds`, `mark`, `value`, `pnl`, `state`; `totals` with `realized_pnl` and `unrealized_pnl`. Exchange fills only: splits, merges, redemptions and transfers are not seen |
 | `predictfun_leaderboard` | every wallet ranked by realized P&L, volume or fills over `all`/`1d`/`7d`/`30d`, or `unrealized` (window `all` only); each row carries every window. Rebuilt hourly |
 
