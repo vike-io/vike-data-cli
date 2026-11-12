@@ -8,7 +8,7 @@ import { describe, it, expect } from 'vitest';
 
 const EXPECTED_TOP_LEVEL = [
   'token', 'wallet', 'perp', 'alerts',
-  'polymarket', 'candles', 'labels',
+  'polymarket', 'predictfun', 'candles', 'labels',
   'init', 'install', 'doctor', 'schema', 'login', 'logout', 'whoami',
   'hl', 'stream', 'call', 'search',
 ];
@@ -22,6 +22,8 @@ const EXPECTED_SUBCMDS = {
            'events', 'resend', 'rotate-secret', 'test-webhook'],
   polymarket: ['markets', 'market', 'wallet', 'smart-money', 'market-trades', 'tape', 'orderbook',
                'market-stats', 'settlement', 'settlements', 'chainlink-prices', 'archive', 'leaderboard'],
+  predictfun: ['overview', 'markets', 'market', 'orderbook', 'market-trades', 'wallet', 'wallet-trades',
+               'leaderboard'],
   candles: ['hl', 'polymarket'],
   hl: ['cohort-metrics', 'segments', 'wallet', 'wallet-activity', 'leaderboard', 'liquidations',
        'market', 'builders', 'vaults', 'vault', 'orders', 'twaps', 'ledger', 'leverage-changes',
@@ -68,6 +70,7 @@ async function loadAllRegisters() {
     registerPerp: (await import('../src/commands/perp.js')).registerPerp,
     registerAlerts: (await import('../src/commands/alerts.js')).registerAlerts,
     registerPolymarket: (await import('../src/commands/polymarket.js')).registerPolymarket,
+    registerPredictfun: (await import('../src/commands/predictfun.js')).registerPredictfun,
     registerLabels: (await import('../src/commands/labels.js')).registerLabels,
     registerCandles: (await import('../src/commands/candles.js')).registerCandles,
     registerInit: (await import('../src/commands/init.js')).registerInit,

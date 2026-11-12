@@ -89,6 +89,16 @@
       ]
     },
     {
+      "title": "Predict.fun",
+      "description": "Prediction markets on BNB Chain: the venue at a glance, markets by 24h volume, one market's outcomes, order book and on-chain fills with wallets, a wallet's positions and P&L, and the wallet leaderboard.",
+      "skills": [
+        "vike-predictfun-markets",
+        "vike-predictfun-market-detail",
+        "vike-predictfun-trader",
+        "vike-predictfun-leaderboard"
+      ]
+    },
+    {
       "title": "Alerts",
       "description": "Create, list, edit, delete transfer alerts (a token or one wallet, USD thresholds) and Hyperliquid alerts; read what fired; HTTPS webhooks with HMAC delivery.",
       "skills": [

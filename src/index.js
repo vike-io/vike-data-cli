@@ -5,6 +5,7 @@ import { registerWallet } from './commands/wallet.js';
 import { registerPerp } from './commands/perp.js';
 import { registerAlerts } from './commands/alerts.js';
 import { registerPolymarket } from './commands/polymarket.js';
+import { registerPredictfun } from './commands/predictfun.js';
 import { registerLabels } from './commands/labels.js';
 import { registerCandles } from './commands/candles.js';
 // New wallet subcommands (counterparties, pnl-history, balances, ens) are
@@ -67,6 +68,7 @@ registerWallet(program);
 registerPerp(program);
 registerAlerts(program);
 registerPolymarket(program);
+registerPredictfun(program);
 registerLabels(program);
 registerCandles(program);
 registerHl(program);

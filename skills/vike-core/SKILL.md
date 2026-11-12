@@ -62,7 +62,7 @@ vike-data --help                        # command list; add --help to any comman
 
 ## Cost awareness
 
-Credits are an accounting figure on each call and never block one. The limit is 20,000 requests per rolling hour per key, shared by the MCP server and the REST API. Free (0 credits): `token search`, `alerts list`, `alerts channels`. Every `hl` command, `search`, and the Polymarket tape, order book, stats, trades, settlement and archive commands are 1 credit. Heaviest: `wallet trace` (4), then `token screener`, `wallet compare`, `wallet balances` (3).
+Credits are an accounting figure on each call and never block one. The limit is 20,000 requests per rolling hour per key, shared by the MCP server and the REST API. Free (0 credits): `token search`, `alerts list`, `alerts channels`. Every `hl` command, every `predictfun` command, `search`, and the Polymarket tape, order book, stats, trades, settlement and archive commands are 1 credit. Heaviest: `wallet trace` (4), then `token screener`, `wallet compare`, `wallet balances` (3).
 
 ## Which skill to use
 
