@@ -12,7 +12,8 @@
 positions, fills, funding, liquidations, candles, and hourly long/short positioning by wallet
 cohort), **Polymarket** (markets, the trade and event tape, order-book snapshots, candles and
 on-chain settlements, plus a daily Parquet archive of the full L2 order book since 2026-07-25,
-for personal use), and **labelled EVM wallets** on Ethereum and BNB Chain, with Base and HyperEVM
+for personal use), **Predict.fun** (prediction markets on BNB Chain: markets, order books, every on-chain fill
+with its wallet, per-wallet positions and P&L, and a wallet leaderboard), and **labelled EVM wallets** on Ethereum and BNB Chain, with Base and HyperEVM
 for the wallet and token tools. The same data is served three ways: an **MCP server** at `https://data.vike.io/mcp` (the one
 this CLI calls), a **REST API** at `https://data.vike.io/v1/`, and the **Parquet archive** at
 `https://data.vike.io/archive/`. A key allows 20,000 requests an hour, and an account can hold up
@@ -56,6 +57,7 @@ The key is read from `VIKE_API_KEY` first, then from `~/.vike/config.json`
 | **Polymarket API** `/v1/polymarket` | Markets, the raw event and trade tape (about 30 days back), order-book snapshots, candles, on-chain settlements | free key | [polymarket](https://vike.io/data/polymarket) |
 | **Hyperliquid cohorts** `/v1/hyperliquid/coins/{coin}/cohort-metrics` | Long vs short per cohort, hourly, up to 8,760 hours in one request. Axes: `size` (account value, shrimp to 4x whale), `tier` (position notional), `pnl` (realized-PnL percentile), `pnl_abs` (PnL in dollars). `labelBasis=point_in_time` grades each hour with the label it had then (from 2026-04-07). | free key | [hl-cohorts](https://vike.io/data/hl-cohorts) |
 | **Hyperliquid API** `/v1/hyperliquid` | Trader rankings and leaderboards, 5-minute position snapshots kept for a year, wallet fills, funding and ledger, liquidations (inferred from snapshots), builders, candles since the start of 2026; closed bars also stream live as the `hl.candles` channel of `wss://stream.vike.io/v1/stream/hl` | free key | [hyperliquid](https://vike.io/data/hyperliquid) |
+| **Predict.fun API** `/v1/predictfun` | Prediction markets on BNB Chain: a venue overview, the market catalog with 24h volume, one market's outcomes and stats, the newest recorded order book (the ~1,000 most active open markets), every on-chain fill with the wallet behind it, per-wallet positions and P&L, and a leaderboard of every wallet by realized and unrealized P&L, volume and fills | free key | [predictfun](https://vike.io/predictfun) |
 | **Event streams** `wss://stream.vike.io/v1/stream/<path>` | Live events with a resume cursor on four paths: `hl` (fills, liquidations, positions, top-10 positions per coin, closed trades, liquidation risk, order walls, candles, TWAPs, ledger, leverage changes, funding), `hl-cohorts` (cohort flow, indices, cohort bias, cohort leverage), `onchain` (transfers on eth, bsc, base, hyperevm), `polymarket` (trades, wallet position changes, resolutions, price moves, new markets). `vike-data stream` reads them; `vike-data stream info` lists every channel and filter. Connections are not counted against the hourly limit. | free key | [stream channels](https://vike.io/docs/data/reference/stream-channels) |
 | **On-chain API** `/v1/onchain` | Wallet summaries, transactions, counterparties, PnL, address labels with per-source provenance, token holders and transfers. Ethereum on every route, BNB Chain on the wallet and token-flow routes, Base on token transfers. | free key | [onchain](https://vike.io/data/onchain) |
 
@@ -145,6 +147,7 @@ Every data command is one `tools/call` to the MCP server. `vike-data <group> --h
 | `vike-data hl` | `cohort-metrics <symbol>`, `segments`, `wallet <address>`, `wallet-activity <address>`, `wallet-trades <address>`, `leaderboard`, `liquidations`, `market`, `orders`, `twaps`, `ledger`, `leverage-changes`, `stats`, `hype-holders`, `builders`, `vaults`, `vault <vault>`, `archive`; a tool with several views takes `--view` | `hl_cohort_metrics`, `hl_segments`, `hl_wallet`, `hl_wallet_activity`, `hl_wallet_trades`, `hl_leaderboard`, `hl_liquidations`, `hl_market`, `hl_orders`, `hl_twaps`, `hl_ledger`, `hl_leverage_changes`, `hl_stats`, `hl_hype_holders`, `hl_builders`, `hl_vaults`, `hl_vault`, `hl_archive` |
 | `vike-data candles` | `hl <symbol>` (Hyperliquid perp or spot, from executed fills; `--view export`, or `--view latest` for the newest bar of every symbol), `polymarket <token_id>` (one outcome token); live bars: `stream hl --channel hl.candles` | `hl_ohlcv`, `polymarket_ohlcv` |
 | `vike-data polymarket` (`pm`) | `markets`, `market <condition_id>`, `wallet <address>`, `smart-money`, `leaderboard`, `market-trades <condition_id>`, `tape`, `orderbook <token_id>`, `market-stats <token_id>`, `settlement <condition_id>`, `settlements`, `chainlink-prices <symbol>` (the Chainlink prices the crypto up/down markets resolve on), `archive` | `polymarket_markets`, `polymarket_market_detail`, `polymarket_wallet`, `polymarket_smart_money`, `polymarket_leaderboard`, `polymarket_market_trades`, `polymarket_tape`, `polymarket_orderbook`, `polymarket_market_stats`, `polymarket_settlement`, `polymarket_settlements_bulk`, `polymarket_chainlink_prices`, `polymarket_archive` |
+| `vike-data predictfun` (`pf`) | `overview`, `markets`, `market <market_id>`, `orderbook <market_id>`, `market-trades <market_id>`, `wallet <address>` (positions and P&L), `wallet-trades <address>`, `leaderboard` | `predictfun_overview`, `predictfun_markets`, `predictfun_market_detail`, `predictfun_market_book`, `predictfun_market_trades`, `predictfun_wallet_positions`, `predictfun_wallet_trades`, `predictfun_leaderboard` |
 | `vike-data alerts` | `list`, `channels`, `create`, `edit`, `delete`, `events`, `resend`, `register-webhook`, `test-webhook`, `rotate-secret`: transfer alerts (a token or one wallet, on eth, bsc, base, hyperevm) Hyperliquid alerts (`--type hl_wallet`, `hl_cohort_fill`, `hl_liquidation`, `hl_cohort_bias`, `hl_liq_proximity`) and Polymarket alerts (`--type pm_wallet_trade`, `pm_market_trade`, `pm_price_move`, `pm_resolution`), by email or an HTTPS webhook, HMAC-signed; at most 200 active alerts per account | `alerts_*` |
 | `vike-data stream <path>` | live events from `wss://stream.vike.io/v1/stream/<path>` (`hl`, `hl-cohorts`, `onchain`, `polymarket`) as NDJSON: `--channel` (one or more), `--filter key=value`, `--cursor` | WebSocket, not MCP |
 | `vike-data stream` | `info`, `check <channel>` (the server's validator), `events <channel>` (stored events, 3 days), `connections` (yours) | `stream_info`, `stream_check_filter`, `stream_events`, `stream_connections` |
@@ -190,14 +193,14 @@ Downloads go to `./vike-archive/`.
 
 ## For AI agents
 
-This package ships **47 skill playbooks** under [`skills/`](skills/): markdown files an AI coding
+This package ships **51 skill playbooks** under [`skills/`](skills/): markdown files an AI coding
 agent loads so it knows when and how to call each command. [`skills.sh.json`](skills.sh.json) groups
-them by domain (Quick start, Tokens, Wallets, CEX perps, Hyperliquid perps, Candles, Polymarket, Alerts, Live streams). The
+them by domain (Quick start, Tokens, Wallets, CEX perps, Hyperliquid perps, Candles, Polymarket, Predict.fun, Alerts, Live streams). The
 entry point is the umbrella skill `vike`, which routes a question to the specialised skill. Per-tool
 skills read one command; the workflow playbooks chain several: who a wallet is, where its money went,
 whether two wallets are related, token holder diligence and the smart-money trend, Hyperliquid cohort
 positioning and how to backtest it, one trader's profile, a symbol briefing, liquidation risk, builder
-codes, perp crowding, a Polymarket market's due diligence, the free L2 archive, a cross-market daily brief.
+codes, perp crowding, a Polymarket market's due diligence, Predict.fun markets, wallets and leaderboard, the free L2 archive, a cross-market daily brief.
 
 ```bash
 npx skills add vike-io/vike-data-cli --list    # see them first
@@ -236,7 +239,7 @@ server, the CLI and the Parquet files) is covered by the [Terms of Service](http
 
 - you can research and trade your own capital, keep the data on your own machine, run private backtests,
   and publish charts, tables, screenshots, backtest and research results and up to 100 rows per publication
-  from on-chain, Hyperliquid and Polymarket data, credited "© Vike (vike.io)";
+  from on-chain, Hyperliquid, Polymarket and Predict.fun data, credited "© Vike (vike.io)";
 - you cannot publish bulk data or full datasets;
 - commercial use (signals or a service for others, use on behalf of a company, fund or prop firm, resale)
   needs a written agreement: info@vike.io.

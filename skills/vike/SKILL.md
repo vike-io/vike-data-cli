@@ -1,13 +1,13 @@
 ---
 name: vike
-description: "Use this skill whenever the user asks any question about on-chain crypto data, wallet behavior, token transfers, smart money, CEX perpetual futures, Hyperliquid perps, prediction markets (Polymarket), ENS, or on-chain flows — and live data from vike.io would improve the answer. This includes questions like \"who is buying X token\", \"what is wallet 0x... doing\", \"top wallets by PnL\", \"funding rate spread across Binance/Bybit/OKX\", \"largest HL perp traders this week\", \"who is winning on Polymarket\", \"what is the ENS name of this address\", \"label this wallet\", \"trace this transfer\", \"top tokens by smart-money inflow\". It is also the entry point that decides which vike-* skill answers a question (tokens, wallets, labels, perps, Hyperliquid, Polymarket, candles, alerts). Always use this skill proactively when the user's query could benefit from real-time or historical on-chain data — don't wait for the user to explicitly ask to \"use vike\". If the user asks a general on-chain question that requires synthesis across wallets/tokens/venues, route to vike first."
+description: "Use this skill whenever the user asks any question about on-chain crypto data, wallet behavior, token transfers, smart money, CEX perpetual futures, Hyperliquid perps, prediction markets (Polymarket, Predict.fun), ENS, or on-chain flows — and live data from vike.io would improve the answer. This includes questions like \"who is buying X token\", \"what is wallet 0x... doing\", \"top wallets by PnL\", \"funding rate spread across Binance/Bybit/OKX\", \"largest HL perp traders this week\", \"who is winning on Polymarket\", \"what is the ENS name of this address\", \"label this wallet\", \"trace this transfer\", \"top tokens by smart-money inflow\". It is also the entry point that decides which vike-* skill answers a question (tokens, wallets, labels, perps, Hyperliquid, Polymarket, Predict.fun, candles, alerts). Always use this skill proactively when the user's query could benefit from real-time or historical on-chain data — don't wait for the user to explicitly ask to \"use vike\". If the user asks a general on-chain question that requires synthesis across wallets/tokens/venues, route to vike first."
 ---
 
 # vike — on-chain, perps and prediction-market data
 
 This skill is for anyone who asks an AI agent about crypto data: who is buying a token, what a wallet holds, what Hyperliquid or Polymarket traders are doing right now. It tells the agent which vike tool answers which question and how to read the result, so it does not guess or invent numbers. It reads its data from vike.io and needs a free vike API key.
 
-What the platform has: wallet and token analytics on Ethereum, BSC, Base and HyperEVM (each tool's chain list is under "What each tool really returns"), multi-source wallet labels, CEX perpetual funding and cross-venue spreads, Hyperliquid wallets, cohorts, leaderboards, liquidations, markets, builders, vaults and candles, Polymarket markets, traders, tape, order books, settlements and the Parquet archive, transfer, Hyperliquid and Polymarket alerts, and live event streams over WebSocket. 70 tools in one MCP server.
+What the platform has: wallet and token analytics on Ethereum, BSC, Base and HyperEVM (each tool's chain list is under "What each tool really returns"), multi-source wallet labels, CEX perpetual funding and cross-venue spreads, Hyperliquid wallets, cohorts, leaderboards, liquidations, markets, builders, vaults and candles, Polymarket markets, traders, tape, order books, settlements and the Parquet archive, Predict.fun (BNB Chain) markets, order books, on-chain fills, wallet positions and P&L and its leaderboard, transfer, Hyperliquid and Polymarket alerts, and live event streams over WebSocket. 82 tools in one MCP server.
 
 **MCP endpoint for all calls:** `https://data.vike.io/mcp` (JSON-RPC 2.0)
 **Or use the CLI:** `npm install -g @vike-io/cli` → `vike-data <command>`
@@ -25,7 +25,7 @@ Hard rules — agents that violate these produce wrong answers. Read once, apply
 1. **Addresses are always full 0x-hex (42 chars).** Never truncate when querying. Never display truncated when the user asks for the address — they'll copy-paste it.
 2. **Perp and Hyperliquid symbols are upper-cased by the server.** Echo back what the user wrote.
 3. **Windows are counted in UTC calendar days, not a rolling 24 hours.** On the token screener `24h` spans yesterday and today; on Hyperliquid `30d` is today plus the previous 30 days.
-4. **Page sizes are small and differ per tool; these have no paging.** Max 20: `wallet_discover` (`size`), `polymarket_smart_money`. Max 30: `polymarket_markets`. Max 50: `token_holders`, `wallet_counterparties`, `wallet_compare`. Max 100: `token_screener`, `hl_perp_top_traders` (`size`), and 100 addresses for `wallet_batch_labels`. Max 500: `wallet_transactions`, `hl_position_match`. `token_transfers` has no limit: it always returns 10 rows. To go deeper, narrow the filter or the window instead of asking for more rows. The `hl` commands, `polymarket market-trades`, `tape`, `settlements`, `chainlink-prices` and `alerts events` DO page: pass the answer's next cursor back with `--cursor`. Page while `has_more` is true, not by page size: a `chainlink-prices` page can be shorter than `--limit` with more to come, and near now an empty page with `has_more` false means caught up: ask again later with `--from-ms` = the last row's `ts_ms` + 1.
+4. **Page sizes are small and differ per tool; these have no paging.** Max 20: `wallet_discover` (`size`), `polymarket_smart_money`. Max 30: `polymarket_markets`. Max 50: `token_holders`, `wallet_counterparties`, `wallet_compare`. Max 100: `token_screener`, `hl_perp_top_traders` (`size`), and 100 addresses for `wallet_batch_labels`. Max 500: `wallet_transactions`, `hl_position_match`. `token_transfers` has no limit: it always returns 10 rows. To go deeper, narrow the filter or the window instead of asking for more rows. The `hl` commands, `polymarket market-trades`, `tape`, `settlements`, `chainlink-prices`, `predictfun markets` (max 100), `market-trades` and `wallet-trades` (max 10000) and `alerts events` DO page: pass the answer's next cursor back with `--cursor` (on `predictfun`, until `next_cursor` is `null`); `predictfun leaderboard` (max 50) pages by `--offset`, at most 1000. Page while `has_more` is true, not by page size: a `chainlink-prices` page can be shorter than `--limit` with more to come, and near now an empty page with `has_more` false means caught up: ask again later with `--from-ms` = the last row's `ts_ms` + 1.
 5. **Refresh differs per tool; never promise "minutes".** `wallet_discover` and `wallet_summary` are rebuilt nightly, so a wallet active an hour ago may not show. Transfers are synced block by block. `hl_position_match` only matches positions seen within 15 minutes of the newest snapshot batch. For events as they happen use `vike-data stream` (`vike-stream`).
 6. **USD amounts are floats in dollars.** `--min-usd 10000` = ten thousand dollars, not micro-USD.
 7. **`--json` is always available** on CLI commands and gives stable machine-readable output. The default (human) format may change; `--json` will not.
@@ -118,6 +118,10 @@ Pick by the question, then read the named skill for the recipe and the traps. If
 | Polymarket wallet leaderboard | `vike-data polymarket leaderboard` / `polymarket_leaderboard` | this skill |
 | One market's liquidity, trades with wallets, raw tape, order book, tape stats, on-chain resolution | `vike-data polymarket market-trades`, `tape`, `orderbook`, `market-stats`, `settlement` | `vike-pm-market-diligence` |
 | Many resolutions; the Parquet L2 archive | `vike-data polymarket settlements`, `archive` | `vike-pm-l2-archive` |
+| Predict.fun at a glance; its markets by 24h volume or newest, by status or a title substring | `vike-data predictfun overview`, `predictfun markets` / `predictfun_overview`, `predictfun_markets` | `vike-predictfun-markets` |
+| One Predict.fun market: outcomes, stats, order book, fills with wallets | `vike-data predictfun market <market_id>`, `orderbook`, `market-trades` / `predictfun_market_detail`, `predictfun_market_book`, `predictfun_market_trades` | `vike-predictfun-market-detail` |
+| One Predict.fun wallet: positions, P&L, fills | `vike-data predictfun wallet <address>`, `wallet-trades` / `predictfun_wallet_positions`, `predictfun_wallet_trades` | `vike-predictfun-trader` |
+| Predict.fun wallet leaderboard (realized / unrealized P&L, volume, fills) | `vike-data predictfun leaderboard` / `predictfun_leaderboard` | `vike-predictfun-leaderboard` |
 | The Chainlink price a crypto up/down market resolves on, at its window start and end (btc, eth, sol, xrp, doge, bnb, hype, zec; since 2026-11-06 09:24 UTC) | `vike-data polymarket chainlink-prices btc --interval <the market's tenor: 5m\|15m\|1h> --from-ms <window start> --to-ms <window end + 1>` / `polymarket_chainlink_prices`: two rows, the price at the start and at the end (`--to-ms` is exclusive). 4h and daily windows follow US Eastern time while buckets are UTC-aligned: ask `--interval 1m --from-ms <start> --to-ms <start + 60000>`, then again with `<end>` and `<end + 60000>` | this skill |
 | Who funded a wallet; which exchanges it uses | `vike-data wallet first-funder`, `wallet exchange-usage` | `vike-wallet-who-is` |
 | A daily brief across perps, Hyperliquid, Polymarket and on-chain | several calls, cheap first | `vike-daily-brief` |
@@ -161,7 +165,7 @@ Any MCP tool, including one with no command of its own, is one `call` away; it p
 vike-data call hl_wallet --args '{"address":"0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045","view":"summary"}'
 ```
 
-**B) Via an MCP connector (recommended when your client has one).** All 70 tools live at `https://data.vike.io/mcp`. Connect the client to that address with the `X-API-KEY` header above, then call a tool by name with its arguments, for example `wallet_summary` with `address` set to a full 0x address.
+**B) Via an MCP connector (recommended when your client has one).** All 82 tools live at `https://data.vike.io/mcp`. Connect the client to that address with the `X-API-KEY` header above, then call a tool by name with its arguments, for example `wallet_summary` with `address` set to a full 0x address.
 
 Run `vike-data schema --pretty` (or call MCP `tools/list`) to see the live arg shape for every tool. Always read the schema before constructing arguments — defaults and enum values change.
 
@@ -235,6 +239,19 @@ Every `hl` command takes `--view` (the first view is the default) and only the f
 | `polymarket_wallet` | one trader: realized PnL, volume-weighted `hit_rate`, `resolved_markets`, positions |
 | `polymarket_smart_money` | MARKETS where the profitable-wallet cohort is flowing (`flows`) or bought below the mid (`mispricings`); not a list of top traders |
 
+### Predict.fun
+Prediction markets on BNB Chain; USD is BSC USDT, prices are probabilities 0 to 1. A market is named by `market_id` (an integer), never its `condition_id`. The 24h figures are whole fill hours ending with the newest hour built, up to ~1.5 h behind the live tape.
+
+| Tool | Returns |
+|---|---|
+| `predictfun_overview` | `markets_open`, `volume_24h_usd`, `trades_24h` (matches), `traders_24h`, `newest_trade_ts` |
+| `predictfun_markets` | `{markets, next_cursor, as_of_ts}`: `market_id`, `title`, `status`, `trading_status`, `volume_24h_usd`, ...; `--status open\|closed\|resolved`, `--query`, `--sort volume_24h\|newest` |
+| `predictfun_market_detail` | one market with Predict.fun's own `details`, `outcomes` (`token_id`, WON/LOST, `last_price`) and `stats` (24h and total volume); an unknown id is an error |
+| `predictfun_market_book` | the newest recorded book, priced on the first outcome (Yes): `bids`, `asks` as `[price, quantity]`, `pending_*`, `last_settled`; only the ~1,000 most active open markets, none in 30 days is an error |
+| `predictfun_market_trades`, `predictfun_wallet_trades` | `{trades, next_cursor}`, newest first, with `wallet`, `counterparty`, `role`, `side`, `size`, `price`, `usd`, `fee`. One row is one ORDER's fill: add `usd` over one `role`, never both. No time filter |
+| `predictfun_wallet_positions` | per outcome token: `net`, `cost`, `proceeds`, `mark`, `value`, `pnl`, `state`; `totals` with `realized_pnl` and `unrealized_pnl`. Exchange fills only: splits, merges, redemptions and transfers are not seen |
+| `predictfun_leaderboard` | every wallet ranked by realized P&L, volume or fills over `all`/`1d`/`7d`/`30d`, or `unrealized` (window `all` only); each row carries every window. Rebuilt hourly |
+
 ### Alerts
 Create + manage on-chain transfer alerts, Hyperliquid alerts and Polymarket alerts, delivered by email or an HTTPS webhook.
 
@@ -254,7 +271,7 @@ A token-wide transfer alert fires on ANY transfer of the token above the USD thr
 Credits are an accounting figure only; they never block a call. The one limit is 20,000 requests per rolling hour per key, shared by MCP and REST.
 
 - **0 credits:** `token_search`, `alerts_list`, `alerts_list_channels`.
-- **1:** `wallet_ens`, `wallet_label_provenance`, `perp_funding`, `perp_spreads`, `perp_open_interest`, `perp_long_short`, `search`, every `hl` command, `hl_ohlcv`, `polymarket_markets`, `polymarket_ohlcv`, the Polymarket tape, order book, stats, trades, settlement, Chainlink prices and archive calls.
+- **1:** `wallet_ens`, `wallet_label_provenance`, `perp_funding`, `perp_spreads`, `perp_open_interest`, `perp_long_short`, `search`, every `hl` command, `hl_ohlcv`, `polymarket_markets`, `polymarket_ohlcv`, the Polymarket tape, order book, stats, trades, settlement, Chainlink prices and archive calls, every `predictfun` tool.
 - **2:** most others, `wallet_summary` among them.
 - **3:** `token_screener`, `wallet_compare`, `wallet_token_balances`, `alerts_create`.
 - **4:** `wallet_trace`.
