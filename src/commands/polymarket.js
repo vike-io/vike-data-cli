@@ -7,7 +7,7 @@ export function registerPolymarket(program) {
   const cmd = program
     .command('polymarket')
     .alias('pm')
-    .description('Polymarket prediction-market analytics (markets, traders, smart money, tape, order book, settlements, archive)');
+    .description('Polymarket prediction-market analytics (markets, traders, smart money, tape, order book, settlements, Chainlink prices, archive)');
 
   cmd
     .command('markets')
@@ -138,6 +138,19 @@ export function registerPolymarket(program) {
       ['--slug-prefix <p>', 'Only markets whose slug starts with this, e.g. btc-updown-5m-'],
       CURSOR,
       ['--limit <n>', 'Rows per page (default 100)'],
+    ],
+  });
+
+  addTool(cmd, 'chainlink-prices <symbol>', {
+    tool: 'polymarket_chainlink_prices',
+    args: ['symbol'],
+    desc: 'Chainlink Data Streams prices that Polymarket\'s crypto up/down markets resolve on, since 2026-11-06 09:24 UTC; '
+      + '<symbol>: btc | eth | sol | xrp | doge | bnb | hype | zec',
+    options: [
+      ['--series <s>', 'price (default; what the markets resolve on) | twap60 (60-second TWAP)'],
+      ['--interval <i>', '1s (default) | 1m | 5m | 15m | 1h | 4h | 1d; above 1s one row per bucket: the first tick at or after its start'],
+      FROM, TO, CURSOR,
+      ['--limit <n>', 'Rows per page (default 100); a shorter page can still have has_more true: keep paging'],
     ],
   });
 
