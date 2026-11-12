@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.17.4
+
+### Patch Changes
+
+- `hl archive`: the help and skills name the three new daily datasets `positions_hourly`, `cohorts_hourly` and `wallets_hourly` (from 2026-05-01) beside `fills` and `positions`; `--date latest` stays `positions` only.
+
 ## 0.17.3
 
 ### Patch Changes
