@@ -219,7 +219,7 @@ These two have no command: `vike-data call perp_open_interest --args '{"symbol":
 | `hl_leaderboard` (`hl leaderboard`) | traders on 20 metrics; `--min-win-rate` is a FRACTION here (0.6), a percent in `perp top-traders` |
 | `hl_liquidations`, `hl_market`, `hl_builders`, `hl_vaults`, `hl_vault` | liquidations / risk / heatmap; open interest, symbol series, positions, indices, large fills, an hourly panel of up to 64 symbols; builder codes; vaults |
 | `hl_orders`, `hl_twaps`, `hl_ledger`, `hl_leverage_changes` | resting orders at one instant, one wallet's orders, order clusters; the cross-wallet feeds (follow one with `--order asc` and each `nextCursor`, stop on an empty page) |
-| `hl_wallet_trades`, `hl_stats`, `hl_hype_holders`, `hl_archive` | one wallet's closed trades; hourly venue equity / open interest / volume; HYPE holders; the daily fills and positions Parquet files (`--view url` = a 7-day link) |
+| `hl_wallet_trades`, `hl_stats`, `hl_hype_holders`, `hl_archive` | one wallet's closed trades; hourly venue equity / open interest / volume; HYPE holders; the daily Parquet files: `fills`, `positions`, and from 2026-05-01 `positions_hourly`, `cohorts_hourly`, `wallets_hourly` (`--view url` = a 7-day link) |
 
 Every `hl` command takes `--view` (the first view is the default) and only the flags that view uses: a flag the view does not take is refused by name, not ignored.
 

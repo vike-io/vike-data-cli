@@ -265,10 +265,10 @@ export function registerHl(program) {
 
   addTool(hl, 'archive', {
     tool: 'hl_archive',
-    desc: 'Index of the Hyperliquid Parquet archive (fills, positions), or a 7-day download link for one file (--view url)',
+    desc: 'Index of the Hyperliquid Parquet archive (fills, positions, positions_hourly, cohorts_hourly, wallets_hourly), or a 7-day download link for one file (--view url)',
     options: [
       view(['datasets', 'url']),
-      ['--dataset <d>', 'url: fills | positions'],
+      ['--dataset <d>', 'url: fills | positions | positions_hourly | cohorts_hourly | wallets_hourly'],
       ['--date <d>', 'url: the UTC day, YYYY-MM-DD, or latest (positions only)'],
     ],
   });

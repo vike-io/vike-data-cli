@@ -47,4 +47,4 @@ The link needs no API key and is valid for 7 days (`expires_at`): treat it as a 
 ## Pairs well with
 
 - `vike-pm-market-diligence` (ids and one market live), `vike-candles` (probability bars), `vike-polymarket-markets`
-- The Hyperliquid twin: `vike-data hl archive --view url --dataset fills --date 2026-10-16` (daily fills and positions files)
+- The Hyperliquid twin: `vike-data hl archive --view url --dataset fills --date 2026-10-16` (daily `fills`, `positions`, `positions_hourly`, `cohorts_hourly` and `wallets_hourly` files)
