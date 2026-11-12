@@ -45,6 +45,7 @@ describe('predictfun', () => {
       'predictfun_market_trades', { market_id: '123', limit: '500', cursor: '1:2:3' }],
     [['wallet', W], 'predictfun_wallet_positions', { address: W }],
     [['wallet-trades', W, '--limit', '10'], 'predictfun_wallet_trades', { address: W, limit: '10' }],
+    [['wallet-flows', W, '--limit', '5'], 'predictfun_wallet_flows', { address: W, limit: '5' }],
     [['leaderboard', '--window', '7d', '--sort', 'volume', '--limit', '50', '--offset', '50'],
       'predictfun_leaderboard', { window: '7d', sort: 'volume', limit: '50', offset: '50' }],
   ])('%j calls %s', async (args, tool, expected) => {

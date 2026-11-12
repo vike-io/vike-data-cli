@@ -11,6 +11,7 @@ allowed-tools: Bash(vike-data:*)
 ```bash
 vike-data predictfun wallet <address> [--json]                                      # positions and P&L, 1 credit
 vike-data predictfun wallet-trades <address> [--limit N] [--cursor C] [--json]      # fills, limit default 100, max 10000; 1 credit
+vike-data predictfun wallet-flows <address> [--limit N] [--cursor C] [--json]       # USDT deposits / withdrawals; 1 credit
 ```
 
 `address` is `0x` + 40 hex digits; anything else is an error.
@@ -27,6 +28,7 @@ vike-data pf wallet-trades 0xabcdef1234... --limit 500 --json     # `pf` alias
 - `wallet`: `{positions, totals, as_of_ts}`. One position per outcome token, most recently traded first: `market_id`, `market_title`, `token_id`, `outcome`, `state` (`open`, `won`, `lost`, or `uncatalogued` for a market not in the catalog yet), `net` (shares bought minus sold minus fees taken in shares), `cost` (USD paid), `proceeds` (USD received, net of fees), `mark` (the token's last price) and `mark_ts`, `value` (`net` x 1 won, x 0 lost, x `mark` while open), `pnl` (`proceeds - cost + value`; `null` for an open token with no price yet), `fills`, `first_ts`, `last_ts`.
   `totals`: `positions`, `open_positions`, `cost`, `proceeds`, `value` (open positions), `pnl`, `realized_pnl` (won and lost positions), `unrealized_pnl` (open ones), `unpriced` (positions with `pnl` `null`). `as_of_ts` is when the positions were last rebuilt.
 - `wallet-trades`: `{trades, next_cursor}`, newest first, each with `market_id`, `market_title` and `outcome` (`null` for a market the catalog does not hold yet), otherwise the rows of `predictfun market-trades`. An address with no fills is an empty page.
+- `wallet-flows`: `{flows, totals, next_cursor, as_of_ts}`: the wallet's USDT transfers on BNB Chain with anyone outside Predict.fun's own contracts (`direction` in/out, `counterparty` and its label such as `cex/binance`, `amount_usd`), newest first; `totals` over the whole history: deposited, withdrawn, net and `first_funder`. It is the wallet's WHOLE USDT traffic: a market maker that also uses Binance or a lending pool shows that activity too, so don't read `deposited_usd` as money put into Predict.fun for such a wallet. Dust under one cent is left out.
 
 ## Reading
 

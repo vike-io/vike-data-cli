@@ -70,6 +70,13 @@ export function registerPredictfun(program) {
     options: [LIMIT, CURSOR],
   });
 
+  addTool(cmd, 'wallet-flows <address>', {
+    tool: 'predictfun_wallet_flows',
+    args: ['address'],
+    desc: 'One wallet\'s USDT deposits and withdrawals on BNB Chain, newest first, with whole-history totals and the first funder',
+    options: [LIMIT, CURSOR],
+  });
+
   addTool(cmd, 'leaderboard', {
     tool: 'predictfun_leaderboard',
     desc: 'Every wallet ranked by realized P&L, volume or fills over a window, or by unrealized P&L (rebuilt hourly)',

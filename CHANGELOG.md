@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.20.0
+
+### Minor Changes
+
+- `predictfun wallet-flows <address>`: one Predict.fun wallet's USDT deposits and withdrawals on BNB Chain (MCP tool `predictfun_wallet_flows`), newest first, with whole-history totals and the first funder.
+
 ## 0.19.0
 
 ### Minor Changes

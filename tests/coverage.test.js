@@ -22,7 +22,7 @@ const EXPECTED_SUBCMDS = {
            'events', 'resend', 'rotate-secret', 'test-webhook'],
   polymarket: ['markets', 'market', 'wallet', 'smart-money', 'market-trades', 'tape', 'orderbook',
                'market-stats', 'settlement', 'settlements', 'chainlink-prices', 'archive', 'leaderboard'],
-  predictfun: ['overview', 'markets', 'market', 'orderbook', 'market-trades', 'wallet', 'wallet-trades',
+  predictfun: ['overview', 'markets', 'market', 'orderbook', 'market-trades', 'wallet', 'wallet-trades', 'wallet-flows',
                'leaderboard'],
   candles: ['hl', 'polymarket'],
   hl: ['cohort-metrics', 'segments', 'wallet', 'wallet-activity', 'leaderboard', 'liquidations',
