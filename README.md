@@ -158,8 +158,9 @@ exits 1 in every mode:
 ```bash
 vike-data token search BTC --json | jq '.'
 vike-data call hl_wallet --args '{"address":"0x...","view":"trades_summary","window":"30d"}'
-# BTC's Chainlink price at each 15-minute window start of 2026-11-10 UTC: what a 15-minute BTC up/down market compares
-vike-data polymarket chainlink-prices btc --interval 15m --from-ms 1794268800000 --to-ms 1794355200000 --limit 96 --json
+# BTC's Chainlink price at every 15-minute boundary of 2026-11-10 UTC, midnight to midnight (--to-ms is exclusive,
+# hence +1): 97 rows, the start and end price of each 15-minute BTC up/down market that day
+vike-data polymarket chainlink-prices btc --interval 15m --from-ms 1794268800000 --to-ms 1794355200001 --limit 97 --json
 vike-data stream hl --channel hl.fills --filter coin=BTC --filter min_usd=100000
 ```
 

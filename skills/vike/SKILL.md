@@ -118,7 +118,7 @@ Pick by the question, then read the named skill for the recipe and the traps. If
 | Polymarket wallet leaderboard | `vike-data polymarket leaderboard` / `polymarket_leaderboard` | this skill |
 | One market's liquidity, trades with wallets, raw tape, order book, tape stats, on-chain resolution | `vike-data polymarket market-trades`, `tape`, `orderbook`, `market-stats`, `settlement` | `vike-pm-market-diligence` |
 | Many resolutions; the Parquet L2 archive | `vike-data polymarket settlements`, `archive` | `vike-pm-l2-archive` |
-| The Chainlink price a crypto up/down market resolves on, at its window start and end (btc, eth, sol, xrp, doge, bnb, hype, zec; since 2026-11-06 09:24 UTC) | `vike-data polymarket chainlink-prices btc --interval 15m --from-ms <start> --to-ms <end>` / `polymarket_chainlink_prices` | this skill |
+| The Chainlink price a crypto up/down market resolves on, at its window start and end (btc, eth, sol, xrp, doge, bnb, hype, zec; since 2026-11-06 09:24 UTC) | `vike-data polymarket chainlink-prices btc --interval <the market's tenor: 5m\|15m\|1h\|4h\|1d> --from-ms <window start> --to-ms <window end + 1>` / `polymarket_chainlink_prices`: two rows, the price at the start and at the end (`--to-ms` is exclusive) | this skill |
 | Who funded a wallet; which exchanges it uses | `vike-data wallet first-funder`, `wallet exchange-usage` | `vike-wallet-who-is` |
 | A daily brief across perps, Hyperliquid, Polymarket and on-chain | several calls, cheap first | `vike-daily-brief` |
 | Find Polymarket markets by slug, or one by condition_id | `vike-data polymarket markets --view search --query btc-updown` / `--view market --condition-id 0x...` | this skill |
