@@ -239,7 +239,7 @@ server, the CLI and the Parquet files) is covered by the [Terms of Service](http
 
 - you can research and trade your own capital, keep the data on your own machine, run private backtests,
   and publish charts, tables, screenshots, backtest and research results and up to 100 rows per publication
-  from on-chain, Hyperliquid and Polymarket data, credited "© Vike (vike.io)";
+  from on-chain, Hyperliquid, Polymarket and Predict.fun data, credited "© Vike (vike.io)";
 - you cannot publish bulk data or full datasets;
 - commercial use (signals or a service for others, use on behalf of a company, fund or prop firm, resale)
   needs a written agreement: info@vike.io.
