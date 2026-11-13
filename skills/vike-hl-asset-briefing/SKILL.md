@@ -22,7 +22,7 @@ vike-data hl liquidations --view heatmap --symbol $S --bins 20 --json   # where 
 vike-data hl market --view large_fills --symbol $S --json               # the newest fills of $50k+ (at most 200)
 ```
 
-Optional: `hl orders --view clusters --symbol $S` (standing orders bucketed around the mid, `--range-pct`, `--step-bps`), `hl market --view size_breakdown --symbol $S` (position-size tiers with `value_close_to_liquidation`), `hl liquidations --view fills --symbol $S --limit 20` (the latest liquidations).
+Optional: `hl orders --view clusters --symbol $S` (standing orders bucketed around the mid, `--range-pct`, `--step-bps`; `--cohort-axis size --cohort whale` for one cohort's), `hl orders --view book --symbol $S --levels 20` (the order book, price levels best first; the spot book with `--market spot --symbol HYPE/USDC`), `hl market --view size_breakdown --symbol $S` (position-size tiers with `value_close_to_liquidation`), `hl liquidations --view fills --symbol $S --limit 20` (the latest liquidations).
 
 ## Reading each section
 

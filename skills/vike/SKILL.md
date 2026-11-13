@@ -108,7 +108,7 @@ Pick by the question, then read the named skill for the recipe and the traps. If
 | Liquidation risk by symbol, liquidation heatmap, recent or live liquidations | `vike-data hl liquidations`; `stream hl --channel hl.liq_risk hl.liquidations` | `vike-hl-liquidation-radar` |
 | Builder codes: fees, users, routed share | `vike-data hl builders` | `vike-hl-builder-intel` |
 | HL open interest, vaults | `vike-data hl market`, `hl vaults`, `hl vault` | this skill |
-| HL orders and order clusters, TWAPs, the ledger, leverage changes, closed trades, venue stats, HYPE holders, the Parquet archive | `vike-data hl orders`, `hl twaps`, `hl ledger`, `hl leverage-changes`, `hl wallet-trades`, `hl stats`, `hl hype-holders`, `hl archive` | this skill |
+| HL orders, order clusters and the order book (perp, or spot with `--market spot`), TWAPs, the ledger, leverage changes, closed trades, venue stats, HYPE holders, the Parquet archive | `vike-data hl orders`, `hl twaps`, `hl ledger`, `hl leverage-changes`, `hl wallet-trades`, `hl stats`, `hl hype-holders`, `hl archive` | this skill |
 | A name, symbol, address, ENS name or polymarket.com link → what it is | `vike-data search <q>` / `search` | this skill |
 | Candles: Hyperliquid perp/spot (history, or the newest bar of every symbol), Polymarket outcome token; live HL bars | `vike-data candles hl` (`--view latest`), `candles polymarket`; `stream hl --channel hl.candles` | `vike-candles` |
 | Trending Polymarket markets (by 24h volume) | `vike-data polymarket markets` / `polymarket_markets` | `vike-polymarket-markets` |
@@ -223,7 +223,7 @@ These two have no command: `vike-data call perp_open_interest --args '{"symbol":
 | `hl_segments` (`hl segments`) | the cohort labels (`--view cohorts`), one cohort now (`summary`), the symbol x cohort board (`heatmap`), one cohort hour by hour (`history`) |
 | `hl_leaderboard` (`hl leaderboard`) | traders on 20 metrics; `--min-win-rate` is a FRACTION here (0.6), a percent in `perp top-traders` |
 | `hl_liquidations`, `hl_market`, `hl_builders`, `hl_vaults`, `hl_vault` | liquidations / risk / heatmap; open interest, symbol series, positions, indices, large fills, an hourly panel of up to 64 symbols; builder codes; vaults |
-| `hl_orders`, `hl_twaps`, `hl_ledger`, `hl_leverage_changes` | resting orders at one instant, one wallet's orders, order clusters; the cross-wallet feeds (follow one with `--order asc` and each `nextCursor`, stop on an empty page) |
+| `hl_orders`, `hl_twaps`, `hl_ledger`, `hl_leverage_changes` | resting orders at one instant (each with its owner's `sizeCohort`, `pnlCohort`, `pnlCumUsd`; `--cohort-axis` + `--cohort` keep one cohort's), one wallet's orders, order clusters, the order book (`--view book`: price levels best first, `--side`, `--levels`); `open`, `clusters` and `book` read the perp books unless `--market spot` (a pair, `HYPE/USDC`); the cross-wallet feeds (follow one with `--order asc` and each `nextCursor`, stop on an empty page) |
 | `hl_wallet_trades`, `hl_stats`, `hl_hype_holders`, `hl_archive` | one wallet's closed trades; hourly venue equity / open interest / volume; HYPE holders; the daily Parquet files: `fills`, `positions`, and from 2026-05-01 `positions_hourly`, `cohorts_hourly`, `wallets_hourly` (`--view url` = a 7-day link) |
 
 Every `hl` command takes `--view` (the first view is the default) and only the flags that view uses: a flag the view does not take is refused by name, not ignored.

@@ -32,6 +32,12 @@ channel the path does not serve is refused with `unknown_channel` and the list. 
   `labels.tags` its trader tags. Filters `min_leverage` (a number) and `tag` (a list) exist on this channel only.
 - `hl.top_positions`: per coin of the top 50, the position that `entered`, `left` or `moved` within the top 10 (filter
   `event` takes ONE of those, `direction` one of `long` / `short`). The first capture sends all 10 of every coin as `entered`.
+- `hl.order_walls`: perp orders of $1M or more that `appeared` in or `disappeared` from the 5-minute order snapshots.
+  `data.kind` is `resting` (a limit order) or `trigger` (a stop or take-profit not yet fired, with `trigger_type`
+  `sl` / `tp` / `trailing` and `trigger_px`); `dex` is `HL` or the HIP-3 dex, `source` the snapshot feed. A
+  `disappeared` says what happened: `outcome` (`filled`, `partially_filled`, `canceled`, `unknown`) and `filled_usd`;
+  it waits for the order's fills, up to ~12 minutes after the snapshot that found the order gone. Filters `side`,
+  `event` and `kind` take one value each.
 - `hl.closed_trades`: a finished round trip (entry and exit price, `realized_pnl`, `duration_seconds`), in batches
   every 30 minutes; unfiltered up to ~32,000 an hour (measured 2026-11-02): filter by `wallet` or `min_usd`.
 - `hl.cohort_leverage` (`hl-cohorts`): once an hour per cohort of one `axis`, `perp_bias` and `equity_exposure`
@@ -58,6 +64,9 @@ vike-data stream onchain --channel chain.transfers --filter chain=base --filter 
 # Position changes at 20x or more, BTC and ETH (the wallet's leverage and liquidation price before the fill are in data)
 vike-data stream hl --channel hl.positions --filter coin=BTC,ETH --filter min_leverage=20
 
+# BTC and ETH stops and take-profits of $1M+ that left the book, with whether they filled
+vike-data stream hl --channel hl.order_walls --filter coin=BTC,ETH --filter kind=trigger --filter event=disappeared
+
 # Every round trip one wallet closes (a batch every 30 minutes)
 vike-data stream hl --channel hl.closed_trades --filter wallet=0x1111111111111111111111111111111111111111
 
@@ -70,7 +79,7 @@ vike-data stream polymarket --channel pm.trades --filter min_usd=10000 | jq -c '
 
 `--filter` applies to every `--channel` of the command; a key the channel does not take is refused by the server
 with the key's name. List keys (`wallet`, `coin`, `token`, `market`, `chain`, cohorts, ...) take comma-separated
-values and repeat; `side`, `direction`, `event`, `axis`, `move`, `role` take one value; `true` / `false` is sent as a yes/no (`contract=false`); `min_usd`, `min_amount`, `min_move`,
+values and repeat; `side`, `direction`, `event`, `axis`, `move`, `role`, `kind` take one value; `true` / `false` is sent as a yes/no (`contract=false`); `min_usd`, `min_amount`, `min_move`,
 `min_leverage` take a number. Channels in one command must all take every key you pass (`min_leverage` and `tag` are `hl.positions` only). Channel fields and filter keys: https://vike.io/docs/data/reference/stream-channels
 
 ## Without a socket

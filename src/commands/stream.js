@@ -10,7 +10,7 @@ export const STREAM_PATHS = ['hl', 'hl-cohorts', 'onchain', 'polymarket'];
 const MAX_SUBSCRIPTIONS = 100;          // per connection, the server's cap
 const IDLE_MS = 60_000;                 // the server pings every 15 s: a minute of silence is a dead connection
 const NUMBER_KEYS = new Set(['min_usd', 'min_amount', 'min_move', 'min_leverage']);
-const ONE_VALUE_KEYS = new Set(['side', 'direction', 'event', 'axis', 'move', 'role']);   // every other key is a list
+const ONE_VALUE_KEYS = new Set(['side', 'direction', 'event', 'axis', 'move', 'role', 'kind']);   // every other key is a list
 // No channel list here: the server decides which channels a path serves (`stream info` lists them) and refuses
 // an unknown one with `unknown_channel`.
 const FATAL_ERRORS = new Set(['bad_subscription', 'unknown_channel', 'rate_limited']);

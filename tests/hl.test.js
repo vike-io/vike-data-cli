@@ -1,5 +1,6 @@
 // `hl market --view funding_rates` must be offered and must send the flags that view takes on
-// MCP (symbol sort order start end limit cursor). fetch is mocked; nothing leaves the machine.
+// MCP (symbol sort order start end limit cursor); so must `hl orders --view book` and the open view's
+// cohort and market flags. fetch is mocked; nothing leaves the machine.
 
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { Command } from 'commander';
@@ -52,5 +53,35 @@ describe('hl market --view funding_rates', () => {
     const market = hlProgram().commands.find((c) => c.name() === 'hl')
       .commands.find((c) => c.name() === 'market');
     expect(market.helpInformation()).toContain('funding_rates');
+  });
+});
+
+describe('hl orders', () => {
+  it('--view book sends symbol, at, market, side and levels to hl_orders', async () => {
+    const body = await run([
+      'orders', '--view', 'book', '--symbol', 'HYPE/USDC', '--market', 'spot', '--at', '2026-11-13T09:00:00Z',
+      '--side', 'bid', '--levels', '20', '--json',
+    ]);
+    expect(body.params.name).toBe('hl_orders');
+    expect(body.params.arguments).toEqual({
+      view: 'book', symbol: 'HYPE/USDC', market: 'spot', at: '2026-11-13T09:00:00Z', side: 'bid', levels: '20',
+    });
+  });
+
+  it('--view open sends --cohort-axis and --cohort with --market', async () => {
+    const body = await run([
+      'orders', '--view', 'open', '--symbol', 'BTC', '--market', 'perp', '--cohort-axis', 'size', '--cohort', 'whale',
+      '--limit', '50', '--json',
+    ]);
+    expect(body.params.arguments).toEqual({
+      view: 'open', symbol: 'BTC', market: 'perp', cohort_axis: 'size', cohort: 'whale', limit: '50',
+    });
+  });
+
+  it('lists the book view and its flags in the help', () => {
+    const orders = hlProgram().commands.find((c) => c.name() === 'hl')
+      .commands.find((c) => c.name() === 'orders');
+    const help = orders.helpInformation();
+    for (const s of ['book', '--market', '--side', '--levels', '--cohort-axis']) expect(help).toContain(s);
   });
 });

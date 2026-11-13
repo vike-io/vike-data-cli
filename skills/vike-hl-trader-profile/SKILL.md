@@ -20,7 +20,7 @@ vike-data hl wallet-activity $W --view ledger --limit 50 --json    # deposits, w
 vike-data hl liquidations --wallet $W --json                       # has it been liquidated
 ```
 
-Optional, by question: `hl wallet-activity $W --view fills --symbol BTC` (raw fills), `--view builders` (which front-ends it routes through), `hl orders --view wallet --address $W` (what became of its orders, 7 days by default, at most 30), `hl twaps --wallet $W`, `hl leverage-changes --wallet $W`, `hl market --view positions --wallet $W` (open positions with liquidation price). `--window` is `1d|7d|30d|all` (default `all`); page with `nextCursor` -> `--cursor`.
+Optional, by question: `hl wallet-activity $W --view fills --symbol BTC` (raw fills), `--view builders` (which front-ends it routes through), `hl orders --view wallet --address $W` (what became of its orders, 7 days by default, at most 30), `hl orders --view open --wallet $W` (its orders resting now; `--market spot` for its spot orders), `hl twaps --wallet $W`, `hl leverage-changes --wallet $W`, `hl market --view positions --wallet $W` (open positions with liquidation price). `--window` is `1d|7d|30d|all` (default `all`); page with `nextCursor` -> `--cursor`.
 
 ## Reading
 

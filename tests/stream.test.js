@@ -60,6 +60,11 @@ describe('parseFilters', () => {
       .toEqual({ coin: ['BTC'], interval: ['1m', '5m'], market: ['perp'], dex: ['HL'], contract: false, role: 'maker' });
   });
 
+  it('hl.order_walls: kind and event take one value', () => {
+    expect(parseFilters(['coin=BTC', 'kind=trigger', 'event=disappeared']))
+      .toEqual({ coin: ['BTC'], kind: 'trigger', event: 'disappeared' });
+  });
+
   it('hl.positions: min_leverage is a number, tag a list; pm.positions: action a list', () => {
     expect(parseFilters(['min_leverage=20', 'tag=scalper,high_risk', 'action=open,close']))
       .toEqual({ min_leverage: 20, tag: ['scalper', 'high_risk'], action: ['open', 'close'] });
