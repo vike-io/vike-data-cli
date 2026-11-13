@@ -1,6 +1,7 @@
 // `hl market --view funding_rates` must be offered and must send the flags that view takes on
-// MCP (symbol sort order start end limit cursor); so must `hl orders --view book` and the open view's
-// cohort and market flags. fetch is mocked; nothing leaves the machine.
+// MCP (symbol sort order start end limit cursor); so must `hl orders --view book`, the open view's
+// cohort and market flags, and the walls, order_stats, squeeze and book_cohorts views' flags.
+// fetch is mocked; nothing leaves the machine.
 
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { Command } from 'commander';
@@ -83,5 +84,62 @@ describe('hl orders', () => {
       .commands.find((c) => c.name() === 'orders');
     const help = orders.helpInformation();
     for (const s of ['book', '--market', '--side', '--levels', '--cohort-axis']) expect(help).toContain(s);
+  });
+
+  it('--view walls sends symbol, wallet, window, min_usd, kind, outcome, market, touch_bps, limit and cursor', async () => {
+    const body = await run([
+      'orders', '--view', 'walls', '--symbol', 'BTC', '--wallet', '0x1111111111111111111111111111111111111111',
+      '--from', '2026-11-12T00:00:00Z', '--to', '2026-11-13T00:00:00Z', '--min-usd', '2000000', '--kind', 'resting',
+      '--outcome', 'pulled', '--market', 'perp', '--touch-bps', '25', '--limit', '100', '--cursor', 'c1', '--json',
+    ]);
+    expect(body.params.name).toBe('hl_orders');
+    expect(body.params.arguments).toEqual({
+      view: 'walls', symbol: 'BTC', wallet: '0x1111111111111111111111111111111111111111',
+      from: '2026-11-12T00:00:00Z', to: '2026-11-13T00:00:00Z', min_usd: '2000000', kind: 'resting',
+      outcome: 'pulled', market: 'perp', touch_bps: '25', limit: '100', cursor: 'c1',
+    });
+  });
+
+  it('--view order_stats sends address, window, min_usd and market', async () => {
+    const body = await run([
+      'orders', '--view', 'order_stats', '--address', '0x1111111111111111111111111111111111111111',
+      '--from', '2026-11-06T00:00:00Z', '--to', '2026-11-13T00:00:00Z', '--min-usd', '100000', '--market', 'spot',
+      '--json',
+    ]);
+    expect(body.params.arguments).toEqual({
+      view: 'order_stats', address: '0x1111111111111111111111111111111111111111',
+      from: '2026-11-06T00:00:00Z', to: '2026-11-13T00:00:00Z', min_usd: '100000', market: 'spot',
+    });
+  });
+
+  it('--view squeeze sends symbol, at, step_bps, range_pct, cohort_axis and cohort', async () => {
+    const body = await run([
+      'orders', '--view', 'squeeze', '--symbol', 'ETH', '--at', '2026-11-13T09:00:00Z', '--step-bps', '50',
+      '--range-pct', '10', '--cohort-axis', 'size', '--cohort', 'whale', '--json',
+    ]);
+    expect(body.params.arguments).toEqual({
+      view: 'squeeze', symbol: 'ETH', at: '2026-11-13T09:00:00Z', step_bps: '50', range_pct: '10',
+      cohort_axis: 'size', cohort: 'whale',
+    });
+  });
+
+  it('--view book_cohorts sends symbol, window, cohort_axis, band_bps, interval and market', async () => {
+    const body = await run([
+      'orders', '--view', 'book_cohorts', '--symbol', 'BTC', '--from', '2026-11-12T00:00:00Z',
+      '--to', '2026-11-13T00:00:00Z', '--cohort-axis', 'size', '--band-bps', '1000', '--interval', '5m',
+      '--market', 'perp', '--json',
+    ]);
+    expect(body.params.arguments).toEqual({
+      view: 'book_cohorts', symbol: 'BTC', from: '2026-11-12T00:00:00Z', to: '2026-11-13T00:00:00Z',
+      cohort_axis: 'size', band_bps: '1000', interval: '5m', market: 'perp',
+    });
+  });
+
+  it('lists the walls, order_stats, squeeze and book_cohorts views and their flags in the help', () => {
+    const orders = hlProgram().commands.find((c) => c.name() === 'hl')
+      .commands.find((c) => c.name() === 'orders');
+    const help = orders.helpInformation();
+    for (const s of ['walls', 'order_stats', 'squeeze', 'book_cohorts', '--min-usd', '--kind', '--outcome',
+      '--touch-bps', '--band-bps', '--interval']) expect(help).toContain(s);
   });
 });
