@@ -184,13 +184,14 @@ export function registerHl(program) {
 
   addTool(hl, 'orders', {
     tool: 'hl_orders',
-    desc: 'Standing orders: resting at one instant, one wallet\'s orders over a window, or one symbol\'s order clusters',
+    desc: 'Standing orders: resting at one instant (with the owner\'s cohorts), one wallet\'s orders over a window, one symbol\'s order clusters or its order book',
     options: [
-      view(['open', 'wallet', 'clusters']),
-      ['--symbol <s>', 'open: symbol and/or --wallet required; clusters: required'],
+      view(['open', 'wallet', 'clusters', 'book']),
+      ['--symbol <s>', 'open: symbol and/or --wallet required; clusters, book: required. With --market spot a pair, e.g. HYPE/USDC'],
+      ['--market <m>', 'open, clusters, book: perp (default) | spot'],
       ['--wallet <a>', 'open: one wallet\'s resting orders'],
       ['--address <a>', 'wallet: the wallet (required)'],
-      ['--at <t>', 'open, clusters: ISO-8601 UTC instant (default the newest snapshot)'],
+      ['--at <t>', 'open, clusters, book: ISO-8601 UTC instant (default the newest snapshot)'],
       ['--oid <n>', 'open: one order id'],
       ['--order-type <t>', 'open: Limit | Stop Market | Stop Limit | Take Profit Market | Take Profit Limit | Trailing Stop Market'],
       ['--created-from <t>', 'open: placed at or after (ISO-8601 UTC)'],
@@ -200,8 +201,10 @@ export function registerHl(program) {
       ['--status <s>', 'wallet: open | filled | partially_filled | canceled_or_expired'],
       ['--step-bps <n>', 'clusters: bucket width in basis points (default 10)'],
       ['--range-pct <n>', 'clusters: half-width around the mid in percent (default 10)'],
-      ['--cohort-axis <a>', 'clusters: size | pnl | pnl_abs'],
-      ['--cohort <c>', 'clusters: one cohort label (current labels; not with --at)'],
+      ['--cohort-axis <a>', 'open, clusters: size | pnl | pnl_abs (default size)'],
+      ['--cohort <c>', 'open, clusters: one cohort label (with --at, the labels of the hour before that snapshot)'],
+      ['--side <s>', 'book: both (default) | bid | ask'],
+      ['--levels <n>', 'book: price levels per side, best first (default 100, max 1000)'],
       LIMIT, CURSOR,
     ],
   });
