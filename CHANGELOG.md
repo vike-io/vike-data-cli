@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.22.0
+
+### Minor Changes
+
+- b440e85: `hl orders` takes four new views. `walls`: the large orders (`--min-usd`, default $1M) of a `--symbol` and/or a `--wallet` last seen in a window (`--from`, `--to`, default 24 hours, at most 7 days) and what became of each, `filled`, `partially_filled`, `pulled` (left the book with no fill), `open` or `unknown` (`--kind both|resting|trigger`, `--outcome`, `--touch-bps`, `--market`, `--limit`, `--cursor`). `order_stats --address`: one wallet's walls in totals and per symbol, with `pulled_share` and `cancel_to_fill_ratio` (`--from`, `--to`, `--min-usd`, default $100k, `--market`). `squeeze`: one perp's price ladder at one instant, per bucket the resting book, the stops and the liquidations, and `pressure` (above 1 = a squeeze) (`--symbol`, `--at`, `--step-bps`, `--range-pct`, `--cohort-axis`, `--cohort`). `book_cohorts`: which cohorts own the book near the mid over time (`--symbol`, `--from`, `--to`, `--cohort-axis size|pnl`, `--band-bps 50|200|1000`, `--interval 5m|1h|1d`, `--market`). README and the vike, vike-hl-asset-briefing, vike-hl-trader-profile and vike-stream skills name them.
+- 2b5d0fc: `alerts create` and `alerts edit` take the `hl_wallet_orders` type: one wallet's Hyperliquid orders placed in or gone from the book, private to the account (`--wallet`, required; `--min-usd`, the order's size x price, default 10000, at least 1000; `--token`; new `--side buy|sell` and `--events placed gone`, both by default; `--side ''` and `--events ''` clear them on edit). Each check is one `wallet_orders` event whose `data.orders` lists every order with the check's totals, 200 orders an event (`part` of `parts`); the full list is kept 1 hour, then the event carries the totals only (`data.orders_removed: true`). `alerts events` help says a page also ends at about 2 MB: page on with `--cursor` while `has_more` is true. README and the vike, vike-alerts-setup and vike-hl-trader-profile skills name the new type and the paging rule.
+
 ## 0.21.0
 
 ### Minor Changes
