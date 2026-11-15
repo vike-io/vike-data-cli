@@ -1,5 +1,5 @@
 // `alerts create` / `alerts edit` send what the server's alerts_create / alerts_edit schema takes:
-// the five Hyperliquid types, the four Polymarket ones, a transfer alert's address, and no default chain (a Hyperliquid
+// the six Hyperliquid types, the four Polymarket ones, a transfer alert's address, and no default chain (a Hyperliquid
 // alert refuses one). fetch is mocked; nothing leaves the machine.
 
 import { describe, it, expect, vi, afterEach } from 'vitest';
@@ -64,6 +64,16 @@ describe('alerts create', () => {
     expect(p.arguments).toMatchObject({ alert_type: 'hl_wallet', wallet: WALLET, actions: ['open', 'flip'] });
   });
 
+  it('a wallet-orders alert: wallet, floor, coin, side and events', async () => {
+    const p = await run(['create', '--label', 'mm orders', '--type', 'hl_wallet_orders', '--wallet', WALLET,
+      '--min-usd', '25000', '--token', 'BTC', '--side', 'sell', '--events', 'placed', 'gone']);
+    expect(p.arguments).toMatchObject({
+      alert_type: 'hl_wallet_orders', wallet: WALLET, min_value_usd: '25000', token_symbol: 'BTC',
+      side: 'sell', events: ['placed', 'gone'],
+    });
+    expect(p.arguments).not.toHaveProperty('chain');
+  });
+
   it('a Polymarket market alert: its market and floor, and no chain', async () => {
     const cid = '0x' + 'ab'.repeat(32);
     const p = await run(['create', '--label', 'big bets', '--type', 'pm_market_trade', '--condition-id', cid,
@@ -105,6 +115,11 @@ describe('alerts edit clears a list with \'\'', () => {
   it('sends [] for --pnl-cohorts \'\', --actions \'\' and --channel \'\'', async () => {
     const p = await run(['edit', '9', '--pnl-cohorts', '', '--actions', '', '--channel', '']);
     expect(p.arguments).toEqual({ alert_id: '9', pnl_cohorts: [], actions: [], channels: [] });
+  });
+
+  it('sends [] for --events \'\' and \'\' for --side \'\'', async () => {
+    const p = await run(['edit', '9', '--events', '', '--side', '']);
+    expect(p.arguments).toEqual({ alert_id: '9', events: [], side: '' });
   });
 });
 

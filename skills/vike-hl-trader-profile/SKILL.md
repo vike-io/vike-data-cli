@@ -41,7 +41,7 @@ Optional, by question: `hl wallet-activity $W --view fills --symbol BTC` (raw fi
 vike-data stream hl --channel hl.fills hl.liquidations hl.ledger hl.closed_trades --filter wallet=$W --filter min_usd=0
 ```
 
-`hl.fills` alone defaults to fills of $1,000 or more; `min_usd=0` is every fill. `hl.closed_trades` sends each round trip once, when it is written as closed, in batches every 30 minutes (a trade that closed at 08:12 arrives around 08:35); its `data` is the item of `hl wallet-trades` (`realized_pnl`, `entry_price`, `exit_price`, `duration_seconds`, `max_size_usd`) and `min_usd` on it is the trade's largest size. A close shows at once as an `hl.fills` event whose `data.action` is `close`. One key holds one `stream hl` connection: add channels to this command, never start a second one. A stored rule instead: `vike-data alerts create --type hl_wallet --wallet $W ...` (see `vike-alerts-setup`).
+`hl.fills` alone defaults to fills of $1,000 or more; `min_usd=0` is every fill. `hl.closed_trades` sends each round trip once, when it is written as closed, in batches every 30 minutes (a trade that closed at 08:12 arrives around 08:35); its `data` is the item of `hl wallet-trades` (`realized_pnl`, `entry_price`, `exit_price`, `duration_seconds`, `max_size_usd`) and `min_usd` on it is the trade's largest size. A close shows at once as an `hl.fills` event whose `data.action` is `close`. One key holds one `stream hl` connection: add channels to this command, never start a second one. A stored rule instead: `vike-data alerts create --type hl_wallet --wallet $W ...` for its fills, `--type hl_wallet_orders --wallet $W ...` for its orders placed or gone (see `vike-alerts-setup`).
 
 ## Verdict rubric (rules of thumb, not tool output)
 

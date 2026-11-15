@@ -1,6 +1,6 @@
 ---
 name: vike-alerts-setup
-description: Create, list, edit, and delete alerts - on-chain transfer alerts (a token, one wallet, USD thresholds; eth, bsc, base, hyperevm) Hyperliquid alerts (a wallet's fills, cohort fills, liquidations, cohort bias, liquidation proximity) and Polymarket alerts (a wallet's trades, big trades in a market, price moves, a market resolving) - and read the events they produced. Delivered by email or an HTTPS webhook. Use when the user asks "alert me when X" / "watch for big transfers" / "notify on whale moves" / "tell me when this wallet trades".
+description: Create, list, edit, and delete alerts - on-chain transfer alerts (a token, one wallet, USD thresholds; eth, bsc, base, hyperevm) Hyperliquid alerts (a wallet's fills, cohort fills, liquidations, cohort bias, liquidation proximity, a wallet's orders placed or gone) and Polymarket alerts (a wallet's trades, big trades in a market, price moves, a market resolving) - and read the events they produced. Delivered by email or an HTTPS webhook. Use when the user asks "alert me when X" / "watch for big transfers" / "notify on whale moves" / "tell me when this wallet trades".
 allowed-tools: Bash(vike-data:*)
 ---
 
@@ -52,11 +52,17 @@ Hyperliquid alerts (`--type`; leave out `--chain`, `--address`, `--max-usd`; del
 | `hl_liquidation` | liquidations | optional `--wallet`, cohorts, `--token`, `--min-usd` |
 | `hl_cohort_bias` | a cohort index crossing a level | `--token` and `--index smi\|wsi\|smart_bias\|whale_bias\|smi_wsi_gap` (required), `--threshold`, `--band`, `--direction up\|down\|both` |
 | `hl_liq_proximity` | a wallet getting close to liquidation | `--wallet` (required), `--threshold` (0-1, default 0.8), `--band` |
+| `hl_wallet_orders` | one wallet's orders placed in or gone from the book (5-minute snapshots) | `--wallet` (required), `--min-usd` (the order's size x price, default 10000, at least 1000), `--token`, `--side buy\|sell` (default both), `--events placed gone` (default both) |
 
 ```bash
 vike-data alerts create --label "BTC smart money flips" --type hl_cohort_bias \
   --token BTC --index smi --threshold 0 --band 0.1 --channel webhook
+
+vike-data alerts create --label "Whale's BTC sell orders" --type hl_wallet_orders \
+  --wallet 0x... --token BTC --side sell --min-usd 50000 --events placed gone
 ```
+
+An `hl_wallet_orders` alert is private to the account (no stream carries it). Each check, about every 5 minutes, is ONE event of kind `wallet_orders`: `data.orders` lists every matching order with its `action` (`placed`, or `gone` with its `outcome`: `filled`, `partially_filled`, `canceled`, or `unknown` when its fills are late) and the check's totals beside it (`n_placed`, `n_gone`, `placed_usd`, `gone_usd`, a count per outcome). A check of more than 200 orders (a market maker) comes as several events, each with `part` of `parts` and the same totals. The full order list is kept 1 hour after the alert; after that the event in `alerts events` carries the totals only, with `data.orders_removed: true`, so read or receive it (webhook) within the hour.
 
 Polymarket alerts (`--type`; leave out `--chain`, `--address`, `--max-usd`; the same channels). `--wallet` is the proxy wallet the site shows at `vike.io/polymarket/wallet/<address>`; `--condition-id` is the market (`0x` + 64 hex: the id in `vike.io/polymarket/market/<id>`, or find it with `vike-data polymarket markets --view search --query <slug>`):
 
@@ -88,6 +94,8 @@ vike-data alerts events --limit 50 --json           # page on with --cursor <nex
 vike-data alerts events --rule-id 42 --json
 vike-data alerts resend <delivery_id>               # send one delivery again
 ```
+
+A page ends at `--limit` events or at about 2 MB, whichever comes first, so it can hold fewer events with `has_more` true: pass `next_cursor` back with `--cursor` while `has_more` is true; nothing is skipped. An empty page returns the same cursor: keep it and ask again later.
 
 ### Delete (only when the user explicitly asks)
 

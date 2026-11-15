@@ -8,9 +8,11 @@ import { addTool } from './tool-command.js';
 const TARGET_OPTIONS = [
   ['--address <a>', 'transfer: one wallet to watch (0x + 40 hex), sent or received'],
   ['--address-role <r>', 'transfer: any | from | to (default any; needs --address)'],
-  ['--wallet <a>', 'Hyperliquid account or Polymarket wallet (0x + 40 hex): required by hl_wallet, hl_liq_proximity and pm_wallet_trade, optional for hl_liquidation'],
+  ['--wallet <a>', 'Hyperliquid account or Polymarket wallet (0x + 40 hex): required by hl_wallet, hl_wallet_orders, hl_liq_proximity and pm_wallet_trade, optional for hl_liquidation'],
   ['--condition-id <id>', 'Polymarket market (0x + 64 hex): required by pm_market_trade, pm_price_move and pm_resolution, optional for pm_wallet_trade'],
   ['--actions <a...>', 'hl_wallet: open close flip increase reduce (default all but reduce)'],
+  ['--side <s>', 'hl_wallet_orders: buy | sell (default both)'],
+  ['--events <e...>', 'hl_wallet_orders: placed gone (default both)'],
   ['--pnl-cohorts <c...>', 'hl_cohort_fill, hl_liquidation: PnL cohorts, e.g. "3x smart" "2x smart"'],
   ['--size-cohorts <c...>', 'hl_cohort_fill, hl_liquidation: size cohorts, e.g. "4x whale" whale'],
   ['--index <i>', 'hl_cohort_bias (required): smi | wsi | smart_bias | whale_bias | smi_wsi_gap'],
@@ -28,6 +30,8 @@ function targetArgs(opts) {
     address_role: opts.addressRole,
     wallet: opts.wallet,
     actions: list(opts.actions),
+    side: opts.side,
+    events: list(opts.events),
     pnl_cohorts: list(opts.pnlCohorts),
     size_cohorts: list(opts.sizeCohorts),
     index: opts.index,
@@ -41,7 +45,7 @@ function targetArgs(opts) {
 export function registerAlerts(program) {
   const cmd = program
     .command('alerts')
-    .description('Manage alerts: on-chain transfers, Hyperliquid fills, liquidations, cohort bias and liquidation proximity, and Polymarket trades, price moves and resolutions (at most 200 active per account)');
+    .description('Manage alerts: on-chain transfers, Hyperliquid fills, liquidations, cohort bias, liquidation proximity and a wallet\'s orders, and Polymarket trades, price moves and resolutions (at most 200 active per account)');
 
   cmd
     .command('list')
@@ -87,11 +91,11 @@ export function registerAlerts(program) {
     .command('create')
     .description('Create an alert: an on-chain transfer alert (default), a Hyperliquid or a Polymarket alert (--type)')
     .requiredOption('--label <l>', 'Alert label (user-visible name)')
-    .option('--type <t>', 'transfer | hl_wallet | hl_cohort_fill | hl_liquidation | hl_cohort_bias | hl_liq_proximity | pm_wallet_trade | pm_market_trade | pm_price_move | pm_resolution (default transfer)')
+    .option('--type <t>', 'transfer | hl_wallet | hl_cohort_fill | hl_liquidation | hl_cohort_bias | hl_liq_proximity | hl_wallet_orders | pm_wallet_trade | pm_market_trade | pm_price_move | pm_resolution (default transfer)')
     .option('--token <sym>', 'transfer: token ticker, UPPERCASE (e.g. USDC); Hyperliquid: the coin (BTC, kPEPE), required by hl_cohort_bias')
     // No default chain: a Hyperliquid alert refuses one.
     .option('--chain <c>', 'transfer only: eth | bsc | base | hyperevm (default eth)')
-    .option('--min-usd <n>', 'transfer: minimum USD value; Hyperliquid, Polymarket: fill, liquidation or trade floor (hl_cohort_fill: required, >= 10000; pm_market_trade: required, >= 1000)')
+    .option('--min-usd <n>', 'transfer: minimum USD value; Hyperliquid, Polymarket: fill, liquidation or trade floor (hl_cohort_fill: required, >= 10000; hl_wallet_orders: the order\'s size x price, >= 1000, default 10000; pm_market_trade: required, >= 1000)')
     .option('--max-usd <n>', 'transfer only: maximum USD value');
   for (const [flags, text] of TARGET_OPTIONS) create.option(flags, text);
   create
@@ -162,10 +166,10 @@ export function registerAlerts(program) {
 
   addTool(cmd, 'events', {
     tool: 'alerts_events',
-    desc: 'Events your alerts produced, oldest first, with each delivery\'s status (kept 15 days)',
+    desc: 'Events your alerts produced, oldest first, with each delivery\'s status (kept 15 days); a page also ends at about 2 MB: page on while has_more is true',
     options: [
       ['--cursor <c>', 'next_cursor from the previous page (an empty page returns the same one)'],
-      ['--limit <n>', 'Events per page, 1-500 (default 100)'],
+      ['--limit <n>', 'Events per page, 1-500 (default 100); a page can hold fewer with has_more true'],
       ['--rule-id <id>', 'Only the events of this alert'],
     ],
   });
