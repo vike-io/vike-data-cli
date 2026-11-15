@@ -37,7 +37,8 @@ channel the path does not serve is refused with `unknown_channel` and the list. 
   `sl` / `tp` / `trailing` and `trigger_px`); `dex` is `HL` or the HIP-3 dex, `source` the snapshot feed. A
   `disappeared` says what happened: `outcome` (`filled`, `partially_filled`, `canceled`, `unknown`) and `filled_usd`;
   it waits for the order's fills, up to ~12 minutes after the snapshot that found the order gone. Filters `side`,
-  `event` and `kind` take one value each.
+  `event` and `kind` take one value each. The same walls after the fact, with a wallet's pulled share:
+  `vike-data hl orders --view walls` and `--view order_stats`.
 - `hl.closed_trades`: a finished round trip (entry and exit price, `realized_pnl`, `duration_seconds`), in batches
   every 30 minutes; unfiltered up to ~32,000 an hour (measured 2026-11-02): filter by `wallet` or `min_usd`.
 - `hl.cohort_leverage` (`hl-cohorts`): once an hour per cohort of one `axis`, `perp_bias` and `equity_exposure`

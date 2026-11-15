@@ -1,0 +1,5 @@
+---
+'@vike-io/cli': minor
+---
+
+`hl orders` takes four new views. `walls`: the large orders (`--min-usd`, default $1M) of a `--symbol` and/or a `--wallet` last seen in a window (`--from`, `--to`, default 24 hours, at most 7 days) and what became of each, `filled`, `partially_filled`, `pulled` (left the book with no fill), `open` or `unknown` (`--kind both|resting|trigger`, `--outcome`, `--touch-bps`, `--market`, `--limit`, `--cursor`). `order_stats --address`: one wallet's walls in totals and per symbol, with `pulled_share` and `cancel_to_fill_ratio` (`--from`, `--to`, `--min-usd`, default $100k, `--market`). `squeeze`: one perp's price ladder at one instant, per bucket the resting book, the stops and the liquidations, and `pressure` (above 1 = a squeeze) (`--symbol`, `--at`, `--step-bps`, `--range-pct`, `--cohort-axis`, `--cohort`). `book_cohorts`: which cohorts own the book near the mid over time (`--symbol`, `--from`, `--to`, `--cohort-axis size|pnl`, `--band-bps 50|200|1000`, `--interval 5m|1h|1d`, `--market`). README and the vike, vike-hl-asset-briefing, vike-hl-trader-profile and vike-stream skills name them.
