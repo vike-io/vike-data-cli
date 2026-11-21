@@ -7,7 +7,7 @@ description: "Use this skill whenever the user asks any question about on-chain 
 
 This skill is for anyone who asks an AI agent about crypto data: who is buying a token, what a wallet holds, what Hyperliquid or Polymarket traders are doing right now. It tells the agent which vike tool answers which question and how to read the result, so it does not guess or invent numbers. It reads its data from vike.io and needs a free vike API key.
 
-What the platform has: wallet and token analytics on Ethereum, BSC, Base and HyperEVM (each tool's chain list is under "What each tool really returns"), multi-source wallet labels, CEX perpetual funding and cross-venue spreads, Hyperliquid wallets, cohorts, leaderboards, liquidations, markets, builders, vaults and candles, Polymarket markets, traders, tape, order books, settlements and the Parquet archive, Predict.fun (BNB Chain) markets, order books, on-chain fills, wallet positions and P&L, USDT deposits and withdrawals and its leaderboard, transfer, Hyperliquid and Polymarket alerts, and live event streams over WebSocket. 83 tools in one MCP server.
+What the platform has: wallet and token analytics on Ethereum, BSC, Base and HyperEVM (each tool's chain list is under "What each tool really returns"), multi-source wallet labels, CEX perpetual funding and cross-venue spreads, Hyperliquid wallets, cohorts, leaderboards, liquidations, markets, builders, vaults and candles, Polymarket markets, traders, tape, order books, settlements and the Parquet archive, Predict.fun (BNB Chain) markets, order books, on-chain fills, wallet positions and P&L, USDT deposits and withdrawals and its leaderboard, transfer, Hyperliquid and Polymarket alerts, and live event streams over WebSocket. 84 tools in one MCP server.
 
 **MCP endpoint for all calls:** `https://data.vike.io/mcp` (JSON-RPC 2.0)
 **Or use the CLI:** `npm install -g @vike-io/cli` → `vike-data <command>`
@@ -165,7 +165,7 @@ Any MCP tool, including one with no command of its own, is one `call` away; it p
 vike-data call hl_wallet --args '{"address":"0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045","view":"summary"}'
 ```
 
-**B) Via an MCP connector (recommended when your client has one).** All 83 tools live at `https://data.vike.io/mcp`. Connect the client to that address with the `X-API-KEY` header above, then call a tool by name with its arguments, for example `wallet_summary` with `address` set to a full 0x address.
+**B) Via an MCP connector (recommended when your client has one).** All 84 tools live at `https://data.vike.io/mcp`. Connect the client to that address with the `X-API-KEY` header above, then call a tool by name with its arguments, for example `wallet_summary` with `address` set to a full 0x address.
 
 Run `vike-data schema --pretty` (or call MCP `tools/list`) to see the live arg shape for every tool. Always read the schema before constructing arguments — defaults and enum values change.
 
